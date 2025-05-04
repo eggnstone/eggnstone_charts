@@ -12,65 +12,67 @@ part of 'GenericLineData.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-/// @nodoc
-mixin _$GenericLineData<TX,TY> {
-
- KtList<GenericPoint<TX, TY>> get points;
-/// Create a copy of GenericLineData
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$GenericLineDataCopyWith<TX, TY, GenericLineData<TX, TY>> get copyWith => _$GenericLineDataCopyWithImpl<TX, TY, GenericLineData<TX, TY>>(this as GenericLineData<TX, TY>, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is GenericLineData<TX, TY>&&(identical(other.points, points) || other.points == points));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,points);
-
-@override
-String toString() {
-  return 'GenericLineData<$TX, $TY>(points: $points)';
-}
-
-
-}
 
 /// @nodoc
-abstract mixin class $GenericLineDataCopyWith<TX,TY,$Res>  {
-  factory $GenericLineDataCopyWith(GenericLineData<TX, TY> value, $Res Function(GenericLineData<TX, TY>) _then) = _$GenericLineDataCopyWithImpl;
-@useResult
-$Res call({
- KtList<GenericPoint<TX, TY>> points
-});
+mixin _$GenericLineData<TX, TY> {
+  KtList<GenericPoint<TX, TY>> get points;
 
+  /// Create a copy of GenericLineData
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $GenericLineDataCopyWith<TX, TY, GenericLineData<TX, TY>> get copyWith =>
+      _$GenericLineDataCopyWithImpl<TX, TY, GenericLineData<TX, TY>>(
+          this as GenericLineData<TX, TY>, _$identity);
 
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is GenericLineData<TX, TY> &&
+            (identical(other.points, points) || other.points == points));
+  }
 
+  @override
+  int get hashCode => Object.hash(runtimeType, points);
 
+  @override
+  String toString() {
+    return 'GenericLineData<$TX, $TY>(points: $points)';
+  }
 }
+
 /// @nodoc
-class _$GenericLineDataCopyWithImpl<TX,TY,$Res>
+abstract mixin class $GenericLineDataCopyWith<TX, TY, $Res> {
+  factory $GenericLineDataCopyWith(GenericLineData<TX, TY> value,
+          $Res Function(GenericLineData<TX, TY>) _then) =
+      _$GenericLineDataCopyWithImpl;
+  @useResult
+  $Res call({KtList<GenericPoint<TX, TY>> points});
+}
+
+/// @nodoc
+class _$GenericLineDataCopyWithImpl<TX, TY, $Res>
     implements $GenericLineDataCopyWith<TX, TY, $Res> {
   _$GenericLineDataCopyWithImpl(this._self, this._then);
 
   final GenericLineData<TX, TY> _self;
   final $Res Function(GenericLineData<TX, TY>) _then;
 
-/// Create a copy of GenericLineData
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? points = null,}) {
-  return _then(GenericLineData(
-null == points ? _self.points : points // ignore: cast_nullable_to_non_nullable
-as KtList<GenericPoint<TX, TY>>,
-  ));
+  /// Create a copy of GenericLineData
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? points = null,
+  }) {
+    return _then(GenericLineData(
+      null == points
+          ? _self.points
+          : points // ignore: cast_nullable_to_non_nullable
+              as KtList<GenericPoint<TX, TY>>,
+    ));
+  }
 }
-
-}
-
 
 // dart format on
