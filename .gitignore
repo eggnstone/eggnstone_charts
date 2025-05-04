@@ -1,0 +1,4 @@
+/.dart_tool/
+/.idea/libraries/Dart_Packages.xml
+/.idea/libraries/Dart_SDK.xml
+pubspec.lock

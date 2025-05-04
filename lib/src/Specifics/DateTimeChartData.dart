@@ -1,0 +1,63 @@
+import 'package:kt_dart/collection.dart';
+
+import '../Generics/GenericChartData.dart';
+import '../Generics/GenericMinMax.dart';
+import 'DateTimeLineData.dart';
+import 'DateTimePoint.dart';
+import 'DoubleChartData.dart';
+import 'DoubleFormatter.dart';
+import 'DoubleLineData.dart';
+import 'DoubleMinMax.dart';
+import 'DoublePoint.dart';
+import 'DoubleTools.dart';
+
+class DateTimeChartData extends GenericChartData<DateTime, double>
+{
+    DateTimeChartData({
+        required super.colors,
+        required super.lines,
+        required super.toolsX,
+        required super.toolsY,
+        required super.minMax
+    });
+
+    @override
+    DoubleChartData getDoubleChartData()
+    {
+        final List<DoubleLineData> doubleLines = <DoubleLineData>[];
+
+        double minX = double.infinity;
+        double maxX = double.negativeInfinity;
+
+        for (int i = 0; i < lines.size; i++)
+        {
+            final DateTimeLineData dateTimeLine = lines[i];
+            final List<DoublePoint> doublePoints = <DoublePoint>[];
+
+            for (int j = 0; j < dateTimeLine.points.size; j++)
+            {
+                final DateTimePoint dateTimePoint = dateTimeLine.points[j];
+                doublePoints.add(DoublePoint(dateTimePoint.x.millisecondsSinceEpoch.toDouble(), dateTimePoint.y));
+                minX = dateTimePoint.x.millisecondsSinceEpoch < minX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : minX;
+                maxX = dateTimePoint.x.millisecondsSinceEpoch > maxX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : maxX;
+            }
+
+            doubleLines.add(DoubleLineData(doublePoints.toImmutableList()));
+        }
+
+        final GenericMinMax<double, double> doubleMinxMax = DoubleMinMax(
+            minX: minX,
+            maxX: maxX,
+            minY: minMax.minY,
+            maxY: minMax.maxY
+        );
+
+        return DoubleChartData(
+            colors: colors,
+            lines: doubleLines.toImmutableList(),
+            toolsX: DoubleTools(const DoubleFormatter(0)),
+            toolsY: DoubleTools(const DoubleFormatter(0)),
+            minMax: doubleMinxMax
+        );
+    }
+}
