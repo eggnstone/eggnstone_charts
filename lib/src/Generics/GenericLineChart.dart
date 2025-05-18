@@ -28,7 +28,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
     Widget build(BuildContext context)
     => Column(
         children: <Widget>[
-            Text(widget.info.title),
+            if (widget.info.title.isNotEmpty) Text(widget.info.title),
             Expanded(child: _createChart())
         ]
     );
