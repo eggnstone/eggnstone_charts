@@ -34,9 +34,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     @override
     void paint(Canvas canvas, Size size)
     {
-        logDebug('\n\n\nLineChartPainter.linePaint() Size: $size');
+        //logDebug('\n\n\nLineChartPainter.linePaint() Size: $size');
+        logDebug('LineChartPainter.linePaint() Size: $size');
         logDebug('  data.minMax:            ${data.minMax}');
         logDebug('  doubleData.minMax:      ${doubleData.minMax}');
+
+        if (data.lines.size != data.colors.size || data.lines.isEmpty())
+            return;
 
         final List<PositionedTextPainter> leftTickPainters = <PositionedTextPainter>
         [
@@ -67,27 +71,76 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         logDebug('  data.minMax.minX:       ${data.minMax.minX}');
         logDebug('  doubleData.minMax.minX: ${doubleData.minMax.minX}');
+
         TX firstTopDataX = data.toolsX.getNextValue(data.minMax.minX);
         logDebug('  firstTopDataX:          $firstTopDataX');
+
         double firstTopDoubleDataX = data.toolsX.toDouble(firstTopDataX);
         logDebug('  firstTopDoubleDataX:    $firstTopDoubleDataX');
+
         TextPainter firstTopPainter = _createAndLayoutTextPainter(data.toolsX.format(firstTopDataX));
         logDebug('  firstTopPainter:        ${firstTopPainter.width} x ${firstTopPainter.height}');
-        double firstTopGraphX = _dataToPixelX(doubleData.minMax, graphMinMax, firstTopDoubleDataX) - firstTopPainter.width / 2;
-        logDebug('  firstTopGraphX:         $firstTopGraphX');
 
-        while (/*firstTopGraphX < graphMinMax.minX ||*/ firstTopGraphX < graphMinMax.minX - paddingHorizontalInner)
+        double firstTopGraphX = _dataToPixelX(doubleData.minMax, graphMinMax, firstTopDoubleDataX) - firstTopPainter.width / 2;
+        logDebug('  1 firstTopGraphX:         $firstTopGraphX');
+
+        if (firstTopDoubleDataX < doubleData.minMax.minX)
+        {
+            logDebug('firstTopDoubleDataX:    $firstTopDoubleDataX');
+            logDebug('doubleData.minMax.minX: ${doubleData.minMax.minX}');
+            final String message = 'firstTopDoubleDataX ($firstTopDoubleDataX) is ${doubleData.minMax.minX - firstTopDoubleDataX} lower than minX (${doubleData.minMax.minX})\n'
+                '  firstTopDataX: $firstTopDataX}  minX: ${data.minMax.minX}\n'
+                '  firstTopDataX: ${data.toolsX.formatter.format(firstTopDataX).replaceAll('\n', '')}  minX: ${data.toolsX.formatter.format(data.minMax.minX).replaceAll('\n', '')}';
+            _showError(canvas, size, message);
+            return;
+        }
+
+        if (firstTopDoubleDataX > doubleData.minMax.maxX)
+        {
+            final String message = 'firstTopDoubleDataX ($firstTopDoubleDataX) is greater than maxX (${doubleData.minMax.maxX})\n'
+                '  firstTopDataX: $firstTopDataX}  maxX: ${data.minMax.maxX}\n'
+                '  firstTopDataX: ${data.toolsX.formatter.format(firstTopDataX).replaceAll('\n', '')}  maxX: ${data.toolsX.formatter.format(data.minMax.maxX).replaceAll('\n', '')}';
+            _showError(canvas, size, message);
+            return;
+        }
+
+        while (firstTopGraphX < graphMinMax.minX - paddingHorizontalInner)
         {
             logDebug('  Correcting to next value');
+
             firstTopDataX = data.toolsX.getNextValue(firstTopDataX);
             logDebug('  firstTopDataX:          $firstTopDataX');
+
             firstTopDoubleDataX = data.toolsX.toDouble(firstTopDataX);
             logDebug('  firstTopDoubleDataX:    $firstTopDoubleDataX');
+
+            if (firstTopDoubleDataX < doubleData.minMax.minX)
+            {
+                final String message = 'firstTopDoubleDataX ($firstTopDoubleDataX) is lower than minX (${doubleData.minMax.minX})\n'
+                    '  firstTopDataX: $firstTopDataX}  minX: ${data.minMax.minX}\n'
+                    '  firstTopDataX: ${data.toolsX.formatter.format(firstTopDataX).replaceAll('\n', '')}  minX: ${data.toolsX.formatter.format(data.minMax.minX).replaceAll('\n', '')}';
+                _showError(canvas, size, message);
+                return;
+            }
+
+            if (firstTopDoubleDataX > doubleData.minMax.maxX)
+            {
+                final String message = 'firstTopDoubleDataX ($firstTopDoubleDataX) is greater than maxX (${doubleData.minMax.maxX})\n'
+                    '  firstTopDataX: $firstTopDataX}  maxX: ${data.minMax.maxX}\n'
+                    '  firstTopDataX: ${data.toolsX.formatter.format(firstTopDataX).replaceAll('\n', '')}  maxX: ${data.toolsX.formatter.format(data.minMax.maxX).replaceAll('\n', '')}';
+                _showError(canvas, size, message);
+                return;
+            }
+
             firstTopPainter = _createAndLayoutTextPainter(data.toolsX.format(firstTopDataX));
             logDebug('  firstTopPainter:        ${firstTopPainter.width} x ${firstTopPainter.height}');
             firstTopGraphX = _dataToPixelX(doubleData.minMax, graphMinMax, firstTopDoubleDataX) - firstTopPainter.width / 2;
-            logDebug('  firstTopGraphX:         $firstTopGraphX');
+            logDebug('  2 firstTopGraphX:         $firstTopGraphX');
+
+            logDebug('  NEXT');
         }
+
+        logDebug('  DONE');
 
         topTickPainters.clear();
         topTickPainters.add(PositionedTextPainter(firstTopDoubleDataX, firstTopPainter));
@@ -147,7 +200,27 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (dataMinMax.getWidth() == 0)
             return graphMinMax.minX;
 
-        return graphMinMax.minX + (dataX - dataMinMax.minX) / dataMinMax.getWidth() * graphMinMax.getWidth();
+        logDebug('graphMinMax.minX: ${graphMinMax.minX}');
+        logDebug('dataX: $dataX');
+        logDebug('dataMinMax.minX: ${dataMinMax.minX}');
+        logDebug('dataMinMax.minX: ${dataMinMax.getWidth()}');
+        logDebug('dataMinMax.minX: ${graphMinMax.getWidth()}');
+
+        final double result = graphMinMax.minX + (dataX - dataMinMax.minX) / dataMinMax.getWidth() * graphMinMax.getWidth();
+
+        if (result < graphMinMax.minX)
+        {
+            logWarning('result < graphMinMax.minX');
+            return graphMinMax.minX;
+        }
+
+        if (result > graphMinMax.maxX)
+        {
+            logWarning('result > graphMinMax.maxX');
+            return graphMinMax.maxX;
+        }
+
+        return result;
     }
 
     double _dataToPixelY(GenericMinMax<double, double> dataMinMax, DoubleMinMax graphMinMax, double dataY)
@@ -155,7 +228,21 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (dataMinMax.getHeight() == 0)
             return graphMinMax.minY;
 
-        return graphMinMax.maxY - (dataY - dataMinMax.minY) / dataMinMax.getHeight() * graphMinMax.getHeight();
+        final double result = graphMinMax.maxY - (dataY - dataMinMax.minY) / dataMinMax.getHeight() * graphMinMax.getHeight();
+
+        if (result < graphMinMax.minY)
+        {
+            logWarning('result < graphMinMax.minY');
+            return graphMinMax.minY;
+        }
+
+        if (result > graphMinMax.maxY)
+        {
+            logWarning('result > graphMinMax.maxY');
+            return graphMinMax.maxY;
+        }
+
+        return result;
     }
 
     DoubleMinMax _calcGraphMinMax(Size size, List<PositionedTextPainter> leftTickPainters, List<PositionedTextPainter> topTickPainters, List<PositionedTextPainter> rightTickPainters, List<PositionedTextPainter> bottomTickPainters)
@@ -386,5 +473,12 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         //logDebug('  painters.middle: ${painters[painters.length - 2].position}  ${painters[painters.length - 2].textPainter.width}');
         logDebug('END LineChartPainter._addTicksX: OK');
         return true;
+    }
+
+    void _showError(Canvas canvas, Size size, String s)
+    {
+        logError(s);
+        final TextPainter tp = _createAndLayoutTextPainter(s);
+        tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - tp.height / 2));
     }
 }

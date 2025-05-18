@@ -29,4 +29,8 @@ class GenericMinMax<TX, TY> with _$GenericMinMax<TX, TY>
 
     TY getHeight()
     => throw UnimplementedError();
+
+    @override
+    String toString()
+    => 'X: [$minX, $maxX] = ${getWidth()}, Y: [$minY, $maxY] = ${getHeight()}';
 }

@@ -10,9 +10,20 @@ class DoubleFormatter implements GenericFormatter<double>
     @override
     String format(dynamic value)
     {
-        if (value is double)
-            return invert ? (-value).toStringAsFixed(precision) : value.toStringAsFixed(precision);
+        if (value is! double)
+            return 'DoubleFormatter ?';
 
-        return 'DoubleFormatter ?';
+        final String s = value.toStringAsFixed(precision);
+
+        if (s == '0' || s == '-0')
+            return '0';
+
+        if (!invert)
+            return s;
+
+        if (s.startsWith('-'))
+            return s.substring(1);
+
+        return '-$s';
     }
 }

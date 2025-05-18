@@ -1,3 +1,4 @@
+import 'package:eggnstone_dart/eggnstone_dart.dart';
 import 'package:kt_dart/collection.dart';
 
 import '../Generics/GenericChartData.dart';
@@ -26,28 +27,32 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
     {
         final List<DoubleLineData> doubleLines = <DoubleLineData>[];
 
-        double minX = double.infinity;
-        double maxX = double.negativeInfinity;
+        /*double minX = double.infinity;
+        double maxX = double.negativeInfinity;*/
+
+        logDebug('lines.size: ${lines.size}');
 
         for (int i = 0; i < lines.size; i++)
         {
             final DateTimeLineData dateTimeLine = lines[i];
             final List<DoublePoint> doublePoints = <DoublePoint>[];
 
+            logDebug('dateTimeLine.points.size: ${dateTimeLine.points.size}');
+
             for (int j = 0; j < dateTimeLine.points.size; j++)
             {
                 final DateTimePoint dateTimePoint = dateTimeLine.points[j];
                 doublePoints.add(DoublePoint(dateTimePoint.x.millisecondsSinceEpoch.toDouble(), dateTimePoint.y));
-                minX = dateTimePoint.x.millisecondsSinceEpoch < minX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : minX;
-                maxX = dateTimePoint.x.millisecondsSinceEpoch > maxX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : maxX;
+                /*minX = dateTimePoint.x.millisecondsSinceEpoch < minX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : minX;
+                maxX = dateTimePoint.x.millisecondsSinceEpoch > maxX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : maxX;*/
             }
 
             doubleLines.add(DoubleLineData(doublePoints.toImmutableList()));
         }
 
         final GenericMinMax<double, double> doubleMinxMax = DoubleMinMax(
-            minX: minX,
-            maxX: maxX,
+            minX: minMax.minX.millisecondsSinceEpoch.toDouble(),
+            maxX: minMax.maxX.millisecondsSinceEpoch.toDouble(),
             minY: minMax.minY,
             maxY: minMax.maxY
         );

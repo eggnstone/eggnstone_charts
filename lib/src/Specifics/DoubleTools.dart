@@ -13,6 +13,10 @@ class DoubleTools extends GenericTools<double>
     => (a + b) / 2;
 
     @override
-    double getNextDoubleValue(double currentValue)
-    => throw UnimplementedError();
+    double getNextValue(double currentValue)
+    => currentValue.floorToDouble() + 1.0;
+
+    @override
+    double toDouble(double value)
+    => value;
 }
