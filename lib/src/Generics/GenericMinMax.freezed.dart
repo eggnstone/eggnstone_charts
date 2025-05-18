@@ -46,11 +46,6 @@ mixin _$GenericMinMax<TX, TY> {
       const DeepCollectionEquality().hash(maxX),
       const DeepCollectionEquality().hash(minY),
       const DeepCollectionEquality().hash(maxY));
-
-  @override
-  String toString() {
-    return 'GenericMinMax<$TX, $TY>(minX: $minX, maxX: $maxX, minY: $minY, maxY: $maxY)';
-  }
 }
 
 /// @nodoc

@@ -47,8 +47,8 @@ Widget buildChart()
 
     const ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
-        radius: 4,
-        textStyle: TextStyle()
+        fontSize: 12,
+        radius: 4
     );
 
     return DoubleLineChart(

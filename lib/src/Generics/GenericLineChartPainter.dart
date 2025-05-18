@@ -21,9 +21,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     static const double paddingVerticalInner = 8;
     static const double paddingVerticalTicks = 8;
 
-    final ChartStyle style;
     final GenericChartData<TX, TY> data;
     final DoubleChartData doubleData;
+    final ChartStyle style;
 
     GenericLineChartPainter({
         required this.data,
@@ -81,7 +81,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         logDebug('  firstTopPainter:        ${firstTopPainter.width} x ${firstTopPainter.height}');
 
         double firstTopGraphX = _dataToPixelX(doubleData.minMax, graphMinMax, firstTopDoubleDataX) - firstTopPainter.width / 2;
-        logDebug('  1 firstTopGraphX:         $firstTopGraphX');
+        logDebug('  firstTopGraphX:         $firstTopGraphX');
 
         if (firstTopDoubleDataX < doubleData.minMax.minX)
         {
@@ -134,7 +134,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             firstTopPainter = _createAndLayoutTextPainter(data.toolsX.format(firstTopDataX));
             logDebug('  firstTopPainter:        ${firstTopPainter.width} x ${firstTopPainter.height}');
             firstTopGraphX = _dataToPixelX(doubleData.minMax, graphMinMax, firstTopDoubleDataX) - firstTopPainter.width / 2;
-            logDebug('  2 firstTopGraphX:         $firstTopGraphX');
+            logDebug('  firstTopGraphX:         $firstTopGraphX');
 
             logDebug('  NEXT');
         }
@@ -187,7 +187,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     TextPainter _createAndLayoutTextPainter(String text)
     {
         final TextPainter tp = TextPainter(
-            text: TextSpan(style: style.textStyle, text: text),
+            text: TextSpan(style: TextStyle(color: style.textColor, fontSize: style.fontSize), text: text),
             textDirection: TextDirection.ltr
         );
         tp.layout();
