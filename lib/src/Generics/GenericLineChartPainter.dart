@@ -10,7 +10,6 @@ import '../Specifics/DoubleLineData.dart';
 import '../Specifics/DoubleMinMax.dart';
 import 'GenericChartData.dart';
 import 'GenericMinMax.dart';
-import 'GenericTools.dart';
 
 class GenericLineChartPainter<TX, TY> extends CustomPainter
 {
@@ -312,7 +311,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double endY = _dataToPixelY(doubleData.minMax, graphMinMax, painter.position);
             _drawLine(canvas, paint, graphMinMax.minX - paddingHorizontalInner, endY, graphMinMax.minX, endY);
 
-            double startY = endY;
+            final double startY = endY;
             /*if (i == 0)
                 startY -= painter.textPainter.height / 2 - paddingVerticalInner;
             else if (i == painters.length - 1)
@@ -330,7 +329,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double endX = _dataToPixelX(doubleData.minMax, graphMinMax, painter.position);
             _drawLine(canvas, paint, endX, graphMinMax.minY - paddingVerticalInner, endX, graphMinMax.minY);
 
-            double startX = endX;
+            final double startX = endX;
             /*if (i == 0)
                 startX += painter.textPainter.width / 2 - paddingHorizontalInner;
             else if (i == painters.length - 1)
@@ -348,7 +347,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double startY = _dataToPixelY(doubleData.minMax, graphMinMax, painter.position);
             _drawLine(canvas, paint, graphMinMax.maxX, startY, graphMinMax.maxX + paddingHorizontalInner, startY);
 
-            double endY = startY;
+            final double endY = startY;
             /*if (i == 0)
                 endY -= painter.textPainter.height / 2 - paddingVerticalInner;
             else if (i == painters.length - 1)
@@ -366,7 +365,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double startX = _dataToPixelX(doubleData.minMax, graphMinMax, painter.position);
             _drawLine(canvas, paint, startX, graphMinMax.maxY, startX, graphMinMax.maxY + paddingVerticalInner);
 
-            double endX = startX;
+            final double endX = startX;
             /*if (i == 0)
                 endX += painter.textPainter.width / 2 - paddingHorizontalInner;
             else if (i == painters.length - 1)
@@ -413,14 +412,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         }
     }
 
-    void _addTicksY(List<PositionedTextPainter> painters, GenericMinMax<double, double> dataMinMax, DoubleMinMax graphMinMax, GenericTools<TX> toolsX)
+    /*void _addTicksY(List<PositionedTextPainter> painters, GenericMinMax<double, double> dataMinMax, DoubleMinMax graphMinMax, GenericTools<TX> toolsX)
     {
         while (true)
             if (!_addTickY(painters, dataMinMax, graphMinMax, toolsX))
                 return;
-    }
+    }*/
 
-    bool _addTickY(List<PositionedTextPainter> painters, GenericMinMax<double, double> dataMinMax, DoubleMinMax graphMinMax, GenericTools<TX> toolsX)
+    /*bool _addTickY(List<PositionedTextPainter> painters, GenericMinMax<double, double> dataMinMax, DoubleMinMax graphMinMax, GenericTools<TX> toolsX)
     {
         logDebug('START LineChartPainter._addTicksX()');
         logDebug('  graphMinMax:     $graphMinMax');
@@ -473,7 +472,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         //logDebug('  painters.middle: ${painters[painters.length - 2].position}  ${painters[painters.length - 2].textPainter.width}');
         logDebug('END LineChartPainter._addTicksX: OK');
         return true;
-    }
+    }*/
 
     void _showError(Canvas canvas, Size size, String s)
     {
