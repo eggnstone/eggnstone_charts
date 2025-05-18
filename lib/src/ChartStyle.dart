@@ -10,6 +10,7 @@ abstract class ChartStyle with _$ChartStyle
         required double devicePixelRatio,
         required double fontSize,
         required double radius,
+        Color? lineColor,
         Color? textColor
     }) = _ChartStyle;
 }

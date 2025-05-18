@@ -148,7 +148,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         //_addTicksY(topTickPainters, doubleData.minMax, graphMinMax, data.toolsX);
 
         final Paint borderPaint = Paint()
-            ..color = Colors.black
+            ..color = style.lineColor ?? Colors.black
             ..strokeWidth = 1 // / style.devicePixelRatio;
             ..style = PaintingStyle.stroke;
 

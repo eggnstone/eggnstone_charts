@@ -18,6 +18,7 @@ mixin _$ChartStyle {
   double get devicePixelRatio;
   double get fontSize;
   double get radius;
+  Color? get lineColor;
   Color? get textColor;
 
   /// Create a copy of ChartStyle
@@ -37,17 +38,19 @@ mixin _$ChartStyle {
             (identical(other.fontSize, fontSize) ||
                 other.fontSize == fontSize) &&
             (identical(other.radius, radius) || other.radius == radius) &&
+            (identical(other.lineColor, lineColor) ||
+                other.lineColor == lineColor) &&
             (identical(other.textColor, textColor) ||
                 other.textColor == textColor));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, devicePixelRatio, fontSize, radius, textColor);
+  int get hashCode => Object.hash(
+      runtimeType, devicePixelRatio, fontSize, radius, lineColor, textColor);
 
   @override
   String toString() {
-    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, radius: $radius, textColor: $textColor)';
+    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, radius: $radius, lineColor: $lineColor, textColor: $textColor)';
   }
 }
 
@@ -61,6 +64,7 @@ abstract mixin class $ChartStyleCopyWith<$Res> {
       {double devicePixelRatio,
       double fontSize,
       double radius,
+      Color? lineColor,
       Color? textColor});
 }
 
@@ -79,6 +83,7 @@ class _$ChartStyleCopyWithImpl<$Res> implements $ChartStyleCopyWith<$Res> {
     Object? devicePixelRatio = null,
     Object? fontSize = null,
     Object? radius = null,
+    Object? lineColor = freezed,
     Object? textColor = freezed,
   }) {
     return _then(_self.copyWith(
@@ -94,6 +99,10 @@ class _$ChartStyleCopyWithImpl<$Res> implements $ChartStyleCopyWith<$Res> {
           ? _self.radius
           : radius // ignore: cast_nullable_to_non_nullable
               as double,
+      lineColor: freezed == lineColor
+          ? _self.lineColor
+          : lineColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
       textColor: freezed == textColor
           ? _self.textColor
           : textColor // ignore: cast_nullable_to_non_nullable
@@ -109,6 +118,7 @@ class _ChartStyle implements ChartStyle {
       {required this.devicePixelRatio,
       required this.fontSize,
       required this.radius,
+      this.lineColor,
       this.textColor});
 
   @override
@@ -117,6 +127,8 @@ class _ChartStyle implements ChartStyle {
   final double fontSize;
   @override
   final double radius;
+  @override
+  final Color? lineColor;
   @override
   final Color? textColor;
 
@@ -138,17 +150,19 @@ class _ChartStyle implements ChartStyle {
             (identical(other.fontSize, fontSize) ||
                 other.fontSize == fontSize) &&
             (identical(other.radius, radius) || other.radius == radius) &&
+            (identical(other.lineColor, lineColor) ||
+                other.lineColor == lineColor) &&
             (identical(other.textColor, textColor) ||
                 other.textColor == textColor));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, devicePixelRatio, fontSize, radius, textColor);
+  int get hashCode => Object.hash(
+      runtimeType, devicePixelRatio, fontSize, radius, lineColor, textColor);
 
   @override
   String toString() {
-    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, radius: $radius, textColor: $textColor)';
+    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, radius: $radius, lineColor: $lineColor, textColor: $textColor)';
   }
 }
 
@@ -164,6 +178,7 @@ abstract mixin class _$ChartStyleCopyWith<$Res>
       {double devicePixelRatio,
       double fontSize,
       double radius,
+      Color? lineColor,
       Color? textColor});
 }
 
@@ -182,6 +197,7 @@ class __$ChartStyleCopyWithImpl<$Res> implements _$ChartStyleCopyWith<$Res> {
     Object? devicePixelRatio = null,
     Object? fontSize = null,
     Object? radius = null,
+    Object? lineColor = freezed,
     Object? textColor = freezed,
   }) {
     return _then(_ChartStyle(
@@ -197,6 +213,10 @@ class __$ChartStyleCopyWithImpl<$Res> implements _$ChartStyleCopyWith<$Res> {
           ? _self.radius
           : radius // ignore: cast_nullable_to_non_nullable
               as double,
+      lineColor: freezed == lineColor
+          ? _self.lineColor
+          : lineColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
       textColor: freezed == textColor
           ? _self.textColor
           : textColor // ignore: cast_nullable_to_non_nullable
