@@ -37,5 +37,5 @@ class GenericChartData<TX, TY> with _$GenericChartData<TX, TY>
     });
 
     DoubleChartData getDoubleChartData()
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericChartData.getDoubleChartData');
 }

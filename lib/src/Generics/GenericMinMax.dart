@@ -25,10 +25,10 @@ class GenericMinMax<TX, TY> with _$GenericMinMax<TX, TY>
     });
 
     TX getWidth()
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericMinMax.getWidth');
 
     TY getHeight()
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericMinMax.getHeight');
 
     @override
     String toString()

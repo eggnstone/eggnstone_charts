@@ -17,6 +17,34 @@ class DateTimeTools extends GenericTools<DateTime>
     => DateTime(currentValue.year, currentValue.month, currentValue.day).add(const Duration(days: 1));
 
     @override
+    DateTime getNextValueOrSame(DateTime currentValue)
+    {
+        if (currentValue.hour == 0 &&
+            currentValue.minute == 0 &&
+            currentValue.second == 0 &&
+            currentValue.millisecond == 0)
+            return currentValue;
+
+        return getNextValue(currentValue);
+    }
+
+    @override
+    DateTime getPreviousValue(DateTime currentValue)
+    => DateTime(currentValue.year, currentValue.month, currentValue.day).subtract(const Duration(days: 1));
+
+    @override
+    DateTime getPreviousValueOrSame(DateTime currentValue)
+    {
+        if (currentValue.hour == 0 &&
+            currentValue.minute == 0 &&
+            currentValue.second == 0 &&
+            currentValue.millisecond == 0)
+            return currentValue;
+
+        return getPreviousValue(currentValue);
+    }
+
+    @override
     DateTime mid(DateTime a, DateTime b)
     {
         final Duration diff = b.difference(a);

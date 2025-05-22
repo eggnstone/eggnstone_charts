@@ -7,20 +7,29 @@ class GenericTools<T>
     const GenericTools(this.formatter);
 
     String format(T value)
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericTools.format');
 
     double getNextDoubleValue(double currentValue)
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericTools.getNextDoubleValue');
 
     T getNextValue(T currentValue)
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericTools.getNextValue');
+
+    T getNextValueOrSame(T currentValue)
+    => throw UnimplementedError('GenericTools.getNextValueOrSame');
+
+    T getPreviousValue(T currentValue)
+    => throw UnimplementedError('GenericTools.getPreviousValue');
+
+    T getPreviousValueOrSame(T currentValue)
+    => throw UnimplementedError('GenericTools.getPreviousValueOrSame');
 
     T mid(T a, T b)
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericTools.mid');
 
     double toDouble(T value)
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericTools.toDouble');
 
     T toT(double value)
-    => throw UnimplementedError();
+    => throw UnimplementedError('GenericTools.toT');
 }
