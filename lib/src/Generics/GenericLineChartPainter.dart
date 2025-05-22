@@ -203,9 +203,10 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     void _drawLine(Canvas canvas, Paint paint, double x1, double y1, double x2, double y2)
     => canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
 
-    TextPainter _createAndLayoutTextPainter(String text)
+    TextPainter _createAndLayoutTextPainter(String text, [double? textScale])
     {
         final TextPainter tp = TextPainter(
+            textScaler: textScale == null ? TextScaler.noScaling : TextScaler.linear(textScale),
             text: TextSpan(style: TextStyle(color: style.textColor, fontSize: style.fontSize), text: text),
             textDirection: TextDirection.ltr
         );
@@ -273,29 +274,10 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final double maxWidthRight = _calcMaxPainterWidth(rightTickPainters);
         final double maxHeightBottom = _calcMaxPainterHeight(bottomTickPainters);
 
-        final double chartStartXViaLeft = maxWidthLeft;
-        /*final double chartStartXViaTop = topTickPainters.first.textPainter.width / 2;
-        final double chartStartXViaBottom = bottomTickPainters.first.textPainter.width / 2;
-        final double chartStartX = paddingHorizontalOuter + max(chartStartXViaLeft, max(chartStartXViaTop, chartStartXViaBottom)) + paddingHorizontalInner;*/
-        final double chartStartX = paddingHorizontalOuter + chartStartXViaLeft + paddingHorizontalInner;
-
-        final double chartStartYViaTop = maxHeightTop;
-        /*final double chartStartYViaLeft = leftTickPainters.first.textPainter.height / 2;
-        final double chartStartYViaRight = rightTickPainters.first.textPainter.height / 2;
-        final double chartStartY = paddingVerticalOuter + max(chartStartYViaTop, max(chartStartYViaLeft, chartStartYViaRight)) + paddingVerticalInner;*/
-        final double chartStartY = paddingVerticalOuter + chartStartYViaTop + paddingVerticalInner;
-
-        final double chartEndXViaRight = maxWidthRight;
-        /*final double chartEndXViaTop = topTickPainters.last.textPainter.width / 2;
-        final double chartEndXViaBottom = bottomTickPainters.last.textPainter.width / 2;
-        final double chartEndX = size.width - paddingHorizontalOuter - max(chartEndXViaRight, max(chartEndXViaTop, chartEndXViaBottom)) - paddingHorizontalInner;*/
-        final double chartEndX = size.width - paddingHorizontalOuter - chartEndXViaRight - paddingHorizontalInner;
-
-        final double chartEndYViaBottom = maxHeightBottom;
-        /*final double chartEndYViaLeft = leftTickPainters.last.textPainter.height / 2;
-        final double chartEndYViaRight = rightTickPainters.last.textPainter.height / 2;
-        final double chartEndY = size.height - paddingVerticalOuter - max(chartEndYViaBottom, max(chartEndYViaLeft, chartEndYViaRight)) - paddingVerticalInner;*/
-        final double chartEndY = size.height - paddingVerticalOuter - chartEndYViaBottom - paddingVerticalInner;
+        final double chartStartX = paddingHorizontalOuter + maxWidthLeft + paddingHorizontalInner;
+        final double chartStartY = paddingVerticalOuter + maxHeightTop + paddingVerticalInner;
+        final double chartEndX = size.width - paddingHorizontalOuter - maxWidthRight - paddingHorizontalInner;
+        final double chartEndY = size.height - paddingVerticalOuter - maxHeightBottom - paddingVerticalInner;
 
         return DoubleMinMax(
             minX: chartStartX,
@@ -500,15 +482,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     {
         logError(s);
 
-        final TextPainter tp = TextPainter(
-            text: TextSpan(style: TextStyle(color: style.textColor, fontSize: style.fontSize * 1.5), text: s),
-            textDirection: TextDirection.ltr
-        );
-        tp.layout();
-        tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - tp.height / 2));
-
         final DoubleMinMax graphMinMax = _calcGraphMinMax(size, <PositionedTextPainter>[], <PositionedTextPainter>[], <PositionedTextPainter>[], <PositionedTextPainter>[]);
         canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), _createBorderPaint());
+
+        final TextPainter tp = _createAndLayoutTextPainter(s, 1.5);
+        tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - tp.height / 2));
     }
 
     Paint _createBorderPaint()
