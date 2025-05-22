@@ -42,6 +42,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
         size: Size.infinite,
         painter: GenericLineChartPainter<TX, TY>(
             data: widget.data,
+            doubleData: widget.data.getDoubleChartData(),
             style: widget.style.copyWith(lineColor: lineColor, textColor: textColor)
         )
     );
