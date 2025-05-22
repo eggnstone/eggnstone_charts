@@ -143,7 +143,7 @@ Widget buildChart(DoubleChartData data)
     const ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
         fontSize: 12,
-        radius: 4
+        pointRadius: 4
     );
 
     return DoubleLineChart(

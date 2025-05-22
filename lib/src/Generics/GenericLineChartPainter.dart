@@ -419,7 +419,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
             double lastX = graphMinMax.minX + (line.points[0].x - doubleData.minMax.minX) / doubleData.minMax.getWidth() * graphMinMax.getWidth();
             double lastY = graphMinMax.maxY - (line.points[0].y - doubleData.minMax.minY) / doubleData.minMax.getHeight() * graphMinMax.getHeight();
-            canvas.drawCircle(Offset(lastX, lastY), style.radius, linePaint);
+            canvas.drawCircle(Offset(lastX, lastY), style.pointRadius, linePaint);
 
             for (int i = 1; i < line.points.size; i++)
             {
@@ -427,7 +427,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 final double currentY = graphMinMax.maxY - (line.points[i].y - doubleData.minMax.minY) / doubleData.minMax.getHeight() * graphMinMax.getHeight();
 
                 _drawLine(canvas, linePaint, lastX, lastY, currentX, currentY);
-                canvas.drawCircle(Offset(currentX, currentY), style.radius, linePaint);
+                canvas.drawCircle(Offset(currentX, currentY), style.pointRadius, linePaint);
                 lastX = currentX;
                 lastY = currentY;
             }

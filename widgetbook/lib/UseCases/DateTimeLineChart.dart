@@ -53,7 +53,7 @@ Widget buildChart({required bool invert})
     const ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
         fontSize: 12,
-        radius: 4
+        pointRadius: 4
     );
 
     return DateTimeLineChart(

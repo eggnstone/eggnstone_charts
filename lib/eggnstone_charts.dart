@@ -3,7 +3,17 @@ library;
 
 export 'src/ChartInfo.dart';
 export 'src/ChartStyle.dart';
+// do not export: PositionedTextPainter
+
+export 'src/Generics/GenericChartData.dart';
+export 'src/Generics/GenericFormatter.dart';
 export 'src/Generics/GenericLineChart.dart';
+// do not export: GenericLineChartPainter
+export 'src/Generics/GenericLineData.dart';
+export 'src/Generics/GenericMinMax.dart';
+export 'src/Generics/GenericPoint.dart';
+export 'src/Generics/GenericTools.dart';
+
 export 'src/Specifics/DateTimeChartData.dart';
 export 'src/Specifics/DateTimeFormatter.dart';
 export 'src/Specifics/DateTimeLineChart.dart';

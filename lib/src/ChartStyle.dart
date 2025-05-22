@@ -9,7 +9,7 @@ abstract class ChartStyle with _$ChartStyle
     const factory ChartStyle({
         required double devicePixelRatio,
         required double fontSize,
-        required double radius,
+        required double pointRadius,
         Color? lineColor,
         Color? textColor
     }) = _ChartStyle;
