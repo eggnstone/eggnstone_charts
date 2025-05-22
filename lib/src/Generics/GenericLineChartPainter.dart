@@ -424,7 +424,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final double doubleMax = isXAxis ? doubleData.minMax.maxX : doubleData.minMax.maxY;
         final double tickLineLength = isXAxis ? tickLineLengthX : tickLineLengthY;
 
-        T value = isFirst ? tools.getNextValueOrSame(minMax) : tools.getPreviousValueOrSame(maxMax);
+        T value = isFirst ? tools.getNextNiceValueOrSame(minMax) : tools.getPreviousNiceValueOrSame(maxMax);
         double doubleValue = tools.toDouble(value);
         TextPainter painter = _createAndLayoutTextPainter(tools.format(value));
         double positionMiddle = (isXAxis ? _dataToPixelX(doubleData.minMax, graphMinMax, doubleValue) : _dataToPixelY(doubleData.minMax, graphMinMax, doubleValue));
@@ -465,8 +465,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                             : '  Correcting to previous value because $positionMax too far to the bottom of ${graphMinMax.maxY + paddingBetweenTickLabelAndTickLineY + tickLineLength}'));
 
             value = isFirst
-                ? tools.getNextValue(value)
-                : tools.getPreviousValue(value);
+                ? tools.getNextNiceValue(value)
+                : tools.getPreviousNiceValue(value);
             doubleValue = tools.toDouble(value);
 
             if (DEBUG)

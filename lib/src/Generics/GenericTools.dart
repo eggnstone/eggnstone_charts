@@ -12,17 +12,17 @@ class GenericTools<T>
     double getNextDoubleValue(double currentValue)
     => throw UnimplementedError('GenericTools.getNextDoubleValue');
 
-    T getNextValue(T currentValue)
-    => throw UnimplementedError('GenericTools.getNextValue');
+    T getNextNiceValue(T currentValue)
+    => throw UnimplementedError('GenericTools.getNextNiceValue');
 
-    T getNextValueOrSame(T currentValue)
-    => throw UnimplementedError('GenericTools.getNextValueOrSame');
+    T getNextNiceValueOrSame(T currentValue)
+    => throw UnimplementedError('GenericTools.getNextNiceValueOrSame');
 
-    T getPreviousValue(T currentValue)
-    => throw UnimplementedError('GenericTools.getPreviousValue');
+    T getPreviousNiceValue(T currentValue)
+    => throw UnimplementedError('GenericTools.getPreviousNiceValue');
 
-    T getPreviousValueOrSame(T currentValue)
-    => throw UnimplementedError('GenericTools.getPreviousValueOrSame');
+    T getPreviousNiceValueOrSame(T currentValue)
+    => throw UnimplementedError('GenericTools.getPreviousNiceValueOrSame');
 
     T mid(T a, T b)
     => throw UnimplementedError('GenericTools.mid');

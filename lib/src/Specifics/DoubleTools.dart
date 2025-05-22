@@ -15,11 +15,11 @@ class DoubleTools extends GenericTools<double>
     => (a + b) / 2;
 
     @override
-    double getNextValue(double currentValue)
+    double getNextNiceValue(double currentValue)
     => currentValue.floorToDouble() + 1.0;
 
     @override
-    double getNextValueOrSame(double currentValue)
+    double getNextNiceValueOrSame(double currentValue)
     {
         final double floorValue = currentValue.floorToDouble();
         if ((currentValue - floorValue).abs() < precisionErrorTolerance)
@@ -29,11 +29,11 @@ class DoubleTools extends GenericTools<double>
     }
 
     @override
-    double getPreviousValue(double currentValue)
+    double getPreviousNiceValue(double currentValue)
     => currentValue.ceilToDouble() - 1.0;
 
     @override
-    double getPreviousValueOrSame(double currentValue)
+    double getPreviousNiceValueOrSame(double currentValue)
     {
         final double ceilValue = currentValue.ceilToDouble();
         if ((currentValue - ceilValue).abs() < precisionErrorTolerance)

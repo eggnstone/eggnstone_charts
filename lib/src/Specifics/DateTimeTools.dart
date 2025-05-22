@@ -10,14 +10,14 @@ class DateTimeTools extends GenericTools<DateTime>
 
     @override
     double getNextDoubleValue(double currentValue)
-    => toDouble(getNextValue(toT(currentValue)));
+    => toDouble(getNextNiceValue(toT(currentValue)));
 
     @override
-    DateTime getNextValue(DateTime currentValue)
+    DateTime getNextNiceValue(DateTime currentValue)
     => DateTime(currentValue.year, currentValue.month, currentValue.day).add(const Duration(days: 1));
 
     @override
-    DateTime getNextValueOrSame(DateTime currentValue)
+    DateTime getNextNiceValueOrSame(DateTime currentValue)
     {
         if (currentValue.hour == 0 &&
             currentValue.minute == 0 &&
@@ -25,15 +25,15 @@ class DateTimeTools extends GenericTools<DateTime>
             currentValue.millisecond == 0)
             return currentValue;
 
-        return getNextValue(currentValue);
+        return getNextNiceValue(currentValue);
     }
 
     @override
-    DateTime getPreviousValue(DateTime currentValue)
+    DateTime getPreviousNiceValue(DateTime currentValue)
     => DateTime(currentValue.year, currentValue.month, currentValue.day).subtract(const Duration(days: 1));
 
     @override
-    DateTime getPreviousValueOrSame(DateTime currentValue)
+    DateTime getPreviousNiceValueOrSame(DateTime currentValue)
     {
         if (currentValue.hour == 0 &&
             currentValue.minute == 0 &&
@@ -41,7 +41,7 @@ class DateTimeTools extends GenericTools<DateTime>
             currentValue.millisecond == 0)
             return currentValue;
 
-        return getPreviousValue(currentValue);
+        return getPreviousNiceValue(currentValue);
     }
 
     @override
