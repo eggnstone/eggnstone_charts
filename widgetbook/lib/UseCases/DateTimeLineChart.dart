@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 import 'package:kt_dart/collection.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook_annotation;
 
-@widgetbook_annotation.UseCase(path: '', name: 'DateTime', type: GenericLineChart)
+@widgetbook_annotation.UseCase(path: '', name: 'Normal', type: DateTimeLineChart)
 Widget buildDateTimeChart(BuildContext context)
 => buildChart(invert: false);
 
-@widgetbook_annotation.UseCase(path: '', name: 'DateTime inverted', type: GenericLineChart)
+@widgetbook_annotation.UseCase(path: '', name: 'Inverted', type: DateTimeLineChart)
 Widget buildDateTimeChartInverted(BuildContext context)
 => buildChart(invert: true);
 

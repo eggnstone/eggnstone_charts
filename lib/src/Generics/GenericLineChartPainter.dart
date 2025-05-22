@@ -13,6 +13,7 @@ import 'GenericMinMax.dart';
 
 class GenericLineChartPainter<TX, TY> extends CustomPainter
 {
+    static const bool DEBUG = false;
     static const double paddingHorizontalOuter = 4;
     static const double paddingHorizontalInner = 8;
     static const double paddingHorizontalTicks = 8;
@@ -33,13 +34,25 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     @override
     void paint(Canvas canvas, Size size)
     {
-        //logDebug('\n\n\nLineChartPainter.linePaint() Size: $size');
-        logDebug('LineChartPainter.linePaint() Size: $size');
-        logDebug('  data.minMax:            ${data.minMax}');
-        logDebug('  doubleData.minMax:      ${doubleData.minMax}');
+        if (DEBUG)
+        {
+            //logDebug('\n\n\nLineChartPainter.linePaint() Size: $size');
+            logDebug('LineChartPainter.linePaint() Size: $size');
+            logDebug('  data.minMax:            ${data.minMax}');
+            logDebug('  doubleData.minMax:      ${doubleData.minMax}');
+        }
 
-        if (data.lines.size != data.colors.size || data.lines.isEmpty())
+        if (data.lines.size != data.colors.size)
+        {
+            _showError(canvas, size, 'Mismatch between lines and colors');
             return;
+        }
+
+        if (data.lines.isEmpty())
+        {
+            _showError(canvas, size, 'No data');
+            return;
+        }
 
         final List<PositionedTextPainter> leftTickPainters = <PositionedTextPainter>
         [
@@ -66,22 +79,21 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         ];
 
         final DoubleMinMax graphMinMax = _calcGraphMinMax(size, leftTickPainters, topTickPainters, rightTickPainters, bottomTickPainters);
-        logDebug('  graphMinMax:            $graphMinMax');
-
-        logDebug('  data.minMax.minX:       ${data.minMax.minX}');
-        logDebug('  doubleData.minMax.minX: ${doubleData.minMax.minX}');
-
         TX firstTopDataX = data.toolsX.getNextValue(data.minMax.minX);
-        logDebug('  firstTopDataX:          $firstTopDataX');
-
         double firstTopDoubleDataX = data.toolsX.toDouble(firstTopDataX);
-        logDebug('  firstTopDoubleDataX:    $firstTopDoubleDataX');
-
         TextPainter firstTopPainter = _createAndLayoutTextPainter(data.toolsX.format(firstTopDataX));
-        logDebug('  firstTopPainter:        ${firstTopPainter.width} x ${firstTopPainter.height}');
-
         double firstTopGraphX = _dataToPixelX(doubleData.minMax, graphMinMax, firstTopDoubleDataX) - firstTopPainter.width / 2;
-        logDebug('  firstTopGraphX:         $firstTopGraphX');
+
+        if (DEBUG)
+        {
+            logDebug('  graphMinMax:            $graphMinMax');
+            logDebug('  data.minMax.minX:       ${data.minMax.minX}');
+            logDebug('  doubleData.minMax.minX: ${doubleData.minMax.minX}');
+            logDebug('  firstTopDataX:          $firstTopDataX');
+            logDebug('  firstTopDoubleDataX:    $firstTopDoubleDataX');
+            logDebug('  firstTopPainter:        ${firstTopPainter.width} x ${firstTopPainter.height}');
+            logDebug('  firstTopGraphX:         $firstTopGraphX');
+        }
 
         if (firstTopDoubleDataX < doubleData.minMax.minX)
         {
@@ -105,13 +117,15 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         while (firstTopGraphX < graphMinMax.minX - paddingHorizontalInner)
         {
-            logDebug('  Correcting to next value');
-
             firstTopDataX = data.toolsX.getNextValue(firstTopDataX);
-            logDebug('  firstTopDataX:          $firstTopDataX');
-
             firstTopDoubleDataX = data.toolsX.toDouble(firstTopDataX);
-            logDebug('  firstTopDoubleDataX:    $firstTopDoubleDataX');
+
+            if (DEBUG)
+            {
+                logDebug('  Correcting to next value');
+                logDebug('  firstTopDataX:          $firstTopDataX');
+                logDebug('  firstTopDoubleDataX:    $firstTopDoubleDataX');
+            }
 
             if (firstTopDoubleDataX < doubleData.minMax.minX)
             {
@@ -132,14 +146,20 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             }
 
             firstTopPainter = _createAndLayoutTextPainter(data.toolsX.format(firstTopDataX));
-            logDebug('  firstTopPainter:        ${firstTopPainter.width} x ${firstTopPainter.height}');
             firstTopGraphX = _dataToPixelX(doubleData.minMax, graphMinMax, firstTopDoubleDataX) - firstTopPainter.width / 2;
-            logDebug('  firstTopGraphX:         $firstTopGraphX');
 
-            logDebug('  NEXT');
+            if (DEBUG)
+            {
+                logDebug('  firstTopPainter:        ${firstTopPainter.width} x ${firstTopPainter.height}');
+                logDebug('  firstTopGraphX:         $firstTopGraphX');
+            }
+
+            if (DEBUG)
+                logDebug('  NEXT');
         }
 
-        logDebug('  DONE');
+        if (DEBUG)
+            logDebug('  DONE');
 
         topTickPainters.clear();
         topTickPainters.add(PositionedTextPainter(firstTopDoubleDataX, firstTopPainter));
@@ -147,14 +167,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         //_addTicksY(topTickPainters, doubleData.minMax, graphMinMax, data.toolsX);
 
-        final Paint borderPaint = Paint()
-            ..color = style.lineColor ?? Colors.black
-            ..strokeWidth = 1 // / style.devicePixelRatio;
-            ..style = PaintingStyle.stroke;
+        if (DEBUG)
+        {
+            logDebug('  data.minMax:       ${doubleData.minMax}');
+            logDebug('  graphMinMax:       $graphMinMax');
+        }
 
-        logDebug('  data.minMax:       ${doubleData.minMax}');
-        logDebug('  graphMinMax:       $graphMinMax');
-
+        final Paint borderPaint = _createBorderPaint();
         canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), borderPaint);
 
         _paintTextPaintersLeft(canvas, borderPaint, leftTickPainters, graphMinMax);
@@ -199,11 +218,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (dataMinMax.getWidth() == 0)
             return graphMinMax.minX;
 
-        logDebug('graphMinMax.minX: ${graphMinMax.minX}');
-        logDebug('dataX: $dataX');
-        logDebug('dataMinMax.minX: ${dataMinMax.minX}');
-        logDebug('dataMinMax.minX: ${dataMinMax.getWidth()}');
-        logDebug('dataMinMax.minX: ${graphMinMax.getWidth()}');
+        if (DEBUG)
+        {
+            logDebug('graphMinMax.minX: ${graphMinMax.minX}');
+            logDebug('dataX: $dataX');
+            logDebug('dataMinMax.minX: ${dataMinMax.minX}');
+            logDebug('dataMinMax.minX: ${dataMinMax.getWidth()}');
+            logDebug('dataMinMax.minX: ${graphMinMax.getWidth()}');
+        }
 
         final double result = graphMinMax.minX + (dataX - dataMinMax.minX) / dataMinMax.getWidth() * graphMinMax.getWidth();
 
@@ -477,7 +499,25 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     void _showError(Canvas canvas, Size size, String s)
     {
         logError(s);
-        final TextPainter tp = _createAndLayoutTextPainter(s);
+
+        final TextPainter tp = TextPainter(
+            text: TextSpan(style: TextStyle(color: style.textColor, fontSize: style.fontSize * 1.5), text: s),
+            textDirection: TextDirection.ltr
+        );
+        tp.layout();
         tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - tp.height / 2));
+
+        final DoubleMinMax graphMinMax = _calcGraphMinMax(size, <PositionedTextPainter>[], <PositionedTextPainter>[], <PositionedTextPainter>[], <PositionedTextPainter>[]);
+        canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), _createBorderPaint());
+    }
+
+    Paint _createBorderPaint()
+    {
+        final Paint borderPaint = Paint()
+            ..color = style.lineColor ?? Colors.black
+            ..strokeWidth = 1 // / style.devicePixelRatio;
+            ..style = PaintingStyle.stroke;
+
+        return borderPaint;
     }
 }

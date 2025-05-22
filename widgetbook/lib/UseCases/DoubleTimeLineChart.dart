@@ -3,13 +3,100 @@ import 'package:flutter/material.dart';
 import 'package:kt_dart/collection.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook_annotation;
 
-@widgetbook_annotation.UseCase(path: '', name: 'Double', type: GenericLineChart)
-Widget buildDoubleTimeChart(BuildContext context)
-=> buildChart();
+@widgetbook_annotation.UseCase(path: '', name: 'No lines', type: DoubleLineChart)
+Widget buildDoubleTimeChartNoLines(BuildContext context)
+=> buildChart(_createNoLines());
 
-Widget buildChart()
+@widgetbook_annotation.UseCase(path: '', name: 'Mismatch of lines and colors', type: DoubleLineChart)
+Widget buildDoubleTimeChartMismatchOfLinesAndColors(BuildContext context)
+=> buildChart(_createMismatchOfLinesAndColors());
+
+@widgetbook_annotation.UseCase(path: '', name: '2 lines, single entry each', type: DoubleLineChart)
+Widget buildDoubleTimeChartTwoLinesOneEntryEach(BuildContext context)
+=> buildChart(_createTwoLinesOneEntryEach());
+
+@widgetbook_annotation.UseCase(path: '', name: '2 lines, single and multiple entries', type: DoubleLineChart)
+Widget buildDoubleTimeChartTwoLinesSingleAndMultipleEntries(BuildContext context)
+=> buildChart(_createTwoLinesSingleAndMultipleEntries());
+
+DoubleChartData _createNoLines()
+=> DoubleChartData(
+    colors: <Color>[].toImmutableList(),
+    lines: <DoubleLineData>[].toImmutableList(),
+    toolsX: DoubleTools(const DoubleFormatter(2)),
+    toolsY: DoubleTools(const DoubleFormatter(2)),
+    minMax: DoubleMinMax(
+        minX: 0,
+        maxX: 10,
+        minY: 0,
+        maxY: 10
+    )
+);
+
+DoubleChartData _createMismatchOfLinesAndColors()
 {
-    final List<Color> colors = <Color>[Colors.red];
+    final List<Color> colors = <Color>[Colors.red, Colors.green];
+    final List<DoubleLineData> doubleLines = <DoubleLineData>
+    [
+        DoubleLineData(
+            <DoublePoint>
+            [
+                const DoublePoint(1, 0),
+                const DoublePoint(2, 1)
+            ].toImmutableList()
+        )
+    ];
+
+    return DoubleChartData(
+        colors: colors.toImmutableList(),
+        lines: doubleLines.toImmutableList(),
+        toolsX: DoubleTools(const DoubleFormatter(2)),
+        toolsY: DoubleTools(const DoubleFormatter(2)),
+        minMax: DoubleMinMax(
+            minX: 0,
+            maxX: 10,
+            minY: 0,
+            maxY: 10
+        )
+    );
+}
+
+DoubleChartData _createTwoLinesOneEntryEach()
+{
+    final List<Color> colors = <Color>[Colors.red, Colors.green];
+    final List<DoubleLineData> doubleLines = <DoubleLineData>
+    [
+        DoubleLineData(
+            <DoublePoint>
+            [
+                const DoublePoint(1, 0)
+            ].toImmutableList()
+        ),
+        DoubleLineData(
+            <DoublePoint>
+            [
+                const DoublePoint(2, 1)
+            ].toImmutableList()
+        )
+    ];
+
+    return DoubleChartData(
+        colors: colors.toImmutableList(),
+        lines: doubleLines.toImmutableList(),
+        toolsX: DoubleTools(const DoubleFormatter(2)),
+        toolsY: DoubleTools(const DoubleFormatter(2)),
+        minMax: DoubleMinMax(
+            minX: 0,
+            maxX: 10,
+            minY: 0,
+            maxY: 10
+        )
+    );
+}
+
+DoubleChartData _createTwoLinesSingleAndMultipleEntries()
+{
+    final List<Color> colors = <Color>[Colors.red, Colors.green];
     final List<DoubleLineData> doubleLines = <DoubleLineData>
     [
         DoubleLineData(
@@ -24,23 +111,31 @@ Widget buildChart()
                 const DoublePoint(7, 1),
                 const DoublePoint(8, 7)
             ].toImmutableList()
+        ),
+        DoubleLineData(
+            <DoublePoint>
+            [
+                const DoublePoint(5, 5)
+            ].toImmutableList()
         )
     ];
 
-    final DoubleChartData data =
-        DoubleChartData(
-            colors: colors.toImmutableList(),
-            lines: doubleLines.toImmutableList(),
-            toolsX: DoubleTools(const DoubleFormatter(2)),
-            toolsY: DoubleTools(const DoubleFormatter(2)),
-            minMax: DoubleMinMax(
-                minX: 0,
-                maxX: 10,
-                minY: 0,
-                maxY: 10
-            )
-        );
+    return DoubleChartData(
+        colors: colors.toImmutableList(),
+        lines: doubleLines.toImmutableList(),
+        toolsX: DoubleTools(const DoubleFormatter(2)),
+        toolsY: DoubleTools(const DoubleFormatter(2)),
+        minMax: DoubleMinMax(
+            minX: 0,
+            maxX: 10,
+            minY: 0,
+            maxY: 10
+        )
+    );
+}
 
+Widget buildChart(DoubleChartData data)
+{
     const ChartInfo info = ChartInfo(
         title: 'Test'
     );

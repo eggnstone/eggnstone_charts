@@ -14,6 +14,8 @@ import 'DoubleTools.dart';
 
 class DateTimeChartData extends GenericChartData<DateTime, double>
 {
+    static const bool DEBUG = false;
+
     DateTimeChartData({
         required super.colors,
         required super.lines,
@@ -30,14 +32,16 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
         /*double minX = double.infinity;
         double maxX = double.negativeInfinity;*/
 
-        logDebug('lines.size: ${lines.size}');
+        if (DEBUG)
+            logDebug('lines.size: ${lines.size}');
 
         for (int i = 0; i < lines.size; i++)
         {
             final DateTimeLineData dateTimeLine = lines[i];
             final List<DoublePoint> doublePoints = <DoublePoint>[];
 
-            logDebug('dateTimeLine.points.size: ${dateTimeLine.points.size}');
+            if (DEBUG)
+                logDebug('dateTimeLine.points.size: ${dateTimeLine.points.size}');
 
             for (int j = 0; j < dateTimeLine.points.size; j++)
             {
