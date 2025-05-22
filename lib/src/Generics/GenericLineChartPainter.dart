@@ -91,12 +91,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         yAxisPainters.clear();
         _addYAxisTicks(yAxisPainters, graphMinMax, data.toolsY);
 
-        if (DEBUG)
-        {
-            logDebug('  data.minMax:       ${doubleData.minMax}');
-            logDebug('  graphMinMax:       $graphMinMax');
-        }
-
         final Paint borderPaint = _createBorderPaint();
         canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), borderPaint);
 
@@ -399,144 +393,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (DEBUG)
             logDebug('_addXAxisTicks');
 
-        _addFirstXAxisTick(tickPainters, graphMinMax, tools);
-        _addLastXAxisTick(tickPainters, graphMinMax, tools);
-    }
-
-    void _addFirstXAxisTick(List<PositionedTextPainter> tickPainters, DoubleMinMax graphMinMax, GenericTools<TX> tools)
-    {
-        if (DEBUG)
-            logDebug('_addFirstXAxisTick');
-
-        TX firstData = tools.getNextValueOrSame(data.minMax.minX);
-        double firstDoubleData = tools.toDouble(firstData);
-        TextPainter firstPainter = _createAndLayoutTextPainter(tools.format(firstData));
-        double firstPosition = _dataToPixelX(doubleData.minMax, graphMinMax, firstDoubleData) - firstPainter.width / 2;
-
-        if (DEBUG)
-        {
-            logDebug('  graphMinMax:       $graphMinMax');
-            logDebug('  data.minMax:       ${data.minMax}');
-            logDebug('  doubleData.minMax: ${doubleData.minMax}');
-            logDebug('  firstData:         $firstData');
-            logDebug('  firstDoubleData:   $firstDoubleData');
-            logDebug('  firstPainter:      ${firstPainter.width} x ${firstPainter.height}');
-            logDebug('  firstPosition:     $firstPosition');
-        }
-
-        if (firstDoubleData < doubleData.minMax.minX)
-            throw ChartsException('firstDoubleData ($firstDoubleData) is ${doubleData.minMax.minX - firstDoubleData} lower than min (${doubleData.minMax.minX})\n'
-                '  firstData: $firstData  min: ${data.minMax.minX}\n'
-                '  firstData: ${tools.formatter.format(firstData).replaceAll('\n', '')}  min: ${tools.formatter.format(data.minMax.minX).replaceAll('\n', '')}');
-
-        if (firstDoubleData > doubleData.minMax.maxX)
-            throw ChartsException('firstDoubleData ($firstDoubleData) is ${firstDoubleData - doubleData.minMax.maxX} greater than max (${doubleData.minMax.maxX})\n'
-                '  firstData: $firstData  max: ${data.minMax.maxX}\n'
-                '  firstData: ${tools.formatter.format(firstData).replaceAll('\n', '')}  max: ${tools.formatter.format(data.minMax.maxX).replaceAll('\n', '')}');
-
-        while (firstPosition < graphMinMax.minX - tickLineLengthX)
-        {
-            if (DEBUG)
-                logWarning('  Correcting to next value because ${graphMinMax.minX - tickLineLengthX - firstPosition} too far to the left');
-
-            firstData = tools.getNextValue(firstData);
-            firstDoubleData = tools.toDouble(firstData);
-
-            if (DEBUG)
-            {
-                logDebug('  firstData:         $firstData');
-                logDebug('  firstDoubleData:   $firstDoubleData');
-            }
-
-            if (firstDoubleData < doubleData.minMax.minX)
-                throw ChartsException('firstDoubleData ($firstDoubleData) is ${doubleData.minMax.minX - firstDoubleData} lower than min (${doubleData.minMax.minX})\n'
-                    '  firstData: $firstData  min: ${data.minMax.minX}\n'
-                    '  firstData: ${tools.formatter.format(firstData).replaceAll('\n', '')}  min: ${tools.formatter.format(data.minMax.minX).replaceAll('\n', '')}');
-
-            if (firstDoubleData > doubleData.minMax.maxX)
-                throw ChartsException('firstDoubleData ($firstDoubleData) is ${firstDoubleData - doubleData.minMax.maxX} greater than max (${doubleData.minMax.maxX})\n'
-                    '  firstData: $firstData  max: ${data.minMax.maxX}\n'
-                    '  firstData: ${tools.formatter.format(firstData).replaceAll('\n', '')}  max: ${tools.formatter.format(data.minMax.maxX).replaceAll('\n', '')}');
-
-            firstPainter = _createAndLayoutTextPainter(tools.format(firstData));
-            firstPosition = _dataToPixelX(doubleData.minMax, graphMinMax, firstDoubleData) - firstPainter.width / 2;
-
-            if (DEBUG)
-            {
-                logDebug('  firstPainter:      ${firstPainter.width} x ${firstPainter.height}');
-                logDebug('  firstPosition:     $firstPosition');
-            }
-        }
-
-        tickPainters.add(PositionedTextPainter(firstDoubleData, firstPainter));
-    }
-
-    void _addLastXAxisTick(List<PositionedTextPainter> tickPainters, DoubleMinMax graphMinMax, GenericTools<TX> tools)
-    {
-        if (DEBUG)
-            logDebug('_addLastXAxisTick');
-
-        TX lastData = tools.getPreviousValueOrSame(data.minMax.maxX);
-        double lastDoubleData = tools.toDouble(lastData);
-        TextPainter lastPainter = _createAndLayoutTextPainter(tools.format(lastData));
-        double lastPosition = _dataToPixelX(doubleData.minMax, graphMinMax, lastDoubleData) - lastPainter.width / 2;
-
-        if (DEBUG)
-        {
-            logDebug('  graphMinMax:       $graphMinMax');
-            logDebug('  data.minMax:       ${data.minMax}');
-            logDebug('  doubleData.minMax: ${doubleData.minMax}');
-            logDebug('  lastData:          $lastData');
-            logDebug('  lastDoubleData:    $lastDoubleData');
-            logDebug('  lastPainter:       ${lastPainter.width} x ${lastPainter.height}');
-            logDebug('  lastPosition:      $lastPosition');
-        }
-
-        if (lastDoubleData < doubleData.minMax.minX)
-            throw ChartsException('lastDoubleData ($lastDoubleData) is ${doubleData.minMax.minX - lastDoubleData} lower than min (${doubleData.minMax.minX})\n'
-                '  lastData: $lastData}  min: ${data.minMax.minX}\n'
-                '  lastData: ${tools.formatter.format(lastData).replaceAll('\n', '')}  min: ${tools.formatter.format(data.minMax.minX).replaceAll('\n', '')}');
-
-        if (lastDoubleData > doubleData.minMax.maxX)
-            throw ChartsException('lastDoubleData ($lastDoubleData) is ${lastDoubleData - doubleData.minMax.maxX} greater than max (${doubleData.minMax.maxX})\n'
-                '  lastData: $lastData}  max: ${data.minMax.maxX}\n'
-                '  lastData: ${tools.formatter.format(lastData).replaceAll('\n', '')}  max: ${tools.formatter.format(data.minMax.maxX).replaceAll('\n', '')}');
-
-        while (lastPosition > graphMinMax.maxX + tickLineLengthX)
-        {
-            if (DEBUG)
-                logWarning('  Correcting to previous value because ${lastPosition - (graphMinMax.maxX + tickLineLengthX)} too far to the right');
-
-            lastData = tools.getPreviousValue(lastData);
-            lastDoubleData = tools.toDouble(lastData);
-
-            if (DEBUG)
-            {
-                logDebug('  lastData:         $lastData');
-                logDebug('  lastDoubleData:   $lastDoubleData');
-            }
-
-            if (lastDoubleData < doubleData.minMax.minX)
-                throw ChartsException('lastDoubleData ($lastDoubleData) is ${doubleData.minMax.minX - lastDoubleData} lower than min (${doubleData.minMax.minX})\n'
-                    '  lastData: $lastData}  min: ${data.minMax.minX}\n'
-                    '  lastData: ${tools.formatter.format(lastData).replaceAll('\n', '')}  min: ${tools.formatter.format(data.minMax.minX).replaceAll('\n', '')}');
-
-            if (lastDoubleData > doubleData.minMax.maxX)
-                throw ChartsException('lastDoubleData ($lastDoubleData) is ${lastDoubleData - doubleData.minMax.maxX} greater than max (${doubleData.minMax.maxX})\n'
-                    '  lastData: $lastData}  max: ${data.minMax.maxX}\n'
-                    '  lastData: ${tools.formatter.format(lastData).replaceAll('\n', '')}  max: ${tools.formatter.format(data.minMax.maxX).replaceAll('\n', '')}');
-
-            lastPainter = _createAndLayoutTextPainter(tools.format(lastData));
-            lastPosition = _dataToPixelX(doubleData.minMax, graphMinMax, lastDoubleData) - lastPainter.width / 2;
-
-            if (DEBUG)
-            {
-                logDebug('  lastPainter:      ${lastPainter.width} x ${lastPainter.height}');
-                logDebug('  lastPosition:     $lastPosition');
-            }
-        }
-
-        tickPainters.add(PositionedTextPainter(lastDoubleData, lastPainter));
+        _addEdgeTick<TX>(tickPainters, graphMinMax, tools, isXAxis: true, isFirst: true);
+        _addEdgeTick<TX>(tickPainters, graphMinMax, tools, isXAxis: true, isFirst: false);
     }
 
     void _addYAxisTicks(List<PositionedTextPainter> tickPainters, DoubleMinMax graphMinMax, GenericTools<TY> tools)
@@ -544,143 +402,101 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (DEBUG)
             logDebug('_addYAxisTicks');
 
-        _addFirstYAxisTick(tickPainters, graphMinMax, tools);
-        _addLastYAxisTick(tickPainters, graphMinMax, tools);
+        _addEdgeTick<TY>(tickPainters, graphMinMax, tools, isXAxis: false, isFirst: true);
+        _addEdgeTick<TY>(tickPainters, graphMinMax, tools, isXAxis: false, isFirst: false);
     }
 
-    void _addFirstYAxisTick(List<PositionedTextPainter> tickPainters, DoubleMinMax graphMinMax, GenericTools<TY> tools)
+    void _addEdgeTick<T>(
+        List<PositionedTextPainter> tickPainters,
+        DoubleMinMax graphMinMax,
+        GenericTools<T> tools, {
+            required bool isXAxis,
+            required bool isFirst
+        }
+    )
     {
         if (DEBUG)
-            logDebug('_addFirstYAxisTick');
+            logDebug('_addEdgeTick');
 
-        TY firstData = tools.getNextValueOrSame(data.minMax.minY);
-        double firstDoubleData = tools.toDouble(firstData);
-        TextPainter firstPainter = _createAndLayoutTextPainter(tools.format(firstData));
-        double firstPosition = _dataToPixelY(doubleData.minMax, graphMinMax, firstDoubleData) - firstPainter.width / 2;
+        final T minMax = isXAxis ? data.minMax.minX as T : data.minMax.minY as T;
+        final T maxMax = isXAxis ? data.minMax.maxX as T : data.minMax.maxY as T;
+        final double doubleMin = isXAxis ? doubleData.minMax.minX : doubleData.minMax.minY;
+        final double doubleMax = isXAxis ? doubleData.minMax.maxX : doubleData.minMax.maxY;
+        final double tickLineLength = isXAxis ? tickLineLengthX : tickLineLengthY;
 
-        if (DEBUG)
-        {
-            logDebug('  graphMinMax:       $graphMinMax');
-            logDebug('  data.minMax:       ${data.minMax}');
-            logDebug('  doubleData.minMax: ${doubleData.minMax}');
-            logDebug('  firstData:         $firstData');
-            logDebug('  firstDoubleData:   $firstDoubleData');
-            logDebug('  firstPainter:      ${firstPainter.width} x ${firstPainter.height}');
-            logDebug('  firstPosition:     $firstPosition');
-        }
-
-        if (firstDoubleData < doubleData.minMax.minY)
-            throw ChartsException('firstDoubleData ($firstDoubleData) is ${doubleData.minMax.minY - firstDoubleData} lower than min (${doubleData.minMax.minY})\n'
-                '  firstData: $firstData  min: ${data.minMax.minY}\n'
-                '  firstData: ${tools.formatter.format(firstData).replaceAll('\n', '')}  min: ${tools.formatter.format(data.minMax.minY).replaceAll('\n', '')}');
-
-        if (firstDoubleData > doubleData.minMax.maxY)
-            throw ChartsException('firstDoubleData ($firstDoubleData) is ${firstDoubleData - doubleData.minMax.maxY} greater than max (${doubleData.minMax.maxY})\n'
-                '  firstData: $firstData  max: ${data.minMax.maxY}\n'
-                '  firstData: ${tools.formatter.format(firstData).replaceAll('\n', '')}  max: ${tools.formatter.format(data.minMax.maxY).replaceAll('\n', '')}');
-
-        while (firstPosition < graphMinMax.minY - tickLineLengthY)
-        {
-            if (DEBUG)
-                logWarning('  Correcting to next value because $firstPosition is ${graphMinMax.minY - tickLineLengthY - firstPosition} too far to the top (${graphMinMax.minY - tickLineLengthY})');
-
-            firstData = tools.getNextValue(firstData);
-            firstDoubleData = tools.toDouble(firstData);
-
-            if (DEBUG)
-            {
-                logDebug('  firstData:         $firstData');
-                logDebug('  firstDoubleData:   $firstDoubleData');
-            }
-
-            if (firstDoubleData < doubleData.minMax.minY)
-                throw ChartsException('firstDoubleData ($firstDoubleData) is ${doubleData.minMax.minY - firstDoubleData} lower than min (${doubleData.minMax.minY})\n'
-                    '  firstData: $firstData  min: ${data.minMax.minY}\n'
-                    '  firstData: ${tools.formatter.format(firstData).replaceAll('\n', '')}  min: ${tools.formatter.format(data.minMax.minY).replaceAll('\n', '')}');
-
-            if (firstDoubleData > doubleData.minMax.maxY)
-                throw ChartsException('firstDoubleData ($firstDoubleData) is ${firstDoubleData - doubleData.minMax.maxY} greater than max (${doubleData.minMax.maxY})\n'
-                    '  firstData: $firstData  max: ${data.minMax.maxY}\n'
-                    '  firstData: ${tools.formatter.format(firstData).replaceAll('\n', '')}  max: ${tools.formatter.format(data.minMax.maxY).replaceAll('\n', '')}');
-
-            firstPainter = _createAndLayoutTextPainter(tools.format(firstData));
-            firstPosition = _dataToPixelY(doubleData.minMax, graphMinMax, firstDoubleData) - firstPainter.width / 2;
-
-            if (DEBUG)
-            {
-                logDebug('  firstPainter:      ${firstPainter.width} x ${firstPainter.height}');
-                logDebug('  firstPosition:     $firstPosition');
-            }
-        }
-
-        tickPainters.add(PositionedTextPainter(firstDoubleData, firstPainter));
-    }
-
-    void _addLastYAxisTick(List<PositionedTextPainter> tickPainters, DoubleMinMax graphMinMax, GenericTools<TY> tools)
-    {
-        if (DEBUG)
-            logDebug('_addLastYAxisTick');
-
-        TY lastData = tools.getPreviousValueOrSame(data.minMax.maxY);
-        double lastDoubleData = tools.toDouble(lastData);
-        TextPainter lastPainter = _createAndLayoutTextPainter(tools.format(lastData));
-        double lastPosition = _dataToPixelY(doubleData.minMax, graphMinMax, lastDoubleData) - lastPainter.width / 2;
+        T value = isFirst ? tools.getNextValueOrSame(minMax) : tools.getPreviousValueOrSame(maxMax);
+        double doubleValue = tools.toDouble(value);
+        TextPainter painter = _createAndLayoutTextPainter(tools.format(value));
+        double positionMiddle = (isXAxis ? _dataToPixelX(doubleData.minMax, graphMinMax, doubleValue) : _dataToPixelY(doubleData.minMax, graphMinMax, doubleValue));
+        double positionMin = positionMiddle - painter.width / 2;
+        double positionMax = positionMiddle + painter.width / 2;
 
         if (DEBUG)
         {
-            logDebug('  graphMinMax:       $graphMinMax');
-            logDebug('  data.minMax:       ${data.minMax}');
-            logDebug('  doubleData.minMax: ${doubleData.minMax}');
-            logDebug('  lastData:          $lastData');
-            logDebug('  lastDoubleData:    $lastDoubleData');
-            logDebug('  lastPainter:       ${lastPainter.width} x ${lastPainter.height}');
-            logDebug('  lastPosition:      $lastPosition');
+            logDebug('  value:             $value');
+            logDebug('  doubleValue:       $doubleValue');
+            logDebug('  painter:           ${painter.width} x ${painter.height}');
+            logDebug('  positionMiddle:    $positionMiddle');
         }
 
-        if (lastDoubleData < doubleData.minMax.minY)
-            throw ChartsException('lastDoubleData ($lastDoubleData) is ${doubleData.minMax.minY - lastDoubleData} lower than min (${doubleData.minMax.minY})\n'
-                '  lastData: $lastData}  min: ${data.minMax.minY}\n'
-                '  lastData: ${tools.formatter.format(lastData).replaceAll('\n', '')}  min: ${tools.formatter.format(data.minMax.minY).replaceAll('\n', '')}');
+        if (doubleValue < doubleMin)
+            throw ChartsException('doubleValue ($doubleValue) is ${doubleMin - doubleValue} lower than min ($doubleMin)\n'
+                '  value: $value  min: $minMax\n'
+                '  value: ${tools.formatter.format(value).replaceAll('\n', '')}  min: ${tools.formatter.format(minMax).replaceAll('\n', '')}');
 
-        if (lastDoubleData > doubleData.minMax.maxY)
-            throw ChartsException('lastDoubleData ($lastDoubleData) is ${lastDoubleData - doubleData.minMax.maxY} greater than max (${doubleData.minMax.maxY})\n'
-                '  lastData: $lastData}  max: ${data.minMax.maxY}\n'
-                '  lastData: ${tools.formatter.format(lastData).replaceAll('\n', '')}  max: ${tools.formatter.format(data.minMax.maxY).replaceAll('\n', '')}');
+        if (doubleValue > doubleMax)
+            throw ChartsException('doubleValue ($doubleValue) is ${doubleValue - doubleMax} greater than max ($doubleMax)\n'
+                '  value: $value  max: $maxMax\n'
+                '  value: ${tools.formatter.format(value).replaceAll('\n', '')}  max: ${tools.formatter.format(maxMax).replaceAll('\n', '')}');
 
-        while (lastPosition > graphMinMax.maxY + tickLineLengthY)
+        bool outOfBounds() => isFirst
+            ? positionMiddle - painter.width / 2 < (isXAxis ? graphMinMax.minX - paddingBetweenTickLabelAndTickLineX : graphMinMax.minY - paddingBetweenTickLabelAndTickLineY) - tickLineLength
+            : positionMiddle + painter.width / 2 > (isXAxis ? graphMinMax.maxX + paddingBetweenTickLabelAndTickLineX : graphMinMax.maxY + paddingBetweenTickLabelAndTickLineY) + tickLineLength;
+
+        while (outOfBounds())
         {
             if (DEBUG)
-                logWarning('  Correcting to previous value because ${lastPosition - (graphMinMax.maxY + tickLineLengthY)} too far to the bottom');
+                logWarning(isFirst
+                        ? (isXAxis
+                            ? '  Correcting to next value because $positionMin too far to the left of ${graphMinMax.minX - paddingBetweenTickLabelAndTickLineX - tickLineLength}'
+                            : '  Correcting to next value because $positionMin is  too far to the top of ${graphMinMax.minY - paddingBetweenTickLabelAndTickLineY - tickLineLength}')
+                        : (isXAxis
+                            ? '  Correcting to previous value because $positionMax too far to the right of ${graphMinMax.maxX + paddingBetweenTickLabelAndTickLineX + tickLineLength}'
+                            : '  Correcting to previous value because $positionMax too far to the bottom of ${graphMinMax.maxY + paddingBetweenTickLabelAndTickLineY + tickLineLength}'));
 
-            lastData = tools.getPreviousValue(lastData);
-            lastDoubleData = tools.toDouble(lastData);
+            value = isFirst
+                ? tools.getNextValue(value)
+                : tools.getPreviousValue(value);
+            doubleValue = tools.toDouble(value);
 
             if (DEBUG)
             {
-                logDebug('  lastData:         $lastData');
-                logDebug('  lastDoubleData:   $lastDoubleData');
+                logDebug('  value:             $value');
+                logDebug('  doubleValue:       $doubleValue');
             }
 
-            if (lastDoubleData < doubleData.minMax.minY)
-                throw ChartsException('lastDoubleData ($lastDoubleData) is ${doubleData.minMax.minY - lastDoubleData} lower than min (${doubleData.minMax.minY})\n'
-                    '  lastData: $lastData}  min: ${data.minMax.minY}\n'
-                    '  lastData: ${tools.formatter.format(lastData).replaceAll('\n', '')}  min: ${tools.formatter.format(data.minMax.minY).replaceAll('\n', '')}');
+            if (doubleValue < doubleMin)
+                throw ChartsException('doubleValue ($doubleValue) is ${doubleMin - doubleValue} lower than min ($doubleMin)\n'
+                    '  value: $value  min: $minMax\n'
+                    '  value: ${tools.formatter.format(value).replaceAll('\n', '')}  min: ${tools.formatter.format(minMax).replaceAll('\n', '')}');
 
-            if (lastDoubleData > doubleData.minMax.maxY)
-                throw ChartsException('lastDoubleData ($lastDoubleData) is ${lastDoubleData - doubleData.minMax.maxY} greater than max (${doubleData.minMax.maxY})\n'
-                    '  lastData: $lastData}  max: ${data.minMax.maxY}\n'
-                    '  lastData: ${tools.formatter.format(lastData).replaceAll('\n', '')}  max: ${tools.formatter.format(data.minMax.maxY).replaceAll('\n', '')}');
+            if (doubleValue > doubleMax)
+                throw ChartsException('doubleValue ($doubleValue) is ${doubleValue - doubleMax} greater than max ($doubleMax)\n'
+                    '  value: $value  max: $maxMax\n'
+                    '  value: ${tools.formatter.format(value).replaceAll('\n', '')}  max: ${tools.formatter.format(maxMax).replaceAll('\n', '')}');
 
-            lastPainter = _createAndLayoutTextPainter(tools.format(lastData));
-            lastPosition = _dataToPixelY(doubleData.minMax, graphMinMax, lastDoubleData) - lastPainter.width / 2;
+            painter = _createAndLayoutTextPainter(tools.format(value));
+            positionMiddle = (isXAxis ? _dataToPixelX(doubleData.minMax, graphMinMax, doubleValue) : _dataToPixelY(doubleData.minMax, graphMinMax, doubleValue));
+            positionMin = positionMiddle - painter.width / 2;
+            positionMax = positionMiddle + painter.width / 2;
 
             if (DEBUG)
             {
-                logDebug('  lastPainter:      ${lastPainter.width} x ${lastPainter.height}');
-                logDebug('  lastPosition:     $lastPosition');
+                logDebug('  painter:           ${painter.width} x ${painter.height}');
+                logDebug('  positionMiddle:    $positionMiddle');
             }
         }
 
-        tickPainters.add(PositionedTextPainter(lastDoubleData, lastPainter));
+        tickPainters.add(PositionedTextPainter(doubleValue, painter));
     }
 }
