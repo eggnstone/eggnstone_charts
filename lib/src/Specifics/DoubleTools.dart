@@ -11,42 +11,46 @@ class DoubleTools extends GenericTools<double>
     => formatter.format(value);
 
     @override
-    double mid(double a, double b)
-    => (a + b) / 2;
+    double getNextDoubleValue(double value)
+    => getNextNiceCustomValue(value);
 
     @override
-    double getNextNiceValue(double currentValue)
-    => currentValue.floorToDouble() + 1.0;
+    double getNextNiceCustomValue(double value)
+    => value.floorToDouble() + 1.0;
 
     @override
-    double getNextNiceValueOrSame(double currentValue)
+    double getNextNiceCustomValueOrSame(double value)
     {
-        final double floorValue = currentValue.floorToDouble();
-        if ((currentValue - floorValue).abs() < precisionErrorTolerance)
-            return currentValue;
+        final double floorValue = value.floorToDouble();
+        if ((value - floorValue).abs() < precisionErrorTolerance)
+            return value;
 
         return floorValue + 1.0;
     }
 
     @override
-    double getPreviousNiceValue(double currentValue)
-    => currentValue.ceilToDouble() - 1.0;
+    double getPreviousNiceCustomValue(double value)
+    => value.ceilToDouble() - 1.0;
 
     @override
-    double getPreviousNiceValueOrSame(double currentValue)
+    double getPreviousNiceCustomValueOrSame(double value)
     {
-        final double ceilValue = currentValue.ceilToDouble();
-        if ((currentValue - ceilValue).abs() < precisionErrorTolerance)
-            return currentValue;
+        final double ceilValue = value.ceilToDouble();
+        if ((value - ceilValue).abs() < precisionErrorTolerance)
+            return value;
 
         return ceilValue - 1.0;
     }
 
     @override
-    double toDouble(double value)
+    double mid(double a, double b)
+    => (a + b) / 2;
+
+    @override
+    double toCustomValue(double value)
     => value;
 
     @override
-    double toT(double value)
+    double toDoubleValue(double value)
     => value;
 }

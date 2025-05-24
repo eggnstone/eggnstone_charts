@@ -9,50 +9,50 @@ class DateTimeTools extends GenericTools<DateTime>
     => formatter.format(value);
 
     @override
-    double getNextDoubleValue(double currentValue)
-    => toDouble(getNextNiceValue(toT(currentValue)));
+    double getNextDoubleValue(double value)
+    => toDoubleValue(getNextNiceCustomValue(toCustomValue(value)));
 
     @override
-    DateTime getNextNiceValue(DateTime currentValue)
-    => DateTime(currentValue.year, currentValue.month, currentValue.day).add(const Duration(days: 1));
+    DateTime getNextNiceCustomValue(DateTime value)
+    => DateTime(value.year, value.month, value.day).add(const Duration(days: 1));
 
     @override
-    DateTime getNextNiceValueOrSame(DateTime currentValue)
+    DateTime getNextNiceCustomValueOrSame(DateTime value)
     {
-        if (currentValue.hour == 0 &&
-            currentValue.minute == 0 &&
-            currentValue.second == 0 &&
-            currentValue.millisecond == 0 &&
-            currentValue.microsecond == 0)
-            return currentValue;
+        if (value.hour == 0 &&
+            value.minute == 0 &&
+            value.second == 0 &&
+            value.millisecond == 0 &&
+            value.microsecond == 0)
+            return value;
 
-        return getNextNiceValue(currentValue);
+        return getNextNiceCustomValue(value);
     }
 
     @override
-    DateTime getPreviousNiceValue(DateTime currentValue)
+    DateTime getPreviousNiceCustomValue(DateTime value)
     {
-        if (currentValue.hour == 0 &&
-            currentValue.minute == 0 &&
-            currentValue.second == 0 &&
-            currentValue.millisecond == 0 &&
-            currentValue.microsecond == 0)
-            return DateTime(currentValue.year, currentValue.month, currentValue.day).subtract(const Duration(days: 1));
+        if (value.hour == 0 &&
+            value.minute == 0 &&
+            value.second == 0 &&
+            value.millisecond == 0 &&
+            value.microsecond == 0)
+            return value.subtract(const Duration(days: 1));
 
-        return DateTime(currentValue.year, currentValue.month, currentValue.day);
+        return DateTime(value.year, value.month, value.day);
     }
 
     @override
-    DateTime getPreviousNiceValueOrSame(DateTime currentValue)
+    DateTime getPreviousNiceCustomValueOrSame(DateTime value)
     {
-        if (currentValue.hour == 0 &&
-            currentValue.minute == 0 &&
-            currentValue.second == 0 &&
-            currentValue.millisecond == 0 &&
-            currentValue.microsecond == 0)
-            return currentValue;
+        if (value.hour == 0 &&
+            value.minute == 0 &&
+            value.second == 0 &&
+            value.millisecond == 0 &&
+            value.microsecond == 0)
+            return value;
 
-        return getPreviousNiceValue(currentValue);
+        return value.subtract(const Duration(days: 1));
     }
 
     @override
@@ -64,10 +64,10 @@ class DateTimeTools extends GenericTools<DateTime>
     }
 
     @override
-    double toDouble(DateTime value)
-    => value.millisecondsSinceEpoch.toDouble();
+    DateTime toCustomValue(double value)
+    => DateTime.fromMillisecondsSinceEpoch(value.toInt());
 
     @override
-    DateTime toT(double value)
-    => DateTime.fromMillisecondsSinceEpoch(value.toInt());
+    double toDoubleValue(DateTime value)
+    => value.millisecondsSinceEpoch.toDouble();
 }

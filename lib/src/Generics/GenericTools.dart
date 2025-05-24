@@ -9,27 +9,27 @@ class GenericTools<T>
     String format(T value)
     => throw UnimplementedError('GenericTools.format');
 
-    double getNextDoubleValue(double currentValue)
+    double getNextDoubleValue(double value)
     => throw UnimplementedError('GenericTools.getNextDoubleValue');
 
-    T getNextNiceValue(T currentValue)
-    => throw UnimplementedError('GenericTools.getNextNiceValue');
+    T getNextNiceCustomValue(T value)
+    => throw UnimplementedError('GenericTools.getNextNiceCustomValue');
 
-    T getNextNiceValueOrSame(T currentValue)
-    => throw UnimplementedError('GenericTools.getNextNiceValueOrSame');
+    T getNextNiceCustomValueOrSame(T value)
+    => throw UnimplementedError('GenericTools.getNextNiceCustomValueOrSame');
 
-    T getPreviousNiceValue(T currentValue)
-    => throw UnimplementedError('GenericTools.getPreviousNiceValue');
+    T getPreviousNiceCustomValue(T value)
+    => throw UnimplementedError('GenericTools.getPreviousNiceCustomValue');
 
-    T getPreviousNiceValueOrSame(T currentValue)
-    => throw UnimplementedError('GenericTools.getPreviousNiceValueOrSame');
+    T getPreviousNiceCustomValueOrSame(T value)
+    => throw UnimplementedError('GenericTools.getPreviousNiceCustomValueOrSame');
 
     T mid(T a, T b)
     => throw UnimplementedError('GenericTools.mid');
 
-    double toDouble(T value)
-    => throw UnimplementedError('GenericTools.toDouble');
+    T toCustomValue(double value)
+    => throw UnimplementedError('GenericTools.toCustomValue');
 
-    T toT(double value)
-    => throw UnimplementedError('GenericTools.toT');
+    double toDoubleValue(T value)
+    => throw UnimplementedError('GenericTools.toDoubleValue');
 }

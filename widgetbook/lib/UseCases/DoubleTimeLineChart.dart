@@ -31,6 +31,10 @@ Widget buildDoubleChartTwoLinesTwoDots(BuildContext context)
 Widget buildDoubleChartOneLine(BuildContext context)
 => _buildChart(_createOneLine());
 
+@widgetbook_annotation.UseCase(path: '', name: '1 line, inverted', type: DoubleLineChart)
+Widget buildDoubleChartOneLineInverted(BuildContext context)
+=> _buildChart(_createOneLine(invert: true));
+
 @widgetbook_annotation.UseCase(path: '', name: '1 line, 1 dot', type: DoubleLineChart)
 Widget buildDoubleChartOneLineOneDot(BuildContext context)
 => _buildChart(_createOneLineOneDot());
@@ -54,7 +58,7 @@ DoubleChartData _createOneDot()
 => _createDoubleChartData(
     <Color>[Colors.red],
     <List<DoublePoint>>[_createDot1()]
-); 
+);
 
 DoubleChartData _createTwoLines()
 => _createDoubleChartData(
@@ -74,10 +78,11 @@ DoubleChartData _createOneLineOneDot()
     <List<DoublePoint>>[_createLine1(), _createDot1()]
 );
 
-DoubleChartData _createOneLine()
+DoubleChartData _createOneLine({bool invert = false})
 => _createDoubleChartData(
     <Color>[Colors.red],
-    <List<DoublePoint>>[_createLine1()]
+    <List<DoublePoint>>[_createLine1()],
+    invert: invert
 );
 
 List<DoublePoint> _createLine1()
@@ -131,10 +136,10 @@ Widget _buildChart(DoubleChartData data)
     );
 }
 
-DoubleChartData _createDoubleChartData(List<Color> colors, List<List<DoublePoint>> doubleLines)
+DoubleChartData _createDoubleChartData(List<Color> colors, List<List<DoublePoint>> doubleLines, {bool invert = false})
 {
     final List<DoubleLineData> convertedDoubleLines = doubleLines
-        .map((List<DoublePoint> points) => DoubleLineData(points.toImmutableList()))
+        .map((List<DoublePoint> points) => DoubleLineData(points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()))
         .toList();
 
     return DoubleChartData(
@@ -145,8 +150,8 @@ DoubleChartData _createDoubleChartData(List<Color> colors, List<List<DoublePoint
         minMax: DoubleMinMax(
             minX: 0,
             maxX: 10,
-            minY: 0,
-            maxY: 10
+            minY: invert ? -10 : 0,
+            maxY: invert ? 0 : 10
         )
     );
 }

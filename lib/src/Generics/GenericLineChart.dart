@@ -41,7 +41,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
     => CustomPaint(
         size: Size.infinite,
         painter: GenericLineChartPainter<TX, TY>(
-            data: widget.data,
+            customData: widget.data,
             doubleData: widget.data.getDoubleChartData(),
             chartStyle: widget.style.copyWith(lineColor: lineColor, textColor: textColor)
         )

@@ -44,6 +44,10 @@ final directories = <_i1.WidgetbookNode>[
         builder: _i3.buildDoubleChartOneLineOneDot,
       ),
       _i1.WidgetbookUseCase(
+        name: '1 line, inverted',
+        builder: _i3.buildDoubleChartOneLineInverted,
+      ),
+      _i1.WidgetbookUseCase(
         name: '2 dots',
         builder: _i3.buildDoubleChartTwoDots,
       ),

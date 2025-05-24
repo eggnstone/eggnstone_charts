@@ -6,13 +6,13 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook_
 
 @widgetbook_annotation.UseCase(path: '', name: 'Normal', type: DateTimeLineChart)
 Widget buildDateTimeChart(BuildContext context)
-=> buildChart(invert: false);
+=> buildChart();
 
 @widgetbook_annotation.UseCase(path: '', name: 'Inverted', type: DateTimeLineChart)
 Widget buildDateTimeChartInverted(BuildContext context)
 => buildChart(invert: true);
 
-Widget buildChart({required bool invert})
+Widget buildChart({bool invert = false})
 {
     final List<Color> colors = <Color>[Colors.red];
     final List<DateTimeLineData> dateTimeLines = <DateTimeLineData>
