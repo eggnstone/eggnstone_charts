@@ -30,7 +30,7 @@ class DateTimeTools extends GenericTools<DateTime>
     }
 
     @override
-    DateTime getPreviousNiceValue(DateTime currentValue) 
+    DateTime getPreviousNiceValue(DateTime currentValue)
     {
         if (currentValue.hour == 0 &&
             currentValue.minute == 0 &&

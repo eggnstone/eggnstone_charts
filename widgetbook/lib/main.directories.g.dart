@@ -32,20 +32,32 @@ final directories = <_i1.WidgetbookNode>[
     name: 'GenericLineChart<double, double, DoubleChartData>',
     useCases: [
       _i1.WidgetbookUseCase(
-        name: '2 lines, single and multiple entries',
-        builder: _i3.buildDoubleTimeChartTwoLinesSingleAndMultipleEntries,
+        name: '1 dot',
+        builder: _i3.buildDoubleChartOneDot,
       ),
       _i1.WidgetbookUseCase(
-        name: '2 lines, single entry each',
-        builder: _i3.buildDoubleTimeChartTwoLinesOneEntryEach,
+        name: '1 line',
+        builder: _i3.buildDoubleChartOneLine,
+      ),
+      _i1.WidgetbookUseCase(
+        name: '1 line, 1 dot',
+        builder: _i3.buildDoubleChartOneLineOneDot,
+      ),
+      _i1.WidgetbookUseCase(
+        name: '2 dots',
+        builder: _i3.buildDoubleChartTwoDots,
+      ),
+      _i1.WidgetbookUseCase(
+        name: '2 lines',
+        builder: _i3.buildDoubleChartTwoLines,
       ),
       _i1.WidgetbookUseCase(
         name: 'Mismatch of lines and colors',
-        builder: _i3.buildDoubleTimeChartMismatchOfLinesAndColors,
+        builder: _i3.buildDoubleChartMismatchOfLinesAndColors,
       ),
       _i1.WidgetbookUseCase(
         name: 'No lines',
-        builder: _i3.buildDoubleTimeChartNoLines,
+        builder: _i3.buildDoubleChartNoData,
       ),
     ],
   ),

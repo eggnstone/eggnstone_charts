@@ -4,22 +4,34 @@ import 'package:kt_dart/collection.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook_annotation;
 
 @widgetbook_annotation.UseCase(path: '', name: 'No lines', type: DoubleLineChart)
-Widget buildDoubleTimeChartNoLines(BuildContext context)
-=> buildChart(_createNoLines());
+Widget buildDoubleChartNoData(BuildContext context)
+=> _buildChart(_createNoData());
 
 @widgetbook_annotation.UseCase(path: '', name: 'Mismatch of lines and colors', type: DoubleLineChart)
-Widget buildDoubleTimeChartMismatchOfLinesAndColors(BuildContext context)
-=> buildChart(_createMismatchOfLinesAndColors());
+Widget buildDoubleChartMismatchOfLinesAndColors(BuildContext context)
+=> _buildChart(_createMismatchOfLinesAndColors());
 
-@widgetbook_annotation.UseCase(path: '', name: '2 lines, single entry each', type: DoubleLineChart)
-Widget buildDoubleTimeChartTwoLinesOneEntryEach(BuildContext context)
-=> buildChart(_createTwoLinesOneEntryEach());
+@widgetbook_annotation.UseCase(path: '', name: '2 dots', type: DoubleLineChart)
+Widget buildDoubleChartTwoDots(BuildContext context)
+=> _buildChart(_createTwoDots());
 
-@widgetbook_annotation.UseCase(path: '', name: '2 lines, single and multiple entries', type: DoubleLineChart)
-Widget buildDoubleTimeChartTwoLinesSingleAndMultipleEntries(BuildContext context)
-=> buildChart(_createTwoLinesSingleAndMultipleEntries());
+@widgetbook_annotation.UseCase(path: '', name: '1 dot', type: DoubleLineChart)
+Widget buildDoubleChartOneDot(BuildContext context)
+=> _buildChart(_createOneDot());
 
-DoubleChartData _createNoLines()
+@widgetbook_annotation.UseCase(path: '', name: '2 lines', type: DoubleLineChart)
+Widget buildDoubleChartTwoLines(BuildContext context)
+=> _buildChart(_createTwoLines());
+
+@widgetbook_annotation.UseCase(path: '', name: '1 line', type: DoubleLineChart)
+Widget buildDoubleChartOneLine(BuildContext context)
+=> _buildChart(_createOneLine());
+
+@widgetbook_annotation.UseCase(path: '', name: '1 line, 1 dot', type: DoubleLineChart)
+Widget buildDoubleChartOneLineOneDot(BuildContext context)
+=> _buildChart(_createOneLineOneDot());
+
+DoubleChartData _createNoData()
 => DoubleChartData(
     colors: <Color>[].toImmutableList(),
     lines: <DoubleLineData>[].toImmutableList(),
@@ -36,53 +48,65 @@ DoubleChartData _createNoLines()
 DoubleChartData _createMismatchOfLinesAndColors()
 {
     final List<Color> colors = <Color>[Colors.red, Colors.green];
-    final List<DoubleLineData> doubleLines = <DoubleLineData>
+    final List<List<DoublePoint>> doubleLines = <List<DoublePoint>>
     [
-        DoubleLineData(
-            <DoublePoint>
-            [
-                const DoublePoint(1, 0),
-                const DoublePoint(2, 1)
-            ].toImmutableList()
-        )
+        <DoublePoint>
+        [
+            const DoublePoint(1, 0),
+            const DoublePoint(2, 1)
+        ]
     ];
 
-    return DoubleChartData(
-        colors: colors.toImmutableList(),
-        lines: doubleLines.toImmutableList(),
-        toolsX: DoubleTools(const DoubleFormatter(2)),
-        toolsY: DoubleTools(const DoubleFormatter(2)),
-        minMax: DoubleMinMax(
-            minX: 0,
-            maxX: 10,
-            minY: 0,
-            maxY: 10
-        )
-    );
+    return _createDoubleChartData(colors, doubleLines);
 }
 
-DoubleChartData _createTwoLinesOneEntryEach()
+DoubleChartData _createTwoDots()
+=> _createDoubleChartData(
+    <Color>[Colors.red, Colors.green],
+    <List<DoublePoint>>[<DoublePoint>[const DoublePoint(1, 0)], <DoublePoint>[const DoublePoint(2, 1)]]
+);
+
+DoubleChartData _createOneDot()
+=> _createDoubleChartData(
+    <Color>[Colors.red],
+    <List<DoublePoint>>[<DoublePoint>[const DoublePoint(1, 1)]]
+);
+
+DoubleChartData _createTwoLines()
 {
     final List<Color> colors = <Color>[Colors.red, Colors.green];
-    final List<DoubleLineData> doubleLines = <DoubleLineData>
+    final List<List<DoublePoint>> doubleLines = <List<DoublePoint>>
     [
-        DoubleLineData(
-            <DoublePoint>
-            [
-                const DoublePoint(1, 0)
-            ].toImmutableList()
-        ),
-        DoubleLineData(
-            <DoublePoint>
-            [
-                const DoublePoint(2, 1)
-            ].toImmutableList()
-        )
+        <DoublePoint>
+        [
+            const DoublePoint(1, 0),
+            const DoublePoint(2, 1),
+            const DoublePoint(3, 2),
+            const DoublePoint(4, 3),
+            const DoublePoint(5, 4),
+            const DoublePoint(6, 3),
+            const DoublePoint(7, 1),
+            const DoublePoint(8, 7)
+        ],
+        <DoublePoint>
+        [
+            const DoublePoint(5, 5),
+            const DoublePoint(6, 6)
+        ]
     ];
+
+    return _createDoubleChartData(colors, doubleLines);
+}
+
+DoubleChartData _createDoubleChartData(List<Color> colors, List<List<DoublePoint>> doubleLines)
+{
+    final List<DoubleLineData> convertedDoubleLines = doubleLines
+        .map((List<DoublePoint> points) => DoubleLineData(points.toImmutableList()))
+        .toList();
 
     return DoubleChartData(
         colors: colors.toImmutableList(),
-        lines: doubleLines.toImmutableList(),
+        lines: convertedDoubleLines.toImmutableList(),
         toolsX: DoubleTools(const DoubleFormatter(2)),
         toolsY: DoubleTools(const DoubleFormatter(2)),
         minMax: DoubleMinMax(
@@ -94,47 +118,53 @@ DoubleChartData _createTwoLinesOneEntryEach()
     );
 }
 
-DoubleChartData _createTwoLinesSingleAndMultipleEntries()
+DoubleChartData _createOneLineOneDot()
 {
     final List<Color> colors = <Color>[Colors.red, Colors.green];
-    final List<DoubleLineData> doubleLines = <DoubleLineData>
+    final List<List<DoublePoint>> doubleLines = <List<DoublePoint>>
     [
-        DoubleLineData(
-            <DoublePoint>
-            [
-                const DoublePoint(1, 0),
-                const DoublePoint(2, 1),
-                const DoublePoint(3, 2),
-                const DoublePoint(4, 3),
-                const DoublePoint(5, 4),
-                const DoublePoint(6, 3),
-                const DoublePoint(7, 1),
-                const DoublePoint(8, 7)
-            ].toImmutableList()
-        ),
-        DoubleLineData(
-            <DoublePoint>
-            [
-                const DoublePoint(5, 5)
-            ].toImmutableList()
-        )
+        <DoublePoint>
+        [
+            const DoublePoint(1, 0),
+            const DoublePoint(2, 1),
+            const DoublePoint(3, 2),
+            const DoublePoint(4, 3),
+            const DoublePoint(5, 4),
+            const DoublePoint(6, 3),
+            const DoublePoint(7, 1),
+            const DoublePoint(8, 7)
+        ],
+        <DoublePoint>
+        [
+            const DoublePoint(5, 5)
+        ]
     ];
 
-    return DoubleChartData(
-        colors: colors.toImmutableList(),
-        lines: doubleLines.toImmutableList(),
-        toolsX: DoubleTools(const DoubleFormatter(2)),
-        toolsY: DoubleTools(const DoubleFormatter(2)),
-        minMax: DoubleMinMax(
-            minX: 0,
-            maxX: 10,
-            minY: 0,
-            maxY: 10
-        )
-    );
+    return _createDoubleChartData(colors, doubleLines);
 }
 
-Widget buildChart(DoubleChartData data)
+DoubleChartData _createOneLine()
+{
+    final List<Color> colors = <Color>[Colors.red];
+    final List<List<DoublePoint>> doubleLines = <List<DoublePoint>>
+    [
+        <DoublePoint>
+        [
+            const DoublePoint(1, 0),
+            const DoublePoint(2, 1),
+            const DoublePoint(3, 2),
+            const DoublePoint(4, 3),
+            const DoublePoint(5, 4),
+            const DoublePoint(6, 3),
+            const DoublePoint(7, 1),
+            const DoublePoint(8, 7)
+        ]
+    ];
+
+    return _createDoubleChartData(colors, doubleLines);
+}
+
+Widget _buildChart(DoubleChartData data)
 {
     const ChartInfo info = ChartInfo(
         title: 'Test'

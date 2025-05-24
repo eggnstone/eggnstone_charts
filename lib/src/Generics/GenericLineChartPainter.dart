@@ -62,9 +62,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     {
         if (DEBUG)
         {
-            logDebug('LineChartPainter._paintOrThrow() Size: $size');
-            logDebug('  data.minMax:            ${data.minMax}');
-            logDebug('  doubleData.minMax:      ${doubleData.minMax}');
+            logDebug('GenericLineChartPainter._paintOrThrow() Size: $size');
+            logDebug('  data.minMax:       ${data.minMax}');
+            logDebug('  doubleData.minMax: ${doubleData.minMax}');
         }
 
         if (data.lines.size != data.colors.size)
@@ -86,6 +86,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         ];
 
         final DoubleMinMax graphMinMax = _calcGraphMinMax(size, xAxisPainters, yAxisPainters);
+        logDebug('  graphMinMax:       $graphMinMax');
 
         xAxisPainters = _createXAxisTicks(graphMinMax);
         yAxisPainters = _createYAxisTicks(graphMinMax);
@@ -348,11 +349,17 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         );
 
         if (lastPainter == null)
-            return tickPainters;
+        {
+            logWarning('    No tick painter for $dataValueLast');
+            //return tickPainters;
+        }
+        else
+        {
+            logDebug('    Tick painter for $dataValueLast at ${lastPainter.textPosition.toStringAsFixed(1)}');
+            tickPainters.add(lastPainter);
+            textPositionMax = lastPainter.textStart.floorToDouble();
+        }
 
-        logDebug('    Tick painter for $dataValueLast at ${lastPainter.textPosition.toStringAsFixed(1)}');
-        tickPainters.add(lastPainter);
-        textPositionMax = lastPainter.textStart.floorToDouble();
         T dataValueCurrent = dataValueFirst;
 
         int count = 0;
@@ -416,11 +423,29 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final double doubleValueMin = axis == Axis.horizontal ? doubleDataMinMax.minX : doubleDataMinMax.minY;
         final double doubleValueMax = axis == Axis.horizontal ? doubleDataMinMax.maxX : doubleDataMinMax.maxY;
 
-        if (currentTextPositionMin < textPositionMin || 
-            currentTextPositionMax > textPositionMax ||
-            doubleValue < doubleValueMin ||
-            doubleValue > doubleValueMax)
+        if (currentTextPositionMin < textPositionMin)
+        {
+            logInfo('currentTextPositionMin ($currentTextPositionMin) < textPositionMin ($textPositionMin)');
             return null;
+        }
+
+        if (currentTextPositionMax > textPositionMax)
+        {
+            logInfo('currentTextPositionMax ($currentTextPositionMax) > textPositionMax ($textPositionMax)');
+            return null;
+        }
+
+        if (doubleValue < doubleValueMin)
+        {
+            logInfo('doubleValue( $doubleValue) < doubleValueMin ($doubleValueMin)');
+            return null;
+        }
+
+        if (doubleValue > doubleValueMax)
+        {
+            logInfo('doubleValue ($doubleValue) > doubleValueMax ($doubleValueMax)');
+            return null;
+        }
 
         return PositionedTextPainter<T>(
             textPosition: currentTextPosition,
