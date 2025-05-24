@@ -22,15 +22,25 @@ class DateTimeTools extends GenericTools<DateTime>
         if (currentValue.hour == 0 &&
             currentValue.minute == 0 &&
             currentValue.second == 0 &&
-            currentValue.millisecond == 0)
+            currentValue.millisecond == 0 &&
+            currentValue.microsecond == 0)
             return currentValue;
 
         return getNextNiceValue(currentValue);
     }
 
     @override
-    DateTime getPreviousNiceValue(DateTime currentValue)
-    => DateTime(currentValue.year, currentValue.month, currentValue.day).subtract(const Duration(days: 1));
+    DateTime getPreviousNiceValue(DateTime currentValue) 
+    {
+        if (currentValue.hour == 0 &&
+            currentValue.minute == 0 &&
+            currentValue.second == 0 &&
+            currentValue.millisecond == 0 &&
+            currentValue.microsecond == 0)
+            return DateTime(currentValue.year, currentValue.month, currentValue.day).subtract(const Duration(days: 1));
+
+        return DateTime(currentValue.year, currentValue.month, currentValue.day);
+    }
 
     @override
     DateTime getPreviousNiceValueOrSame(DateTime currentValue)
@@ -38,7 +48,8 @@ class DateTimeTools extends GenericTools<DateTime>
         if (currentValue.hour == 0 &&
             currentValue.minute == 0 &&
             currentValue.second == 0 &&
-            currentValue.millisecond == 0)
+            currentValue.millisecond == 0 &&
+            currentValue.microsecond == 0)
             return currentValue;
 
         return getPreviousNiceValue(currentValue);

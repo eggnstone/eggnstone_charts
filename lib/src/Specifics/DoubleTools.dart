@@ -45,4 +45,8 @@ class DoubleTools extends GenericTools<double>
     @override
     double toDouble(double value)
     => value;
+
+    @override
+    double toT(double value)
+    => value;
 }

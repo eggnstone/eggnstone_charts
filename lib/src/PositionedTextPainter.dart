@@ -4,10 +4,12 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'PositionedTextPainter.freezed.dart';
 
 @freezed
-abstract class PositionedTextPainter with _$PositionedTextPainter
+abstract class PositionedTextPainter<T> with _$PositionedTextPainter<T>
 {
-    const factory PositionedTextPainter(
-        double position,
-        TextPainter textPainter
-    ) = _PositionedTextPainter;
+    const factory PositionedTextPainter({
+        required double textPosition,
+        required double textStart,
+        required double textEnd,
+        required TextPainter textPainter
+    }) = _PositionedTextPainter<T>;
 }
