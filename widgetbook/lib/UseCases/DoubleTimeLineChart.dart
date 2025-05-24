@@ -23,6 +23,10 @@ Widget buildDoubleChartOneDot(BuildContext context)
 Widget buildDoubleChartTwoLines(BuildContext context)
 => _buildChart(_createTwoLines());
 
+@widgetbook_annotation.UseCase(path: '', name: '2 lines, 2 dots', type: DoubleLineChart)
+Widget buildDoubleChartTwoLinesTwoDots(BuildContext context)
+=> _buildChart(_createTwoLinesTwoDots());
+
 @widgetbook_annotation.UseCase(path: '', name: '1 line', type: DoubleLineChart)
 Widget buildDoubleChartOneLine(BuildContext context)
 => _buildChart(_createOneLine());
@@ -50,12 +54,18 @@ DoubleChartData _createOneDot()
 => _createDoubleChartData(
     <Color>[Colors.red],
     <List<DoublePoint>>[_createDot1()]
-);
+); 
 
 DoubleChartData _createTwoLines()
 => _createDoubleChartData(
     <Color>[Colors.red, Colors.green],
     <List<DoublePoint>>[_createLine1(), _createLine2()]
+);
+
+DoubleChartData _createTwoLinesTwoDots()
+=> _createDoubleChartData(
+    <Color>[Colors.red, Colors.green, Colors.blue, Colors.orange],
+    <List<DoublePoint>>[_createLine1(), _createLine2(), _createDot1(), _createDot2()]
 );
 
 DoubleChartData _createOneLineOneDot()
@@ -86,8 +96,8 @@ List<DoublePoint> _createLine1()
 List<DoublePoint> _createLine2()
 => <DoublePoint>
 [
-    const DoublePoint(5, 5),
-    const DoublePoint(6, 6)
+    const DoublePoint(2, 8),
+    const DoublePoint(8, 4)
 ];
 
 List<DoublePoint> _createDot1()

@@ -52,6 +52,10 @@ final directories = <_i1.WidgetbookNode>[
         builder: _i3.buildDoubleChartTwoLines,
       ),
       _i1.WidgetbookUseCase(
+        name: '2 lines, 2 dots',
+        builder: _i3.buildDoubleChartTwoLinesTwoDots,
+      ),
+      _i1.WidgetbookUseCase(
         name: 'Mismatch of lines and colors',
         builder: _i3.buildDoubleChartMismatchOfLinesAndColors,
       ),
