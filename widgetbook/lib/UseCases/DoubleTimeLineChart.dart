@@ -32,70 +32,93 @@ Widget buildDoubleChartOneLineOneDot(BuildContext context)
 => _buildChart(_createOneLineOneDot());
 
 DoubleChartData _createNoData()
-=> DoubleChartData(
-    colors: <Color>[].toImmutableList(),
-    lines: <DoubleLineData>[].toImmutableList(),
-    toolsX: DoubleTools(const DoubleFormatter(2)),
-    toolsY: DoubleTools(const DoubleFormatter(2)),
-    minMax: DoubleMinMax(
-        minX: 0,
-        maxX: 10,
-        minY: 0,
-        maxY: 10
-    )
-);
+=> _createDoubleChartData(<Color>[], <List<DoublePoint>>[]);
 
 DoubleChartData _createMismatchOfLinesAndColors()
-{
-    final List<Color> colors = <Color>[Colors.red, Colors.green];
-    final List<List<DoublePoint>> doubleLines = <List<DoublePoint>>
-    [
-        <DoublePoint>
-        [
-            const DoublePoint(1, 0),
-            const DoublePoint(2, 1)
-        ]
-    ];
-
-    return _createDoubleChartData(colors, doubleLines);
-}
+=> _createDoubleChartData(
+    <Color>[Colors.red, Colors.green],
+    <List<DoublePoint>>[_createLine1()]
+);
 
 DoubleChartData _createTwoDots()
 => _createDoubleChartData(
     <Color>[Colors.red, Colors.green],
-    <List<DoublePoint>>[<DoublePoint>[const DoublePoint(1, 0)], <DoublePoint>[const DoublePoint(2, 1)]]
+    <List<DoublePoint>>[_createDot1(), _createDot2()]
 );
 
 DoubleChartData _createOneDot()
 => _createDoubleChartData(
     <Color>[Colors.red],
-    <List<DoublePoint>>[<DoublePoint>[const DoublePoint(1, 1)]]
+    <List<DoublePoint>>[_createDot1()]
 );
 
 DoubleChartData _createTwoLines()
-{
-    final List<Color> colors = <Color>[Colors.red, Colors.green];
-    final List<List<DoublePoint>> doubleLines = <List<DoublePoint>>
-    [
-        <DoublePoint>
-        [
-            const DoublePoint(1, 0),
-            const DoublePoint(2, 1),
-            const DoublePoint(3, 2),
-            const DoublePoint(4, 3),
-            const DoublePoint(5, 4),
-            const DoublePoint(6, 3),
-            const DoublePoint(7, 1),
-            const DoublePoint(8, 7)
-        ],
-        <DoublePoint>
-        [
-            const DoublePoint(5, 5),
-            const DoublePoint(6, 6)
-        ]
-    ];
+=> _createDoubleChartData(
+    <Color>[Colors.red, Colors.green],
+    <List<DoublePoint>>[_createLine1(), _createLine2()]
+);
 
-    return _createDoubleChartData(colors, doubleLines);
+DoubleChartData _createOneLineOneDot()
+=> _createDoubleChartData(
+    <Color>[Colors.red, Colors.green],
+    <List<DoublePoint>>[_createLine1(), _createDot1()]
+);
+
+DoubleChartData _createOneLine()
+=> _createDoubleChartData(
+    <Color>[Colors.red],
+    <List<DoublePoint>>[_createLine1()]
+);
+
+List<DoublePoint> _createLine1()
+=> <DoublePoint>
+[
+    const DoublePoint(1, 0),
+    const DoublePoint(2, 1),
+    const DoublePoint(3, 2),
+    const DoublePoint(4, 3),
+    const DoublePoint(5, 4),
+    const DoublePoint(6, 3),
+    const DoublePoint(7, 1),
+    const DoublePoint(8, 7)
+];
+
+List<DoublePoint> _createLine2()
+=> <DoublePoint>
+[
+    const DoublePoint(5, 5),
+    const DoublePoint(6, 6)
+];
+
+List<DoublePoint> _createDot1()
+=> <DoublePoint>
+[
+    const DoublePoint(5, 5)
+];
+
+List<DoublePoint> _createDot2()
+=> <DoublePoint>
+[
+    const DoublePoint(6, 6)
+];
+
+Widget _buildChart(DoubleChartData data)
+{
+    const ChartInfo info = ChartInfo(
+        title: 'Test'
+    );
+
+    const ChartStyle style = ChartStyle(
+        devicePixelRatio: 1,
+        fontSize: 12,
+        pointRadius: 4
+    );
+
+    return DoubleLineChart(
+        data: data,
+        info: info,
+        style: style
+    );
 }
 
 DoubleChartData _createDoubleChartData(List<Color> colors, List<List<DoublePoint>> doubleLines)
@@ -115,70 +138,5 @@ DoubleChartData _createDoubleChartData(List<Color> colors, List<List<DoublePoint
             minY: 0,
             maxY: 10
         )
-    );
-}
-
-DoubleChartData _createOneLineOneDot()
-{
-    final List<Color> colors = <Color>[Colors.red, Colors.green];
-    final List<List<DoublePoint>> doubleLines = <List<DoublePoint>>
-    [
-        <DoublePoint>
-        [
-            const DoublePoint(1, 0),
-            const DoublePoint(2, 1),
-            const DoublePoint(3, 2),
-            const DoublePoint(4, 3),
-            const DoublePoint(5, 4),
-            const DoublePoint(6, 3),
-            const DoublePoint(7, 1),
-            const DoublePoint(8, 7)
-        ],
-        <DoublePoint>
-        [
-            const DoublePoint(5, 5)
-        ]
-    ];
-
-    return _createDoubleChartData(colors, doubleLines);
-}
-
-DoubleChartData _createOneLine()
-{
-    final List<Color> colors = <Color>[Colors.red];
-    final List<List<DoublePoint>> doubleLines = <List<DoublePoint>>
-    [
-        <DoublePoint>
-        [
-            const DoublePoint(1, 0),
-            const DoublePoint(2, 1),
-            const DoublePoint(3, 2),
-            const DoublePoint(4, 3),
-            const DoublePoint(5, 4),
-            const DoublePoint(6, 3),
-            const DoublePoint(7, 1),
-            const DoublePoint(8, 7)
-        ]
-    ];
-
-    return _createDoubleChartData(colors, doubleLines);
-}
-
-Widget _buildChart(DoubleChartData data)
-{
-    const ChartInfo info = ChartInfo(
-        title: 'Test'
-    );
-
-    const ChartStyle style = ChartStyle(
-        devicePixelRatio: 1,
-        fontSize: 12,
-        pointRadius: 4
-    );
-
-    return DoubleLineChart(
-        data: data,
-        info: info,
-        style: style
     );
 }
