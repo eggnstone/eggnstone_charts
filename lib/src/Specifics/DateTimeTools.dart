@@ -52,7 +52,7 @@ class DateTimeTools extends GenericTools<DateTime>
             value.microsecond == 0)
             return value;
 
-        return value.subtract(const Duration(days: 1));
+        return DateTime(value.year, value.month, value.day);
     }
 
     @override

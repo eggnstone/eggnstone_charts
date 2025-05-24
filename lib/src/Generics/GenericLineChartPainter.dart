@@ -16,7 +16,7 @@ import 'GenericTools.dart';
 
 class GenericLineChartPainter<TX, TY> extends CustomPainter
 {
-    static const bool DEBUG = true;
+    static const bool DEBUG = false;
     static const bool DEBUG_DATA_TO_PIXEL = false;
 
     static const double additionalSpaceForLabelX = paddingBetweenTickLabelAndTickLineX + tickLineLengthX;
@@ -88,12 +88,15 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (DEBUG)
             logDebug('  graphMinMax:       $graphMinMax');
 
+        //final List<PositionedTextPainter<TX>> xAxisPainters = <PositionedTextPainter<TX>>[];
         final List<PositionedTextPainter<TX>> xAxisPainters = _createXAxisTicks(graphMinMax);
+
+        //final List<PositionedTextPainter<TY>> yAxisPainters = <PositionedTextPainter<TY>>[];
         final List<PositionedTextPainter<TY>> yAxisPainters = _createYAxisTicks(graphMinMax);
 
-        if (DEBUG)
+        if (DEBUG && false)
         {
-            xAxisPainters.add(
+            xAxisPainters.insert(0,
                 PositionedTextPainter<TX>(
                     textPosition: graphMinMax.minX,
                     textStart: -1,
@@ -102,7 +105,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 )
             );
 
-            xAxisPainters.add(
+            xAxisPainters.insert(0,
                 PositionedTextPainter<TX>(
                     textPosition: graphMinMax.maxX,
                     textStart: -1,
@@ -111,7 +114,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 )
             );
 
-            yAxisPainters.add(
+            yAxisPainters.insert(0,
                 PositionedTextPainter<TY>(
                     textPosition: graphMinMax.minY,
                     textStart: -1,
@@ -120,7 +123,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 )
             );
 
-            yAxisPainters.add(
+            yAxisPainters.insert(0,
                 PositionedTextPainter<TY>(
                     textPosition: graphMinMax.maxY,
                     textStart: -1,
@@ -175,16 +178,18 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (doubleDataMinMax.getWidth() == 0)
             throw ChartsException('doubleDataMinMax.getWidth() == 0');
 
+        final double result = graphMinMax.minX + (doubleData - doubleDataMinMax.minX) / doubleDataMinMax.getWidth() * graphMinMax.getWidth();
+
         if (DEBUG_DATA_TO_PIXEL)
         {
-            logDebug('graphMinMax.getWidth:      ${graphMinMax.getWidth()}');
-            logDebug('graphMinMax.minX:          ${graphMinMax.minX}');
-            logDebug('doubleDataMinMax.getWidth: ${doubleDataMinMax.getWidth()}');
-            logDebug('doubleDataMinMax.minX:     ${doubleDataMinMax.minX}');
-            logDebug('doubleData:                $doubleData');
+            logDebug('_dataToPixelX:');
+            logDebug('  graphMinMax:      [${graphMinMax.minX}, ${graphMinMax.maxX}] = ${graphMinMax.getWidth()}');
+            logDebug('  doubleDataMinMax: [${doubleDataMinMax.minX}, ${doubleDataMinMax.maxX}] = ${doubleDataMinMax.getWidth()}');
+            logDebug('  doubleData:       $doubleData');
+            logDebug('  result:           $result');
         }
 
-        return graphMinMax.minX + (doubleData - doubleDataMinMax.minX) / doubleDataMinMax.getWidth() * graphMinMax.getWidth();
+        return result;
     }
 
     static double _dataToPixelY(GenericMinMax<double, double> doubleDataMinMax, DoubleMinMax graphMinMax, double doubleData)
@@ -192,16 +197,18 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (doubleDataMinMax.getHeight() == 0)
             throw ChartsException('doubleDataMinMax.getHeight() == 0');
 
+        final double result = graphMinMax.maxY - (doubleData - doubleDataMinMax.minY) / doubleDataMinMax.getHeight() * graphMinMax.getHeight();
+
         if (DEBUG_DATA_TO_PIXEL)
         {
-            logDebug('graphMinMax.getHeight:      ${graphMinMax.getHeight()}');
-            logDebug('graphMinMax.minY:           ${graphMinMax.minY}');
-            logDebug('doubleDataMinMax.getHeight: ${doubleDataMinMax.getHeight()}');
-            logDebug('doubleDataMinMax.minY:      ${doubleDataMinMax.minY}');
-            logDebug('doubleData:                 $doubleData');
+            logDebug('_dataToPixelY:');
+            logDebug('  graphMinMax:      [${graphMinMax.minY}, ${graphMinMax.maxY}] = ${graphMinMax.getHeight()}');
+            logDebug('  doubleDataMinMax: [${doubleDataMinMax.minY}, ${doubleDataMinMax.maxY}] = ${doubleDataMinMax.getHeight()}');
+            logDebug('  doubleData:       $doubleData');
+            logDebug('  result:           $result');
         }
 
-        return graphMinMax.maxY - (doubleData - doubleDataMinMax.minY) / doubleDataMinMax.getHeight() * graphMinMax.getHeight();
+        return result;
     }
 
     DoubleMinMax _calcGraphMinMax(Size size, List<TextPainter> xAxisPainters, List<TextPainter> yAxisPainters)
@@ -382,29 +389,32 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             logDebug('  textPositionMax: $textPositionMax');
         }
 
-        final PositionedTextPainter<T>? lastPainter = _createNextTickPainter<T>(
+        final PositionedTextPainter<T>? lastPainter = _createTickPainter<T>(
             doubleData.minMax,
             graphMinMax,
             chartStyle,
             tools,
             axis: axis,
-            textPositionMax: textPositionMax,
             textPositionMin: textPositionMin,
+            textPositionMax: textPositionMax,
             customDataValue: customDataLast
         );
 
         if (lastPainter == null)
         {
-            logWarning('    No tick painter for $customDataLast');
-            //return tickPainters;
+            logInfo('    No tick painter for $customDataLast');
+            return tickPainters;
         }
         else
         {
             if (DEBUG)
-                logDebug('    Tick painter for $customDataLast at ${lastPainter.textPosition.toStringAsFixed(1)}');
+                logDebug('    Tick painter for $customDataLast at ${lastPainter.textStart.toStringAsFixed(1)} / ${lastPainter.textPosition.toStringAsFixed(1)} / ${lastPainter.textEnd.toStringAsFixed(1)}');
 
             tickPainters.add(lastPainter);
-            textPositionMax = lastPainter.textStart.floorToDouble();
+            if (axis == Axis.horizontal)
+                textPositionMax = lastPainter.textStart.floorToDouble();
+            else
+                textPositionMin = lastPainter.textEnd.ceilToDouble();
         }
 
         T customDataValue = customDataFirst;
@@ -427,7 +437,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 logDebug('  textPositionMax:  ${textPositionMax.toStringAsFixed(1)}');
             }
 
-            final PositionedTextPainter<T>? tickPainter = _createNextTickPainter<T>(
+            final PositionedTextPainter<T>? tickPainter = _createTickPainter<T>(
                 doubleData.minMax,
                 graphMinMax,
                 chartStyle,
@@ -443,19 +453,25 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 logInfo('    No tick painter for $customDataValue');
                 break;
             }
+            else
+            {
+                if (DEBUG)
+                    logDebug('    Tick painter for $customDataValue at ${tickPainter.textStart.toStringAsFixed(1)} / ${tickPainter.textPosition.toStringAsFixed(1)} / ${tickPainter.textEnd.toStringAsFixed(1)}');
 
-            if (DEBUG)
-                logDebug('    Tick painter for $customDataValue at ${tickPainter.textPosition.toStringAsFixed(1)}');
+                tickPainters.add(tickPainter);
+                if (axis == Axis.horizontal)
+                    textPositionMin = tickPainter.textEnd.ceilToDouble();
+                else
+                    textPositionMax = tickPainter.textStart.floorToDouble();
+            }
 
-            tickPainters.add(tickPainter);
-            textPositionMin = tickPainter.textEnd.ceilToDouble();
             customDataValue = tools.getNextNiceCustomValue(customDataValue);
         }
 
         return tickPainters;
     }
 
-    static PositionedTextPainter<T>? _createNextTickPainter<T>(
+    static PositionedTextPainter<T>? _createTickPainter<T>(
         GenericMinMax<double, double> doubleDataMinMax,
         DoubleMinMax graphMinMax,
         ChartStyle chartStyle,
@@ -469,9 +485,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     { 
         final double doubleDataValue = tools.toDoubleValue(customDataValue);
         final TextPainter textPainter = _createAndLayoutTextPainter(tools.format(customDataValue), chartStyle);
-        final double textPosition = (axis == Axis.horizontal ? _dataToPixelX(doubleDataMinMax, graphMinMax, doubleDataValue) : _dataToPixelY(doubleDataMinMax, graphMinMax, doubleDataValue));
-        final double textPositionStart = textPosition - textPainter.width / 2;
-        final double textPositionEnd = textPosition + textPainter.width / 2;
+        final double textPosition = axis == Axis.horizontal ? _dataToPixelX(doubleDataMinMax, graphMinMax, doubleDataValue) : _dataToPixelY(doubleDataMinMax, graphMinMax, doubleDataValue);
+        final double textPositionStart = textPosition - (axis == Axis.horizontal ? textPainter.width : textPainter.height) / 2;
+        final double textPositionEnd = textPosition + (axis == Axis.horizontal ? textPainter.width : textPainter.height) / 2;
         final double doubleDataMin = axis == Axis.horizontal ? doubleDataMinMax.minX : doubleDataMinMax.minY;
         final double doubleDataMax = axis == Axis.horizontal ? doubleDataMinMax.maxX : doubleDataMinMax.maxY;
 
