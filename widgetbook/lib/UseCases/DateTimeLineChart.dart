@@ -34,7 +34,7 @@ Widget buildChart(BuildContext context, {bool invert = false})
     ];
 
     final int rangeX = context.knobs.int.slider(label: 'Range X', initialValue: 10, min: 10, max: 30, divisions: 2);
-    final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: 10, min: 10, max: 70, divisions: 2).toDouble();
+    final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: 10, min: 10, max: 100, divisions: 3).toDouble();
     final DateTimeChartData data =
         DateTimeChartData(
             colors: colors.toImmutableList(),

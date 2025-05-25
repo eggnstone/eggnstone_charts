@@ -23,11 +23,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     static const double additionalSpaceForLabelX = paddingBetweenTickLabelAndTickLineX + tickLineLengthX;
     static const double outerPaddingX = 4;
     static const double paddingBetweenTickLabelAndTickLineX = 2;
+    static const double paddingBetweenTicksX = 2;
     static const double tickLineLengthX = 8;
 
     static const double additionalSpaceForLabelY = paddingBetweenTickLabelAndTickLineY + tickLineLengthY;
     static const double outerPaddingY = 4;
     static const double paddingBetweenTickLabelAndTickLineY = 0;
+    static const double paddingBetweenTicksY = 2;
     static const double tickLineLengthY = 8;
 
     final ChartStyle chartStyle;
@@ -100,7 +102,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             size: size,
             graphMinMax: graphMinMax,
             borderPaint: _createBorderPaint(),
-            gridPaint: _createGridPaint()
+            gridPaint: _createGridPaint(),
+            gridPaint2: _createGridPaint2()
         );
 
         canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), paintInfo.borderPaint);
@@ -230,11 +233,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         for (int i = 0; i < painters.length; i++)
         {
             final PositionedTextPainter<T> painter = painters[i];
+            final TextPainter? textPainter = painter.textPainter;
 
             if (painter.position > paintInfo.graphMinMax.minY && painter.position < paintInfo.graphMinMax.maxY)
-                _drawLine(paintInfo.canvas, paintInfo.gridPaint, paintInfo.graphMinMax.minX, painter.position, paintInfo.graphMinMax.maxX, painter.position);
+            {
+                final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
+                _drawLine(paintInfo.canvas, gridPaint, paintInfo.graphMinMax.minX, painter.position, paintInfo.graphMinMax.maxX, painter.position);
+            }
 
-            final TextPainter? textPainter = painter.textPainter;
             if (textPainter != null)
             {
                 _drawLine(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.minX - tickLineLengthX, painter.position, paintInfo.graphMinMax.minX, painter.position);
@@ -276,11 +282,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         for (int i = 0; i < painters.length; i++)
         {
             final PositionedTextPainter<T> painter = painters[i];
+            final TextPainter? textPainter = painter.textPainter;
 
             if (painter.position > paintInfo.graphMinMax.minX && painter.position < paintInfo.graphMinMax.maxX)
-                _drawLine(paintInfo.canvas, paintInfo.gridPaint, painter.position, paintInfo.graphMinMax.minY, painter.position, paintInfo.graphMinMax.maxY);
+            {
+                final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
+                _drawLine(paintInfo.canvas, gridPaint, painter.position, paintInfo.graphMinMax.minY, painter.position, paintInfo.graphMinMax.maxY);
+            }
 
-            final TextPainter? textPainter = painter.textPainter;
             if (textPainter != null)
             {
                 _drawLine(paintInfo.canvas, paintInfo.borderPaint, painter.position, paintInfo.graphMinMax.maxY, painter.position, paintInfo.graphMinMax.maxY + tickLineLengthY);
@@ -306,7 +315,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
             final Paint linePaint = Paint()
                 ..color = color
-                ..strokeWidth = 2
+                ..strokeWidth = (chartStyle.lineWidth == null ? 2 : chartStyle.lineWidth!) / chartStyle.devicePixelRatio
                 ..style = PaintingStyle.fill;
 
             double lastX = paintInfo.graphMinMax.minX + (line.points[0].x - doubleData.minMax.minX) / doubleData.minMax.getWidth() * paintInfo.graphMinMax.getWidth();
@@ -339,13 +348,17 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     => _createPaint(chartStyle.borderColor ?? Colors.red);
 
     Paint _createGridPaint()
-    => _createPaint(chartStyle.gridColor ?? Colors.grey.withAlpha(128));
+    => _createPaint(chartStyle.gridColor?.withAlpha(128) ?? chartStyle.borderColor?.withAlpha(128) ?? Colors.grey.withAlpha(128));
+
+    Paint _createGridPaint2()
+    => _createPaint(chartStyle.gridColor?.withAlpha(32) ?? chartStyle.borderColor?.withAlpha(32) ?? Colors.grey.withAlpha(32));
 
     Paint _createPaint(Color color)
     {
         final Paint paint = Paint()
             ..color = color
-            ..strokeWidth = 1 // / style.devicePixelRatio;
+            //..strokeWidth = 1
+            ..strokeWidth = 1 / chartStyle.devicePixelRatio
             ..style = PaintingStyle.stroke;
 
         return paint;
@@ -483,9 +496,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
                 tickPainters.add(tickPainter);
                 if (axis == Axis.horizontal)
-                    textPositionMin = tickPainter.textEnd.ceilToDouble();
+                    textPositionMin = tickPainter.textEnd.ceilToDouble() + paddingBetweenTicksX;
                 else
-                    textPositionMax = tickPainter.textStart.floorToDouble();
+                    textPositionMax = tickPainter.textStart.floorToDouble() - paddingBetweenTicksY;
             }
 
             customDataValue = tools.getNextNiceCustomValue(customDataValue);

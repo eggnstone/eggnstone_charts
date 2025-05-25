@@ -20,6 +20,7 @@ mixin _$PaintInfo {
   DoubleMinMax get graphMinMax;
   Paint get borderPaint;
   Paint get gridPaint;
+  Paint get gridPaint2;
 
   /// Create a copy of PaintInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -40,16 +41,18 @@ mixin _$PaintInfo {
             (identical(other.borderPaint, borderPaint) ||
                 other.borderPaint == borderPaint) &&
             (identical(other.gridPaint, gridPaint) ||
-                other.gridPaint == gridPaint));
+                other.gridPaint == gridPaint) &&
+            (identical(other.gridPaint2, gridPaint2) ||
+                other.gridPaint2 == gridPaint2));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, canvas, size, graphMinMax, borderPaint, gridPaint);
+  int get hashCode => Object.hash(runtimeType, canvas, size, graphMinMax,
+      borderPaint, gridPaint, gridPaint2);
 
   @override
   String toString() {
-    return 'PaintInfo(canvas: $canvas, size: $size, graphMinMax: $graphMinMax, borderPaint: $borderPaint, gridPaint: $gridPaint)';
+    return 'PaintInfo(canvas: $canvas, size: $size, graphMinMax: $graphMinMax, borderPaint: $borderPaint, gridPaint: $gridPaint, gridPaint2: $gridPaint2)';
   }
 }
 
@@ -63,7 +66,8 @@ abstract mixin class $PaintInfoCopyWith<$Res> {
       Size size,
       DoubleMinMax graphMinMax,
       Paint borderPaint,
-      Paint gridPaint});
+      Paint gridPaint,
+      Paint gridPaint2});
 }
 
 /// @nodoc
@@ -83,6 +87,7 @@ class _$PaintInfoCopyWithImpl<$Res> implements $PaintInfoCopyWith<$Res> {
     Object? graphMinMax = null,
     Object? borderPaint = null,
     Object? gridPaint = null,
+    Object? gridPaint2 = null,
   }) {
     return _then(_self.copyWith(
       canvas: null == canvas
@@ -105,6 +110,10 @@ class _$PaintInfoCopyWithImpl<$Res> implements $PaintInfoCopyWith<$Res> {
           ? _self.gridPaint
           : gridPaint // ignore: cast_nullable_to_non_nullable
               as Paint,
+      gridPaint2: null == gridPaint2
+          ? _self.gridPaint2
+          : gridPaint2 // ignore: cast_nullable_to_non_nullable
+              as Paint,
     ));
   }
 }
@@ -117,7 +126,8 @@ class _PaintInfo implements PaintInfo {
       required this.size,
       required this.graphMinMax,
       required this.borderPaint,
-      required this.gridPaint});
+      required this.gridPaint,
+      required this.gridPaint2});
 
   @override
   final Canvas canvas;
@@ -129,6 +139,8 @@ class _PaintInfo implements PaintInfo {
   final Paint borderPaint;
   @override
   final Paint gridPaint;
+  @override
+  final Paint gridPaint2;
 
   /// Create a copy of PaintInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -150,16 +162,18 @@ class _PaintInfo implements PaintInfo {
             (identical(other.borderPaint, borderPaint) ||
                 other.borderPaint == borderPaint) &&
             (identical(other.gridPaint, gridPaint) ||
-                other.gridPaint == gridPaint));
+                other.gridPaint == gridPaint) &&
+            (identical(other.gridPaint2, gridPaint2) ||
+                other.gridPaint2 == gridPaint2));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, canvas, size, graphMinMax, borderPaint, gridPaint);
+  int get hashCode => Object.hash(runtimeType, canvas, size, graphMinMax,
+      borderPaint, gridPaint, gridPaint2);
 
   @override
   String toString() {
-    return 'PaintInfo(canvas: $canvas, size: $size, graphMinMax: $graphMinMax, borderPaint: $borderPaint, gridPaint: $gridPaint)';
+    return 'PaintInfo(canvas: $canvas, size: $size, graphMinMax: $graphMinMax, borderPaint: $borderPaint, gridPaint: $gridPaint, gridPaint2: $gridPaint2)';
   }
 }
 
@@ -176,7 +190,8 @@ abstract mixin class _$PaintInfoCopyWith<$Res>
       Size size,
       DoubleMinMax graphMinMax,
       Paint borderPaint,
-      Paint gridPaint});
+      Paint gridPaint,
+      Paint gridPaint2});
 }
 
 /// @nodoc
@@ -196,6 +211,7 @@ class __$PaintInfoCopyWithImpl<$Res> implements _$PaintInfoCopyWith<$Res> {
     Object? graphMinMax = null,
     Object? borderPaint = null,
     Object? gridPaint = null,
+    Object? gridPaint2 = null,
   }) {
     return _then(_PaintInfo(
       canvas: null == canvas
@@ -217,6 +233,10 @@ class __$PaintInfoCopyWithImpl<$Res> implements _$PaintInfoCopyWith<$Res> {
       gridPaint: null == gridPaint
           ? _self.gridPaint
           : gridPaint // ignore: cast_nullable_to_non_nullable
+              as Paint,
+      gridPaint2: null == gridPaint2
+          ? _self.gridPaint2
+          : gridPaint2 // ignore: cast_nullable_to_non_nullable
               as Paint,
     ));
   }

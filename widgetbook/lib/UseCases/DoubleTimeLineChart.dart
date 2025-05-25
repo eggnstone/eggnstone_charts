@@ -150,8 +150,8 @@ DoubleChartData _createDoubleChartData(BuildContext context, List<Color> colors,
         .map((List<DoublePoint> points) => DoubleLineData(points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()))
         .toList();
 
-    final double rangeX = context.knobs.int.slider(label: 'Range X', initialValue: 10, min: 10, max: 70, divisions: 2).toDouble();
-    final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: 10, min: 10, max: 70, divisions: 2).toDouble();
+    final double rangeX = context.knobs.int.slider(label: 'Range X', initialValue: 10, min: 10, max: 100, divisions: 3).toDouble();
+    final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: 10, min: 10, max: 100, divisions: 3).toDouble();
     return DoubleChartData(
         colors: colors.toImmutableList(),
         lines: convertedDoubleLines.toImmutableList(),

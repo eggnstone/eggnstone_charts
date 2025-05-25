@@ -13,6 +13,7 @@ abstract class PaintInfo with _$PaintInfo
         required Size size,
         required DoubleMinMax graphMinMax,
         required Paint borderPaint,
-        required Paint gridPaint
+        required Paint gridPaint,
+        required Paint gridPaint2
     }) = _PaintInfo;
 }
