@@ -1,85 +1,93 @@
 import 'package:eggnstone_charts/eggnstone_charts.dart';
 import 'package:flutter/material.dart';
 import 'package:kt_dart/collection.dart';
-import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook_annotation;
+import 'package:widgetbook/widgetbook.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
-@widgetbook_annotation.UseCase(path: '', name: 'No lines', type: DoubleLineChart)
+@UseCase(path: 'Errors', name: 'No data', type: DoubleLineChart)
 Widget buildDoubleChartNoData(BuildContext context)
-=> _buildChart(_createNoData());
+=> _buildChart(_createNoData(context));
 
-@widgetbook_annotation.UseCase(path: '', name: 'Mismatch of lines and colors', type: DoubleLineChart)
+@UseCase(path: 'Errors', name: 'Mismatch of lines and colors', type: DoubleLineChart)
 Widget buildDoubleChartMismatchOfLinesAndColors(BuildContext context)
-=> _buildChart(_createMismatchOfLinesAndColors());
+=> _buildChart(_createMismatchOfLinesAndColors(context));
 
-@widgetbook_annotation.UseCase(path: '', name: '2 dots', type: DoubleLineChart)
+@UseCase(path: '', name: '2 dots', type: DoubleLineChart)
 Widget buildDoubleChartTwoDots(BuildContext context)
-=> _buildChart(_createTwoDots());
+=> _buildChart(_createTwoDots(context));
 
-@widgetbook_annotation.UseCase(path: '', name: '1 dot', type: DoubleLineChart)
+@UseCase(path: '', name: '1 dot', type: DoubleLineChart)
 Widget buildDoubleChartOneDot(BuildContext context)
-=> _buildChart(_createOneDot());
+=> _buildChart(_createOneDot(context));
 
-@widgetbook_annotation.UseCase(path: '', name: '2 lines', type: DoubleLineChart)
+@UseCase(path: '', name: '2 lines', type: DoubleLineChart)
 Widget buildDoubleChartTwoLines(BuildContext context)
-=> _buildChart(_createTwoLines());
+=> _buildChart(_createTwoLines(context));
 
-@widgetbook_annotation.UseCase(path: '', name: '2 lines, 2 dots', type: DoubleLineChart)
+@UseCase(path: '', name: '2 lines, 2 dots', type: DoubleLineChart)
 Widget buildDoubleChartTwoLinesTwoDots(BuildContext context)
-=> _buildChart(_createTwoLinesTwoDots());
+=> _buildChart(_createTwoLinesTwoDots(context));
 
-@widgetbook_annotation.UseCase(path: '', name: '1 line', type: DoubleLineChart)
+@UseCase(path: '', name: '1 line', type: DoubleLineChart)
 Widget buildDoubleChartOneLine(BuildContext context)
-=> _buildChart(_createOneLine());
+=> _buildChart(_createOneLine(context));
 
-@widgetbook_annotation.UseCase(path: '', name: '1 line, inverted', type: DoubleLineChart)
+@UseCase(path: '', name: '1 line, inverted', type: DoubleLineChart)
 Widget buildDoubleChartOneLineInverted(BuildContext context)
-=> _buildChart(_createOneLine(invert: true));
+=> _buildChart(_createOneLine(context, invert: true));
 
-@widgetbook_annotation.UseCase(path: '', name: '1 line, 1 dot', type: DoubleLineChart)
+@UseCase(path: '', name: '1 line, 1 dot', type: DoubleLineChart)
 Widget buildDoubleChartOneLineOneDot(BuildContext context)
-=> _buildChart(_createOneLineOneDot());
+=> _buildChart(_createOneLineOneDot(context));
 
-DoubleChartData _createNoData()
-=> _createDoubleChartData(<Color>[], <List<DoublePoint>>[]);
+DoubleChartData _createNoData(BuildContext context)
+=> _createDoubleChartData(context, <Color>[], <List<DoublePoint>>[]);
 
-DoubleChartData _createMismatchOfLinesAndColors()
+DoubleChartData _createMismatchOfLinesAndColors(BuildContext context)
 => _createDoubleChartData(
+    context,
     <Color>[Colors.red, Colors.green],
     <List<DoublePoint>>[_createLine1()]
 );
 
-DoubleChartData _createTwoDots()
+DoubleChartData _createTwoDots(BuildContext context)
 => _createDoubleChartData(
+    context,
     <Color>[Colors.red, Colors.green],
     <List<DoublePoint>>[_createDot1(), _createDot2()]
 );
 
-DoubleChartData _createOneDot()
+DoubleChartData _createOneDot(BuildContext context)
 => _createDoubleChartData(
+    context,
     <Color>[Colors.red],
     <List<DoublePoint>>[_createDot1()]
 );
 
-DoubleChartData _createTwoLines()
+DoubleChartData _createTwoLines(BuildContext context)
 => _createDoubleChartData(
+    context,
     <Color>[Colors.red, Colors.green],
     <List<DoublePoint>>[_createLine1(), _createLine2()]
 );
 
-DoubleChartData _createTwoLinesTwoDots()
+DoubleChartData _createTwoLinesTwoDots(BuildContext context)
 => _createDoubleChartData(
+    context,
     <Color>[Colors.red, Colors.green, Colors.blue, Colors.orange],
     <List<DoublePoint>>[_createLine1(), _createLine2(), _createDot1(), _createDot2()]
 );
 
-DoubleChartData _createOneLineOneDot()
+DoubleChartData _createOneLineOneDot(BuildContext context)
 => _createDoubleChartData(
+    context,
     <Color>[Colors.red, Colors.green],
     <List<DoublePoint>>[_createLine1(), _createDot1()]
 );
 
-DoubleChartData _createOneLine({bool invert = false})
+DoubleChartData _createOneLine(BuildContext context, {bool invert = false})
 => _createDoubleChartData(
+    context,
     <Color>[Colors.red],
     <List<DoublePoint>>[_createLine1()],
     invert: invert
@@ -136,12 +144,14 @@ Widget _buildChart(DoubleChartData data)
     );
 }
 
-DoubleChartData _createDoubleChartData(List<Color> colors, List<List<DoublePoint>> doubleLines, {bool invert = false})
+DoubleChartData _createDoubleChartData(BuildContext context, List<Color> colors, List<List<DoublePoint>> doubleLines, {bool invert = false})
 {
     final List<DoubleLineData> convertedDoubleLines = doubleLines
         .map((List<DoublePoint> points) => DoubleLineData(points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()))
         .toList();
 
+    final double rangeX = context.knobs.int.slider(label: 'Range X', initialValue: 10, min: 10, max: 70, divisions: 2).toDouble();
+    final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: 10, min: 10, max: 70, divisions: 2).toDouble();
     return DoubleChartData(
         colors: colors.toImmutableList(),
         lines: convertedDoubleLines.toImmutableList(),
@@ -149,9 +159,9 @@ DoubleChartData _createDoubleChartData(List<Color> colors, List<List<DoublePoint
         toolsY: DoubleTools(DoubleFormatter(0, invert: invert)),
         minMax: DoubleMinMax(
             minX: 0,
-            maxX: 10,
-            minY: invert ? -10 : 0,
-            maxY: invert ? 0 : 10
+            maxX: rangeX,
+            minY: invert ? -rangeY : 0,
+            maxY: invert ? 0 : rangeY
         )
     );
 }

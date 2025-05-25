@@ -2,17 +2,18 @@ import 'package:eggnstone_charts/eggnstone_charts.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kt_dart/collection.dart';
-import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook_annotation;
+import 'package:widgetbook/widgetbook.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
-@widgetbook_annotation.UseCase(path: '', name: 'Normal', type: DateTimeLineChart)
+@UseCase(path: '', name: 'Normal', type: DateTimeLineChart)
 Widget buildDateTimeChart(BuildContext context)
-=> buildChart();
+=> buildChart(context);
 
-@widgetbook_annotation.UseCase(path: '', name: 'Inverted', type: DateTimeLineChart)
+@UseCase(path: '', name: 'Inverted', type: DateTimeLineChart)
 Widget buildDateTimeChartInverted(BuildContext context)
-=> buildChart(invert: true);
+=> buildChart(context, invert: true);
 
-Widget buildChart({bool invert = false})
+Widget buildChart(BuildContext context, {bool invert = false})
 {
     final List<Color> colors = <Color>[Colors.red];
     final List<DateTimeLineData> dateTimeLines = <DateTimeLineData>
@@ -32,6 +33,8 @@ Widget buildChart({bool invert = false})
         )
     ];
 
+    final int rangeX = context.knobs.int.slider(label: 'Range X', initialValue: 10, min: 10, max: 30, divisions: 2);
+    final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: 10, min: 10, max: 70, divisions: 2).toDouble();
     final DateTimeChartData data =
         DateTimeChartData(
             colors: colors.toImmutableList(),
@@ -39,10 +42,10 @@ Widget buildChart({bool invert = false})
             toolsX: DateTimeTools(DateTimeFormatter(DateFormat('dd.\nMM.\nyyyy'))),
             toolsY: DoubleTools(DoubleFormatter(0, invert: invert)),
             minMax: DateTimeMinMax(
-                minX: DateTime.now().subtract(const Duration(days: 8)),
+                minX: DateTime.now().subtract(Duration(days: rangeX - 2)),
                 maxX: DateTime.now().add(const Duration(days: 2)),
-                minY: invert ? -10 : 0,
-                maxY: invert ? 0 : 10
+                minY: invert ? -rangeY : 0,
+                maxY: invert ? 0 : rangeY
             )
         );
 

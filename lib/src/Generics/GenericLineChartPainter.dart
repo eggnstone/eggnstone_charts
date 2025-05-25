@@ -94,45 +94,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         //final List<PositionedTextPainter<TY>> yAxisPainters = <PositionedTextPainter<TY>>[];
         final List<PositionedTextPainter<TY>> yAxisPainters = _createYAxisTicks(graphMinMax);
 
-        if (DEBUG && false)
-        {
-            xAxisPainters.insert(0,
-                PositionedTextPainter<TX>(
-                    textPosition: graphMinMax.minX,
-                    textStart: -1,
-                    textEnd: -1,
-                    textPainter: _createAndLayoutTextPainter(customData.toolsX.format(customData.minMax.minX), chartStyle.copyWith(textColor: Colors.lightGreenAccent))
-                )
-            );
-
-            xAxisPainters.insert(0,
-                PositionedTextPainter<TX>(
-                    textPosition: graphMinMax.maxX,
-                    textStart: -1,
-                    textEnd: -1,
-                    textPainter: _createAndLayoutTextPainter(customData.toolsX.format(customData.minMax.maxX), chartStyle.copyWith(textColor: Colors.lightGreenAccent))
-                )
-            );
-
-            yAxisPainters.insert(0,
-                PositionedTextPainter<TY>(
-                    textPosition: graphMinMax.minY,
-                    textStart: -1,
-                    textEnd: -1,
-                    textPainter: _createAndLayoutTextPainter(customData.toolsY.format(customData.minMax.minY), chartStyle.copyWith(textColor: Colors.lightGreenAccent))
-                )
-            );
-
-            yAxisPainters.insert(0,
-                PositionedTextPainter<TY>(
-                    textPosition: graphMinMax.maxY,
-                    textStart: -1,
-                    textEnd: -1,
-                    textPainter: _createAndLayoutTextPainter(customData.toolsY.format(customData.minMax.maxY), chartStyle.copyWith(textColor: Colors.lightGreenAccent))
-                )
-            );
-        }
-
         final Paint borderPaint = _createBorderPaint();
         canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), borderPaint);
 
