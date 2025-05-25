@@ -1,4 +1,11 @@
 /.dart_tool/
-/.idea/libraries/Dart_Packages.xml
-/.idea/libraries/Dart_SDK.xml
-pubspec.lock
+/.idea/*
+/build/
+
+# As per https://dart.dev/guides/libraries/private-files#packages this library should ignore and remove the pubspec.lock file.
+/pubspec.lock
+
+# Exceptions to above rules.
+!*.iml
+!.idea/dictionaries
+!.idea/runConfigurations
