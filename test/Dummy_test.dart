@@ -1,10 +1,17 @@
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main()
 {
-    test('Dummy', ()
+    test('Dart Dummy', ()
         {
-            expect(true, true);
+            expect(true, isTrue);
+        }
+    );
+
+    testWidgets('Flutter Dummy', (WidgetTester tester)
+        async
+        {
+            expect(true, isTrue);
         }
     );
 }

@@ -1,4 +1,7 @@
 {
-    "flutter_package_homepage": "eggnstone_charts HomePage",
-    "flutter_package_name": "eggnstone_charts"
+    "company_name": "Software-Entwicklung Eggenstein",
+    "copyright_years": "2024-2025",
+    "package_description": "A simple charts library.",
+    "package_homepage": "https://github.com/eggnstone/eggnstone_charts",
+    "package_name": "eggnstone_charts"
 }
