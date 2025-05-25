@@ -3,13 +3,10 @@ copyright: 2024-2025 Mark Eggenstein
 description: A simple charts library.
 homepage: https://github.com/eggnstone/eggnstone_dart
 
-version: 0.1.0+1
+version: 0.1.0
 
 environment:
   sdk: ^3.0.0
-
-executables:
-  eggnstone_charts: eggnstone_charts
 
 dependencies:
   flutter:
