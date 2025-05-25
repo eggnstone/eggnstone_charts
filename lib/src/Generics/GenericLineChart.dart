@@ -27,23 +27,23 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
     @override
     Widget build(BuildContext context)
     {
-        final Color lineColor = widget.style.lineColor ?? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black);
+        final Color borderColor = widget.style.borderColor ?? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black);
         final Color textColor = widget.style.textColor ?? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black);
         return Column(
             children: <Widget>[
                 if (widget.info.title.isNotEmpty) Text(widget.info.title),
-                Expanded(child: _createChart(lineColor: lineColor, textColor: textColor))
+                Expanded(child: _createChart(borderColor: borderColor, textColor: textColor))
             ]
         );
     }
 
-    Widget _createChart({required Color lineColor, required Color textColor})
+    Widget _createChart({required Color borderColor, required Color textColor})
     => CustomPaint(
         size: Size.infinite,
         painter: GenericLineChartPainter<TX, TY>(
             customData: widget.data,
             doubleData: widget.data.getDoubleChartData(),
-            chartStyle: widget.style.copyWith(lineColor: lineColor, textColor: textColor)
+            chartStyle: widget.style.copyWith(borderColor: borderColor, textColor: textColor)
         )
     );
 }

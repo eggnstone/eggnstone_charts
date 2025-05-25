@@ -18,7 +18,8 @@ mixin _$ChartStyle {
   double get devicePixelRatio;
   double get fontSize;
   double get pointRadius;
-  Color? get lineColor;
+  Color? get borderColor;
+  Color? get gridColor;
   Color? get textColor;
 
   /// Create a copy of ChartStyle
@@ -39,19 +40,21 @@ mixin _$ChartStyle {
                 other.fontSize == fontSize) &&
             (identical(other.pointRadius, pointRadius) ||
                 other.pointRadius == pointRadius) &&
-            (identical(other.lineColor, lineColor) ||
-                other.lineColor == lineColor) &&
+            (identical(other.borderColor, borderColor) ||
+                other.borderColor == borderColor) &&
+            (identical(other.gridColor, gridColor) ||
+                other.gridColor == gridColor) &&
             (identical(other.textColor, textColor) ||
                 other.textColor == textColor));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, devicePixelRatio, fontSize,
-      pointRadius, lineColor, textColor);
+      pointRadius, borderColor, gridColor, textColor);
 
   @override
   String toString() {
-    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, pointRadius: $pointRadius, lineColor: $lineColor, textColor: $textColor)';
+    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, pointRadius: $pointRadius, borderColor: $borderColor, gridColor: $gridColor, textColor: $textColor)';
   }
 }
 
@@ -65,7 +68,8 @@ abstract mixin class $ChartStyleCopyWith<$Res> {
       {double devicePixelRatio,
       double fontSize,
       double pointRadius,
-      Color? lineColor,
+      Color? borderColor,
+      Color? gridColor,
       Color? textColor});
 }
 
@@ -84,7 +88,8 @@ class _$ChartStyleCopyWithImpl<$Res> implements $ChartStyleCopyWith<$Res> {
     Object? devicePixelRatio = null,
     Object? fontSize = null,
     Object? pointRadius = null,
-    Object? lineColor = freezed,
+    Object? borderColor = freezed,
+    Object? gridColor = freezed,
     Object? textColor = freezed,
   }) {
     return _then(_self.copyWith(
@@ -100,9 +105,13 @@ class _$ChartStyleCopyWithImpl<$Res> implements $ChartStyleCopyWith<$Res> {
           ? _self.pointRadius
           : pointRadius // ignore: cast_nullable_to_non_nullable
               as double,
-      lineColor: freezed == lineColor
-          ? _self.lineColor
-          : lineColor // ignore: cast_nullable_to_non_nullable
+      borderColor: freezed == borderColor
+          ? _self.borderColor
+          : borderColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
+      gridColor: freezed == gridColor
+          ? _self.gridColor
+          : gridColor // ignore: cast_nullable_to_non_nullable
               as Color?,
       textColor: freezed == textColor
           ? _self.textColor
@@ -119,7 +128,8 @@ class _ChartStyle implements ChartStyle {
       {required this.devicePixelRatio,
       required this.fontSize,
       required this.pointRadius,
-      this.lineColor,
+      this.borderColor,
+      this.gridColor,
       this.textColor});
 
   @override
@@ -129,7 +139,9 @@ class _ChartStyle implements ChartStyle {
   @override
   final double pointRadius;
   @override
-  final Color? lineColor;
+  final Color? borderColor;
+  @override
+  final Color? gridColor;
   @override
   final Color? textColor;
 
@@ -152,19 +164,21 @@ class _ChartStyle implements ChartStyle {
                 other.fontSize == fontSize) &&
             (identical(other.pointRadius, pointRadius) ||
                 other.pointRadius == pointRadius) &&
-            (identical(other.lineColor, lineColor) ||
-                other.lineColor == lineColor) &&
+            (identical(other.borderColor, borderColor) ||
+                other.borderColor == borderColor) &&
+            (identical(other.gridColor, gridColor) ||
+                other.gridColor == gridColor) &&
             (identical(other.textColor, textColor) ||
                 other.textColor == textColor));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, devicePixelRatio, fontSize,
-      pointRadius, lineColor, textColor);
+      pointRadius, borderColor, gridColor, textColor);
 
   @override
   String toString() {
-    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, pointRadius: $pointRadius, lineColor: $lineColor, textColor: $textColor)';
+    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, pointRadius: $pointRadius, borderColor: $borderColor, gridColor: $gridColor, textColor: $textColor)';
   }
 }
 
@@ -180,7 +194,8 @@ abstract mixin class _$ChartStyleCopyWith<$Res>
       {double devicePixelRatio,
       double fontSize,
       double pointRadius,
-      Color? lineColor,
+      Color? borderColor,
+      Color? gridColor,
       Color? textColor});
 }
 
@@ -199,7 +214,8 @@ class __$ChartStyleCopyWithImpl<$Res> implements _$ChartStyleCopyWith<$Res> {
     Object? devicePixelRatio = null,
     Object? fontSize = null,
     Object? pointRadius = null,
-    Object? lineColor = freezed,
+    Object? borderColor = freezed,
+    Object? gridColor = freezed,
     Object? textColor = freezed,
   }) {
     return _then(_ChartStyle(
@@ -215,9 +231,13 @@ class __$ChartStyleCopyWithImpl<$Res> implements _$ChartStyleCopyWith<$Res> {
           ? _self.pointRadius
           : pointRadius // ignore: cast_nullable_to_non_nullable
               as double,
-      lineColor: freezed == lineColor
-          ? _self.lineColor
-          : lineColor // ignore: cast_nullable_to_non_nullable
+      borderColor: freezed == borderColor
+          ? _self.borderColor
+          : borderColor // ignore: cast_nullable_to_non_nullable
+              as Color?,
+      gridColor: freezed == gridColor
+          ? _self.gridColor
+          : gridColor // ignore: cast_nullable_to_non_nullable
               as Color?,
       textColor: freezed == textColor
           ? _self.textColor

@@ -15,10 +15,11 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$PositionedTextPainter<T> {
-  double get textPosition;
-  double get textStart;
-  double get textEnd;
-  TextPainter get textPainter;
+  double
+      get position; /*required double textPosition,
+        required double textStart,
+        required double textEnd,*/
+  TextPainter? get textPainter;
 
   /// Create a copy of PositionedTextPainter
   /// with the given fields replaced by the non-null parameter values.
@@ -33,22 +34,18 @@ mixin _$PositionedTextPainter<T> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is PositionedTextPainter<T> &&
-            (identical(other.textPosition, textPosition) ||
-                other.textPosition == textPosition) &&
-            (identical(other.textStart, textStart) ||
-                other.textStart == textStart) &&
-            (identical(other.textEnd, textEnd) || other.textEnd == textEnd) &&
+            (identical(other.position, position) ||
+                other.position == position) &&
             (identical(other.textPainter, textPainter) ||
                 other.textPainter == textPainter));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, textPosition, textStart, textEnd, textPainter);
+  int get hashCode => Object.hash(runtimeType, position, textPainter);
 
   @override
   String toString() {
-    return 'PositionedTextPainter<$T>(textPosition: $textPosition, textStart: $textStart, textEnd: $textEnd, textPainter: $textPainter)';
+    return 'PositionedTextPainter<$T>(position: $position, textPainter: $textPainter)';
   }
 }
 
@@ -58,11 +55,7 @@ abstract mixin class $PositionedTextPainterCopyWith<T, $Res> {
           $Res Function(PositionedTextPainter<T>) _then) =
       _$PositionedTextPainterCopyWithImpl;
   @useResult
-  $Res call(
-      {double textPosition,
-      double textStart,
-      double textEnd,
-      TextPainter textPainter});
+  $Res call({double position, TextPainter? textPainter});
 }
 
 /// @nodoc
@@ -78,49 +71,36 @@ class _$PositionedTextPainterCopyWithImpl<T, $Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? textPosition = null,
-    Object? textStart = null,
-    Object? textEnd = null,
-    Object? textPainter = null,
+    Object? position = null,
+    Object? textPainter = freezed,
   }) {
     return _then(_self.copyWith(
-      textPosition: null == textPosition
-          ? _self.textPosition
-          : textPosition // ignore: cast_nullable_to_non_nullable
+      position: null == position
+          ? _self.position
+          : position // ignore: cast_nullable_to_non_nullable
               as double,
-      textStart: null == textStart
-          ? _self.textStart
-          : textStart // ignore: cast_nullable_to_non_nullable
-              as double,
-      textEnd: null == textEnd
-          ? _self.textEnd
-          : textEnd // ignore: cast_nullable_to_non_nullable
-              as double,
-      textPainter: null == textPainter
+      textPainter: freezed == textPainter
           ? _self.textPainter
           : textPainter // ignore: cast_nullable_to_non_nullable
-              as TextPainter,
+              as TextPainter?,
     ));
   }
 }
 
 /// @nodoc
 
-class _PositionedTextPainter<T> implements PositionedTextPainter<T> {
+class _PositionedTextPainter<T> extends PositionedTextPainter<T> {
   const _PositionedTextPainter(
-      {required this.textPosition,
-      required this.textStart,
-      required this.textEnd,
-      required this.textPainter});
+      {required this.position, required this.textPainter})
+      : super._();
 
   @override
-  final double textPosition;
+  final double position;
+/*required double textPosition,
+        required double textStart,
+        required double textEnd,*/
   @override
-  final double textStart;
-  @override
-  final double textEnd;
-  @override
-  final TextPainter textPainter;
+  final TextPainter? textPainter;
 
   /// Create a copy of PositionedTextPainter
   /// with the given fields replaced by the non-null parameter values.
@@ -136,22 +116,18 @@ class _PositionedTextPainter<T> implements PositionedTextPainter<T> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _PositionedTextPainter<T> &&
-            (identical(other.textPosition, textPosition) ||
-                other.textPosition == textPosition) &&
-            (identical(other.textStart, textStart) ||
-                other.textStart == textStart) &&
-            (identical(other.textEnd, textEnd) || other.textEnd == textEnd) &&
+            (identical(other.position, position) ||
+                other.position == position) &&
             (identical(other.textPainter, textPainter) ||
                 other.textPainter == textPainter));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, textPosition, textStart, textEnd, textPainter);
+  int get hashCode => Object.hash(runtimeType, position, textPainter);
 
   @override
   String toString() {
-    return 'PositionedTextPainter<$T>(textPosition: $textPosition, textStart: $textStart, textEnd: $textEnd, textPainter: $textPainter)';
+    return 'PositionedTextPainter<$T>(position: $position, textPainter: $textPainter)';
   }
 }
 
@@ -163,11 +139,7 @@ abstract mixin class _$PositionedTextPainterCopyWith<T, $Res>
       __$PositionedTextPainterCopyWithImpl;
   @override
   @useResult
-  $Res call(
-      {double textPosition,
-      double textStart,
-      double textEnd,
-      TextPainter textPainter});
+  $Res call({double position, TextPainter? textPainter});
 }
 
 /// @nodoc
@@ -183,28 +155,18 @@ class __$PositionedTextPainterCopyWithImpl<T, $Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? textPosition = null,
-    Object? textStart = null,
-    Object? textEnd = null,
-    Object? textPainter = null,
+    Object? position = null,
+    Object? textPainter = freezed,
   }) {
     return _then(_PositionedTextPainter<T>(
-      textPosition: null == textPosition
-          ? _self.textPosition
-          : textPosition // ignore: cast_nullable_to_non_nullable
+      position: null == position
+          ? _self.position
+          : position // ignore: cast_nullable_to_non_nullable
               as double,
-      textStart: null == textStart
-          ? _self.textStart
-          : textStart // ignore: cast_nullable_to_non_nullable
-              as double,
-      textEnd: null == textEnd
-          ? _self.textEnd
-          : textEnd // ignore: cast_nullable_to_non_nullable
-              as double,
-      textPainter: null == textPainter
+      textPainter: freezed == textPainter
           ? _self.textPainter
           : textPainter // ignore: cast_nullable_to_non_nullable
-              as TextPainter,
+              as TextPainter?,
     ));
   }
 }

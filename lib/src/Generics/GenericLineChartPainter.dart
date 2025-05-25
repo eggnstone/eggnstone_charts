@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../ChartStyle.dart';
 import '../ChartsException.dart';
 import '../ChartsUserException.dart';
+import '../PaintInfo.dart';
 import '../PositionedTextPainter.dart';
 import '../Specifics/DoubleChartData.dart';
 import '../Specifics/DoubleLineData.dart';
@@ -94,16 +95,23 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         //final List<PositionedTextPainter<TY>> yAxisPainters = <PositionedTextPainter<TY>>[];
         final List<PositionedTextPainter<TY>> yAxisPainters = _createYAxisTicks(graphMinMax);
 
-        final Paint borderPaint = _createBorderPaint();
-        canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), borderPaint);
+        final PaintInfo paintInfo = PaintInfo(
+            canvas: canvas,
+            size: size,
+            graphMinMax: graphMinMax,
+            borderPaint: _createBorderPaint(),
+            gridPaint: _createGridPaint()
+        );
 
-        _paintTextPaintersLeft(canvas, borderPaint, graphMinMax, yAxisPainters);
-        _paintTextPaintersRight(canvas, borderPaint, graphMinMax, yAxisPainters);
+        canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), paintInfo.borderPaint);
 
-        _paintTextPaintersTop(canvas, borderPaint, graphMinMax, xAxisPainters);
-        _paintTextPaintersBottom(canvas, borderPaint, graphMinMax, xAxisPainters);
+        _paintTextPaintersLeft(paintInfo, yAxisPainters);
+        _paintTextPaintersRight(paintInfo, yAxisPainters);
 
-        _drawLines(canvas, graphMinMax);
+        _paintTextPaintersTop(paintInfo, xAxisPainters);
+        _paintTextPaintersBottom(paintInfo, xAxisPainters);
+
+        _drawLines(paintInfo);
 
         /*
         final TextPainter tpLeft = _createAndLayoutTextPainter('Left');
@@ -217,51 +225,71 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return maxWidth;
     }
 
-    void _paintTextPaintersLeft<T>(Canvas canvas, Paint paint, DoubleMinMax graphMinMax, List<PositionedTextPainter<T>> painters)
+    void _paintTextPaintersLeft<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
     {
         for (int i = 0; i < painters.length; i++)
         {
             final PositionedTextPainter<T> painter = painters[i];
-            final double endY = painter.textPosition;
-            _drawLine(canvas, paint, graphMinMax.minX - tickLineLengthX, endY, graphMinMax.minX, endY);
-            painter.textPainter.paint(canvas, Offset(graphMinMax.minX - tickLineLengthX - paddingBetweenTickLabelAndTickLineX - painter.textPainter.width, endY - painter.textPainter.height / 2));
+
+            if (painter.position > paintInfo.graphMinMax.minY && painter.position < paintInfo.graphMinMax.maxY)
+                _drawLine(paintInfo.canvas, paintInfo.gridPaint, paintInfo.graphMinMax.minX, painter.position, paintInfo.graphMinMax.maxX, painter.position);
+
+            final TextPainter? textPainter = painter.textPainter;
+            if (textPainter != null)
+            {
+                _drawLine(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.minX - tickLineLengthX, painter.position, paintInfo.graphMinMax.minX, painter.position);
+                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.minX - tickLineLengthX - paddingBetweenTickLabelAndTickLineX - textPainter.width, painter.position - textPainter.height / 2));
+            }
         }
     }
 
-    void _paintTextPaintersTop<T>(Canvas canvas, Paint paint, DoubleMinMax graphMinMax, List<PositionedTextPainter<T>> painters)
+    void _paintTextPaintersTop<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
     {
         for (int i = 0; i < painters.length; i++)
         {
             final PositionedTextPainter<T> painter = painters[i];
-            final double endX = painter.textPosition;
-            _drawLine(canvas, paint, endX, graphMinMax.minY - tickLineLengthY, endX, graphMinMax.minY);
-            painter.textPainter.paint(canvas, Offset(endX - painter.textPainter.width / 2, graphMinMax.minY - tickLineLengthY - paddingBetweenTickLabelAndTickLineY - painter.textPainter.height));
+            final TextPainter? textPainter = painter.textPainter;
+            if (textPainter != null)
+            {
+                _drawLine(paintInfo.canvas, paintInfo.borderPaint, painter.position, paintInfo.graphMinMax.minY - tickLineLengthY, painter.position, paintInfo.graphMinMax.minY);
+                textPainter.paint(paintInfo.canvas, Offset(painter.position - textPainter.width / 2, paintInfo.graphMinMax.minY - tickLineLengthY - paddingBetweenTickLabelAndTickLineY - textPainter.height));
+            }
         }
     }
 
-    void _paintTextPaintersRight<T>(Canvas canvas, Paint paint, DoubleMinMax graphMinMax, List<PositionedTextPainter<T>> painters)
+    void _paintTextPaintersRight<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
     {
         for (int i = 0; i < painters.length; i++)
         {
             final PositionedTextPainter<T> painter = painters[i];
-            final double startY = painter.textPosition;
-            _drawLine(canvas, paint, graphMinMax.maxX, startY, graphMinMax.maxX + tickLineLengthX, startY);
-            painter.textPainter.paint(canvas, Offset(graphMinMax.maxX + tickLineLengthX + paddingBetweenTickLabelAndTickLineX, startY - painter.textPainter.height / 2));
+            final TextPainter? textPainter = painter.textPainter;
+            if (textPainter != null)
+            {
+                _drawLine(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.maxX, painter.position, paintInfo.graphMinMax.maxX + tickLineLengthX, painter.position);
+                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.maxX + tickLineLengthX + paddingBetweenTickLabelAndTickLineX, painter.position - textPainter.height / 2));
+            }
         }
     }
 
-    void _paintTextPaintersBottom<T>(Canvas canvas, Paint paint, DoubleMinMax graphMinMax, List<PositionedTextPainter<T>> painters)
+    void _paintTextPaintersBottom<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
     {
         for (int i = 0; i < painters.length; i++)
         {
             final PositionedTextPainter<T> painter = painters[i];
-            final double startX = painter.textPosition;
-            _drawLine(canvas, paint, startX, graphMinMax.maxY, startX, graphMinMax.maxY + tickLineLengthY);
-            painter.textPainter.paint(canvas, Offset(startX - painter.textPainter.width / 2, graphMinMax.maxY + tickLineLengthY + paddingBetweenTickLabelAndTickLineY));
+
+            if (painter.position > paintInfo.graphMinMax.minX && painter.position < paintInfo.graphMinMax.maxX)
+                _drawLine(paintInfo.canvas, paintInfo.gridPaint, painter.position, paintInfo.graphMinMax.minY, painter.position, paintInfo.graphMinMax.maxY);
+
+            final TextPainter? textPainter = painter.textPainter;
+            if (textPainter != null)
+            {
+                _drawLine(paintInfo.canvas, paintInfo.borderPaint, painter.position, paintInfo.graphMinMax.maxY, painter.position, paintInfo.graphMinMax.maxY + tickLineLengthY);
+                textPainter.paint(paintInfo.canvas, Offset(painter.position - textPainter.width / 2, paintInfo.graphMinMax.maxY + tickLineLengthY + paddingBetweenTickLabelAndTickLineY));
+            }
         }
     }
 
-    void _drawLines(Canvas canvas, DoubleMinMax graphMinMax)
+    void _drawLines(PaintInfo paintInfo)
     {
         for (int lineIndex = 0; lineIndex < doubleData.lines.size; lineIndex++)
         {
@@ -281,17 +309,17 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 ..strokeWidth = 2
                 ..style = PaintingStyle.fill;
 
-            double lastX = graphMinMax.minX + (line.points[0].x - doubleData.minMax.minX) / doubleData.minMax.getWidth() * graphMinMax.getWidth();
-            double lastY = graphMinMax.maxY - (line.points[0].y - doubleData.minMax.minY) / doubleData.minMax.getHeight() * graphMinMax.getHeight();
-            canvas.drawCircle(Offset(lastX, lastY), chartStyle.pointRadius, linePaint);
+            double lastX = paintInfo.graphMinMax.minX + (line.points[0].x - doubleData.minMax.minX) / doubleData.minMax.getWidth() * paintInfo.graphMinMax.getWidth();
+            double lastY = paintInfo.graphMinMax.maxY - (line.points[0].y - doubleData.minMax.minY) / doubleData.minMax.getHeight() * paintInfo.graphMinMax.getHeight();
+            paintInfo.canvas.drawCircle(Offset(lastX, lastY), chartStyle.pointRadius, linePaint);
 
             for (int i = 1; i < line.points.size; i++)
             {
-                final double currentX = graphMinMax.minX + (line.points[i].x - doubleData.minMax.minX) / doubleData.minMax.getWidth() * graphMinMax.getWidth();
-                final double currentY = graphMinMax.maxY - (line.points[i].y - doubleData.minMax.minY) / doubleData.minMax.getHeight() * graphMinMax.getHeight();
+                final double currentX = paintInfo.graphMinMax.minX + (line.points[i].x - doubleData.minMax.minX) / doubleData.minMax.getWidth() * paintInfo.graphMinMax.getWidth();
+                final double currentY = paintInfo.graphMinMax.maxY - (line.points[i].y - doubleData.minMax.minY) / doubleData.minMax.getHeight() * paintInfo.graphMinMax.getHeight();
 
-                _drawLine(canvas, linePaint, lastX, lastY, currentX, currentY);
-                canvas.drawCircle(Offset(currentX, currentY), chartStyle.pointRadius, linePaint);
+                _drawLine(paintInfo.canvas, linePaint, lastX, lastY, currentX, currentY);
+                paintInfo.canvas.drawCircle(Offset(currentX, currentY), chartStyle.pointRadius, linePaint);
                 lastX = currentX;
                 lastY = currentY;
             }
@@ -308,13 +336,19 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     }
 
     Paint _createBorderPaint()
+    => _createPaint(chartStyle.borderColor ?? Colors.red);
+
+    Paint _createGridPaint()
+    => _createPaint(chartStyle.gridColor ?? Colors.grey.withAlpha(128));
+
+    Paint _createPaint(Color color)
     {
-        final Paint borderPaint = Paint()
-            ..color = chartStyle.lineColor ?? Colors.black
+        final Paint paint = Paint()
+            ..color = color
             ..strokeWidth = 1 // / style.devicePixelRatio;
             ..style = PaintingStyle.stroke;
 
-        return borderPaint;
+        return paint;
     }
 
     List<PositionedTextPainter<TX>> _createXAxisTicks(DoubleMinMax graphMinMax)
@@ -363,13 +397,23 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         if (lastPainter == null)
         {
-            logInfo('    No tick painter for $customDataLast');
+            if (DEBUG)
+                logInfo('    No tick painter for $customDataLast');
+
             return tickPainters;
+        }
+
+        if (lastPainter.textPainter == null)
+        {
+            if (DEBUG)
+                logInfo('    No text-tick painter for $customDataLast');
+
+            tickPainters.add(lastPainter);
         }
         else
         {
             if (DEBUG)
-                logDebug('    Tick painter for $customDataLast at ${lastPainter.textStart.toStringAsFixed(1)} / ${lastPainter.textPosition.toStringAsFixed(1)} / ${lastPainter.textEnd.toStringAsFixed(1)}');
+                logDebug('    Tick painter for $customDataLast at ${lastPainter.textStart.toStringAsFixed(1)} / ${lastPainter.position.toStringAsFixed(1)} / ${lastPainter.textEnd.toStringAsFixed(1)}');
 
             tickPainters.add(lastPainter);
             if (axis == Axis.horizontal)
@@ -414,10 +458,28 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 logInfo('    No tick painter for $customDataValue');
                 break;
             }
+
+            if (tickPainter.textPainter == null)
+            {
+                tickPainters.add(tickPainter);
+                if (DEBUG)
+                    logInfo('    No text-tick painter for $customDataValue');
+
+                if (axis == Axis.horizontal)
+                {
+                    if (tickPainter.position >= graphMinMax.maxX)
+                        break;
+                }
+                else
+                {
+                    if (tickPainter.position <= graphMinMax.minY)
+                        break;
+                }
+            }
             else
             {
                 if (DEBUG)
-                    logDebug('    Tick painter for $customDataValue at ${tickPainter.textStart.toStringAsFixed(1)} / ${tickPainter.textPosition.toStringAsFixed(1)} / ${tickPainter.textEnd.toStringAsFixed(1)}');
+                    logDebug('    Tick painter for $customDataValue at ${tickPainter.textStart.toStringAsFixed(1)} / ${tickPainter.position.toStringAsFixed(1)} / ${tickPainter.textEnd.toStringAsFixed(1)}');
 
                 tickPainters.add(tickPainter);
                 if (axis == Axis.horizontal)
@@ -454,33 +516,32 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         if (textPositionStart < textPositionMin)
         {
-            logInfo('textPositionStart ($textPositionStart) < textPositionMin ($textPositionMin)');
-            return null;
+            if (DEBUG)
+                logDebug('textPositionStart ($textPositionStart) < textPositionMin ($textPositionMin)');
+
+            return PositionedTextPainter<T>(position: textPosition, textPainter: null);
         }
 
         if (textPositionEnd > textPositionMax)
         {
-            logInfo('textPositionEnd ($textPositionEnd) > textPositionMax ($textPositionMax)');
-            return null;
+            if (DEBUG)
+                logDebug('textPositionEnd ($textPositionEnd) > textPositionMax ($textPositionMax)');
+
+            return PositionedTextPainter<T>(position: textPosition, textPainter: null);
         }
 
         if (doubleDataValue < doubleDataMin)
         {
-            logInfo('doubleDataValue( $doubleDataValue) < doubleDataMin ($doubleDataMin)');
-            return null;
+            logWarning('doubleDataValue( $doubleDataValue) < doubleDataMin ($doubleDataMin)');
+            return PositionedTextPainter<T>(position: textPosition, textPainter: null);
         }
 
         if (doubleDataValue > doubleDataMax)
         {
-            logInfo('doubleDataValue ($doubleDataValue) > doubleDataMax ($doubleDataMax)');
-            return null;
+            logWarning('doubleDataValue ($doubleDataValue) > doubleDataMax ($doubleDataMax)');
+            return PositionedTextPainter<T>(position: textPosition, textPainter: null);
         }
 
-        return PositionedTextPainter<T>(
-            textPosition: textPosition,
-            textStart: textPositionStart,
-            textEnd: textPositionEnd,
-            textPainter: textPainter
-        );
+        return PositionedTextPainter<T>(position: textPosition, textPainter: textPainter);
     }
 }
