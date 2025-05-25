@@ -1,0 +1,8 @@
+# eggnstone_charts
+
+A simple charts library.
+
+![Build](https://github.com/eggnstone/eggnstone_charts/actions/workflows/dart.yaml/badge.svg)
+[![pub package](https://img.shields.io/pub/v/eggnstone_charts.svg)](https://pub.dartlang.org/packages/eggnstone_charts)
+[![GitHub Issues](https://img.shields.io/github/issues/eggnstone/eggnstone_charts.svg)](https://github.com/eggnstone/eggnstone_charts/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/eggnstone/eggnstone_charts.svg)](https://github.com/eggnstone/eggnstone_charts/stargazers)

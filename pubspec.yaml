@@ -1,8 +1,9 @@
 name: eggnstone_charts
-description: A Flutter package
-publish_to: 'none'
+copyright: 2024-2025 Mark Eggenstein
+description: A simple charts library.
+homepage: https://github.com/eggnstone/eggnstone_dart
 
-version: 0.0.1+1
+version: 0.1.0+1
 
 environment:
   sdk: ^3.0.0
