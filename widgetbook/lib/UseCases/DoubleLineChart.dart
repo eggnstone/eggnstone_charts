@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:eggnstone_charts/eggnstone_charts.dart';
 import 'package:flutter/material.dart';
 import 'package:kt_dart/collection.dart';
@@ -140,14 +141,14 @@ Widget _buildChart(DoubleChartData data)
     return DoubleLineChart(
         data: data,
         info: info,
-        style: style
+        chartStyle: style
     );
 }
 
 DoubleChartData _createDoubleChartData(BuildContext context, List<Color> colors, List<List<DoublePoint>> doubleLines, {bool invert = false})
 {
     final List<DoubleLineData> convertedDoubleLines = doubleLines
-        .map((List<DoublePoint> points) => DoubleLineData(points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()))
+        .mapIndexed((int index, List<DoublePoint> points) => DoubleLineData('Data Series #${index + 1}', points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()))
         .toList();
 
     final double rangeX = context.knobs.int.slider(label: 'Range X', initialValue: 10, min: 10, max: 100, divisions: 3).toDouble();

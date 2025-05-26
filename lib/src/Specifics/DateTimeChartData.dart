@@ -51,7 +51,7 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
                 maxX = dateTimePoint.x.millisecondsSinceEpoch > maxX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : maxX;*/
             }
 
-            doubleLines.add(DoubleLineData(doublePoints.toImmutableList()));
+            doubleLines.add(DoubleLineData(dateTimeLine.label, doublePoints.toImmutableList()));
         }
 
         final GenericMinMax<double, double> doubleMinxMax = DoubleMinMax(

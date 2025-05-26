@@ -19,6 +19,7 @@ Widget buildChart(BuildContext context, {bool invert = false})
     final List<DateTimeLineData> dateTimeLines = <DateTimeLineData>
     [
         DateTimeLineData(
+            'Line 1',
             <DateTimePoint>
             [
                 DateTimePoint(DateTime.now().subtract(const Duration(days: 7)), 0),
@@ -62,6 +63,6 @@ Widget buildChart(BuildContext context, {bool invert = false})
     return DateTimeLineChart(
         data: data,
         info: info,
-        style: style
+        chartStyle: style
     );
 }

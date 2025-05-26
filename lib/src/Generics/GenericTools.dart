@@ -1,35 +1,26 @@
 import 'GenericFormatter.dart';
 
-class GenericTools<T>
+abstract class GenericTools<T>
 {
     final GenericFormatter<T> formatter;
 
     const GenericTools(this.formatter);
 
-    String format(T value)
-    => throw UnimplementedError('GenericTools.format');
+    String format(T value);
 
-    double getNextDoubleValue(double value)
-    => throw UnimplementedError('GenericTools.getNextDoubleValue');
+    double getNextDoubleValue(double value);
 
-    T getNextNiceCustomValue(T value)
-    => throw UnimplementedError('GenericTools.getNextNiceCustomValue');
+    T getNextNiceCustomValue(T value);
 
-    T getNextNiceCustomValueOrSame(T value)
-    => throw UnimplementedError('GenericTools.getNextNiceCustomValueOrSame');
+    T getNextNiceCustomValueOrSame(T value);
 
-    T getPreviousNiceCustomValue(T value)
-    => throw UnimplementedError('GenericTools.getPreviousNiceCustomValue');
+    T getPreviousNiceCustomValue(T value);
 
-    T getPreviousNiceCustomValueOrSame(T value)
-    => throw UnimplementedError('GenericTools.getPreviousNiceCustomValueOrSame');
+    T getPreviousNiceCustomValueOrSame(T value);
 
-    T mid(T a, T b)
-    => throw UnimplementedError('GenericTools.mid');
+    T mid(T a, T b);
 
-    T toCustomValue(double value)
-    => throw UnimplementedError('GenericTools.toCustomValue');
+    T toCustomValue(double value);
 
-    double toDoubleValue(T value)
-    => throw UnimplementedError('GenericTools.toDoubleValue');
+    double toDoubleValue(T value);
 }

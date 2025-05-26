@@ -15,6 +15,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$GenericLineData<TX, TY> {
+  String get label;
   KtList<GenericPoint<TX, TY>> get points;
 
   /// Create a copy of GenericLineData
@@ -30,15 +31,16 @@ mixin _$GenericLineData<TX, TY> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is GenericLineData<TX, TY> &&
+            (identical(other.label, label) || other.label == label) &&
             (identical(other.points, points) || other.points == points));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, points);
+  int get hashCode => Object.hash(runtimeType, label, points);
 
   @override
   String toString() {
-    return 'GenericLineData<$TX, $TY>(points: $points)';
+    return 'GenericLineData<$TX, $TY>(label: $label, points: $points)';
   }
 }
 
@@ -48,7 +50,7 @@ abstract mixin class $GenericLineDataCopyWith<TX, TY, $Res> {
           $Res Function(GenericLineData<TX, TY>) _then) =
       _$GenericLineDataCopyWithImpl;
   @useResult
-  $Res call({KtList<GenericPoint<TX, TY>> points});
+  $Res call({String label, KtList<GenericPoint<TX, TY>> points});
 }
 
 /// @nodoc
@@ -64,9 +66,14 @@ class _$GenericLineDataCopyWithImpl<TX, TY, $Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? label = null,
     Object? points = null,
   }) {
     return _then(GenericLineData(
+      null == label
+          ? _self.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
       null == points
           ? _self.points
           : points // ignore: cast_nullable_to_non_nullable

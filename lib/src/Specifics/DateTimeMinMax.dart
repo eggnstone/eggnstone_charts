@@ -14,6 +14,10 @@ class DateTimeMinMax extends GenericMinMax<DateTime, double>
     => maxY - minY;
 
     @override
+    DateTime getWidth()
+    => throw UnimplementedError('DateTimeMinMax.getWidth');
+
+    @override
     String toString()
     {
         final Duration diff = maxX.difference(minX);
