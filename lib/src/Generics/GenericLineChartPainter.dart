@@ -21,13 +21,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     static const bool DEBUG_DATA_TO_PIXEL = false;
 
     static const double additionalSpaceForLabelX = paddingBetweenTickLabelAndTickLineX + tickLineLengthX;
-    static const double outerPaddingX = 4;
     static const double paddingBetweenTickLabelAndTickLineX = 2;
     static const double paddingBetweenTicksX = 2;
     static const double tickLineLengthX = 8;
 
     static const double additionalSpaceForLabelY = paddingBetweenTickLabelAndTickLineY + tickLineLengthY;
-    static const double outerPaddingY = 4;
     static const double paddingBetweenTickLabelAndTickLineY = 0;
     static const double paddingBetweenTicksY = 2;
     static const double tickLineLengthY = 8;
@@ -186,12 +184,12 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     DoubleMinMax _calcGraphMinMax(Size size, List<TextPainter> xAxisPainters, List<TextPainter> yAxisPainters)
     {
         final double maxYAxisPainterWidth = _calcMaxPainterWidth(yAxisPainters);
-        final double chartStartX = outerPaddingX + maxYAxisPainterWidth + paddingBetweenTickLabelAndTickLineX + tickLineLengthX;
-        final double chartEndX = size.width - outerPaddingX - maxYAxisPainterWidth - paddingBetweenTickLabelAndTickLineX - tickLineLengthX;
+        final double chartStartX = maxYAxisPainterWidth + paddingBetweenTickLabelAndTickLineX + tickLineLengthX;
+        final double chartEndX = size.width - maxYAxisPainterWidth - paddingBetweenTickLabelAndTickLineX - tickLineLengthX;
 
         final double maxXAxisPainterHeight = _calcMaxPainterHeight(xAxisPainters);
-        final double chartStartY = outerPaddingY + maxXAxisPainterHeight + tickLineLengthY + paddingBetweenTickLabelAndTickLineY;
-        final double chartEndY = size.height - outerPaddingY - maxXAxisPainterHeight - tickLineLengthY - paddingBetweenTickLabelAndTickLineY;
+        final double chartStartY = maxXAxisPainterHeight + tickLineLengthY + paddingBetweenTickLabelAndTickLineY;
+        final double chartEndY = size.height - maxXAxisPainterHeight - tickLineLengthY - paddingBetweenTickLabelAndTickLineY;
 
         /*logDebug('maxYAxisPainterWidth:  $maxYAxisPainterWidth');
         logDebug('maxXAxisPainterHeight: $maxXAxisPainterHeight');
