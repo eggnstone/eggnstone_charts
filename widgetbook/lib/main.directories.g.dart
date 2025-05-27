@@ -37,6 +37,10 @@ final directories = <_i1.WidgetbookNode>[
     name: 'GenericLineChart<DateTime, double, DateTimeChartData>',
     useCases: [
       _i1.WidgetbookUseCase(
+        name: 'Doc 1',
+        builder: _i3.buildDateTimeChartDocOne,
+      ),
+      _i1.WidgetbookUseCase(
         name: 'Inverted',
         builder: _i3.buildDateTimeChartInverted,
       ),
@@ -76,6 +80,10 @@ final directories = <_i1.WidgetbookNode>[
       _i1.WidgetbookUseCase(
         name: '2 lines, 2 dots',
         builder: _i2.buildDoubleChartTwoLinesTwoDots,
+      ),
+      _i1.WidgetbookUseCase(
+        name: 'Doc 1',
+        builder: _i2.buildDoubleChartDocOne,
       ),
     ],
   ),

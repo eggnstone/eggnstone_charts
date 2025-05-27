@@ -30,8 +30,8 @@ class ChartOverlay<TX, TY> extends StatefulWidget
 
 class _ChartOverlayState<TX, TY> extends State<ChartOverlay<TX, TY>>
 {
-    Offset? _popupPosition;
-    String _popupText = '';
+    Offset? _dataTipPosition;
+    String _dataTipText = '';
 
     @override
     Widget build(BuildContext context)
@@ -45,7 +45,7 @@ class _ChartOverlayState<TX, TY> extends State<ChartOverlay<TX, TY>>
         return LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints)
             {
-                final Widget? popup = _createPopup(backgroundColor, textColor, constraints);
+                final Widget? dataTip = _createDataTip(backgroundColor, textColor, constraints);
 
                 return Stack(
                     children: <Widget>[
@@ -72,7 +72,7 @@ class _ChartOverlayState<TX, TY> extends State<ChartOverlay<TX, TY>>
                             onExit: _onExit,
                             onHover: _onHover
                         ),
-                        if (popup != null) popup
+                        if (dataTip != null) dataTip
                     ]
                 );
             }
@@ -86,7 +86,7 @@ class _ChartOverlayState<TX, TY> extends State<ChartOverlay<TX, TY>>
     {
         //logDebug('ChartOverlay: Exited at ${event.localPosition}');
         //_lastPosition = null;
-        setState(() => _popupPosition = null);
+        setState(() => _dataTipPosition = null);
     }
 
     void _onHover(PointerHoverEvent event)
@@ -146,7 +146,7 @@ class _ChartOverlayState<TX, TY> extends State<ChartOverlay<TX, TY>>
 
     void _updatePosition(Offset localPosition, String source)
     {
-        logDebug('$localPosition from $source');
+        //logDebug('$localPosition from $source');
         //_lastPosition = localPosition;
 
         if (widget.graphMinMax == null)
@@ -173,96 +173,96 @@ class _ChartOverlayState<TX, TY> extends State<ChartOverlay<TX, TY>>
 
         setState(()
             {
-                _popupPosition = localPosition;
-                _popupText = 'X: $customDataXString\nY: $customDataYString';
+                _dataTipPosition = localPosition;
+                _dataTipText = 'X: $customDataXString\nY: $customDataYString';
             }
         );
     }
 
-    Widget? _createPopup(Color backgroundColor, Color textColor, BoxConstraints constraints)
+    Widget? _createDataTip(Color backgroundColor, Color textColor, BoxConstraints constraints)
     {
-        if (_popupPosition == null || _popupText.isEmpty)
+        if (_dataTipPosition == null || _dataTipText.isEmpty)
             return null;
 
-        const EdgeInsets popupPadding = EdgeInsets.all(4);
-        final TextStyle popupTextStyle = TextStyle(color: textColor, fontSize: 12);
+        const EdgeInsets dataTipPadding = EdgeInsets.all(4);
+        final TextStyle dataTipTextStyle = TextStyle(color: textColor, fontSize: 12);
         const double cursorGapLeft = 2;
         const double cursorGapRight = 12;
         const double cursorGapTop = 4;
         const double cursorGapBottom = 24;
 
-        // Measure text to get popup size
-        final TextSpan textSpan = TextSpan(text: _popupText, style: popupTextStyle);
+        // Measure text to get dataTip size
+        final TextSpan textSpan = TextSpan(text: _dataTipText, style: dataTipTextStyle);
         final TextPainter textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr);
 
         // Constrain the text width to fit within the overlay, accounting for padding
-        final double maxTextWidth = constraints.maxWidth - popupPadding.horizontal;
+        final double maxTextWidth = constraints.maxWidth - dataTipPadding.horizontal;
         textPainter.layout(maxWidth: maxTextWidth > 0 ? maxTextWidth : 0);
 
-        final double popupContentWidth = textPainter.width;
-        final double popupContentHeight = textPainter.height;
-        final double popupWidth = popupContentWidth + popupPadding.horizontal;
-        final double popupHeight = popupContentHeight + popupPadding.vertical;
+        final double dataTipContentWidth = textPainter.width;
+        final double dataTipContentHeight = textPainter.height;
+        final double dataTipWidth = dataTipContentWidth + dataTipPadding.horizontal;
+        final double dataTipHeight = dataTipContentHeight + dataTipPadding.vertical;
 
         final double overlayWidth = constraints.maxWidth;
         final double overlayHeight = constraints.maxHeight;
 
         // Default position: bottom-right of the cursor
-        final double candidateLeft = _popupPosition!.dx + cursorGapRight;
-        final double candidateTop = _popupPosition!.dy + cursorGapBottom;
+        final double candidateLeft = _dataTipPosition!.dx + cursorGapRight;
+        final double candidateTop = _dataTipPosition!.dy + cursorGapBottom;
 
         // Check if default position fits
-        final bool defaultFits = (candidateLeft + popupWidth <= overlayWidth) &&
-            (candidateTop + popupHeight <= overlayHeight);
+        final bool defaultFits = (candidateLeft + dataTipWidth <= overlayWidth) &&
+            (candidateTop + dataTipHeight <= overlayHeight);
 
-        double finalPopupLeft;
-        double finalPopupTop;
+        double finalDataTipLeft;
+        double finalDataTipTop;
 
         if (defaultFits)
         {
-            finalPopupLeft = candidateLeft;
-            finalPopupTop = candidateTop;
+            finalDataTipLeft = candidateLeft;
+            finalDataTipTop = candidateTop;
         }
         else
         {
             // Alternative position: top-left of the cursor
-            // (Popup's bottom-right corner is to the top-left of the cursor)
-            finalPopupLeft = _popupPosition!.dx - popupWidth - cursorGapLeft;
-            finalPopupTop = _popupPosition!.dy - popupHeight - cursorGapTop;
+            // (DataTip's bottom-right corner is to the top-left of the cursor)
+            finalDataTipLeft = _dataTipPosition!.dx - dataTipWidth - cursorGapLeft;
+            finalDataTipTop = _dataTipPosition!.dy - dataTipHeight - cursorGapTop;
         }
 
-        // Clamp position to ensure popup stays within overlay boundaries
+        // Clamp position to ensure dataTip stays within overlay boundaries
         // Ensure left edge is not < 0
-        if (finalPopupLeft < 0)
-            finalPopupLeft = 0;
+        if (finalDataTipLeft < 0)
+            finalDataTipLeft = 0;
 
         // Ensure right edge does not exceed overlay width
-        if (finalPopupLeft + popupWidth > overlayWidth)
-            finalPopupLeft = overlayWidth - popupWidth;
+        if (finalDataTipLeft + dataTipWidth > overlayWidth)
+            finalDataTipLeft = overlayWidth - dataTipWidth;
 
-        // Recalculate if popup is wider than overlay (pin to left)
-        if (finalPopupLeft < 0) 
-            finalPopupLeft = 0;
+        // Recalculate if dataTip is wider than overlay (pin to left)
+        if (finalDataTipLeft < 0) 
+            finalDataTipLeft = 0;
 
         // Ensure top edge is not < 0
-        if (finalPopupTop < 0)
-            finalPopupTop = 0;
+        if (finalDataTipTop < 0)
+            finalDataTipTop = 0;
 
         // Ensure bottom edge does not exceed overlay height
-        if (finalPopupTop + popupHeight > overlayHeight)
-            finalPopupTop = overlayHeight - popupHeight;
+        if (finalDataTipTop + dataTipHeight > overlayHeight)
+            finalDataTipTop = overlayHeight - dataTipHeight;
 
-        // Recalculate if popup is taller than overlay (pin to top)
-        if (finalPopupTop < 0)
-            finalPopupTop = 0;
+        // Recalculate if dataTip is taller than overlay (pin to top)
+        if (finalDataTipTop < 0)
+            finalDataTipTop = 0;
 
         return Positioned(
-            left: finalPopupLeft,
-            top: finalPopupTop,
+            left: finalDataTipLeft,
+            top: finalDataTipTop,
             child: Container(
-                padding: popupPadding,
+                padding: dataTipPadding,
                 decoration: BoxDecoration(color: backgroundColor, borderRadius: BorderRadius.circular(4)),
-                child: Text(_popupText, style: popupTextStyle)
+                child: Text(_dataTipText, style: dataTipTextStyle)
             )
         );
     }
