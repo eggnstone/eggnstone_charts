@@ -150,9 +150,5 @@ Widget _buildChart(String title, DateTimeChartData data)
         pointRadius: 4
     );
 
-    return DateTimeLineChart(
-        data: data,
-        info: info,
-        chartStyle: style
-    );
+    return DateTimeLineChart(data: data, info: info, style: style);
 }

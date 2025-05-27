@@ -227,9 +227,5 @@ Widget _buildChart(String title, DoubleChartData data)
         pointRadius: 4
     );
 
-    return DoubleLineChart(
-        data: data,
-        info: info,
-        chartStyle: style
-    );
+    return DoubleLineChart(data: data, info: info, style: style);
 }

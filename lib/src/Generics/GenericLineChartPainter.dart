@@ -34,23 +34,33 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     final ChartStyle chartStyle;
     final GenericChartData<TX, TY> customData;
     final DoubleChartData doubleData;
+    final Offset? pointerPosition;
     final GraphMinMaxCalculatedCallback? onGraphMinMaxCalculated;
 
     GenericLineChartPainter({
         required this.chartStyle,
         required this.customData,
         required this.doubleData,
+        this.pointerPosition,
         this.onGraphMinMaxCalculated
     });
 
     @override
     void paint(Canvas canvas, Size size)
     {
-        //logDebug('GenericLineChartPainter.paint()');
+        //logDebug('GenericLineChartPainter.paint() pointerPosition: $pointerPosition');
 
         try
         {
             _paintOrThrow(canvas, size);
+
+            /*final TextPainter tp = TextPainter(
+                text: TextSpan(style: const TextStyle(color: Colors.red, fontSize: 20), text: '${DateTime.now().toIso8601String()} pointerPosition: $pointerPosition'),
+                textDirection: TextDirection.ltr
+            );
+            tp.layout();
+            canvas.drawRect(Rect.fromLTWH(0, 0, tp.width + 20, tp.height + 20), _createPaint(Colors.black, PaintingStyle.fill));
+            tp.paint(canvas, const Offset(10, 10));*/
         }
         on ChartsUserException catch (e, stackTrace)
         {
@@ -135,7 +145,21 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     }
 
     @override
-    bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+    bool shouldRepaint(covariant CustomPainter oldDelegate)
+    {
+        //logDebug('GenericLineChartPainter.shouldRepaint() oldDelegate: ${oldDelegate.runtimeType}');
+
+        if (oldDelegate is GenericLineChartPainter<TX, TY>)
+        {
+            final GenericLineChartPainter<TX, TY> oldPainter = oldDelegate;
+            return oldPainter.customData != customData 
+                || oldPainter.doubleData != doubleData 
+                || oldPainter.chartStyle != chartStyle 
+                || oldPainter.pointerPosition != pointerPosition;
+        }
+
+        return true;
+    }
 
     void _drawLine(Canvas canvas, Paint paint, double x1, double y1, double x2, double y2) => canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
 
@@ -320,13 +344,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     Paint _createGridPaint2()
     => _createPaint(chartStyle.gridColor?.withAlpha(32) ?? chartStyle.borderColor?.withAlpha(32) ?? Colors.grey.withAlpha(32));
 
-    Paint _createPaint(Color color)
+    Paint _createPaint(Color color, [PaintingStyle style = PaintingStyle.stroke])
     {
         final Paint paint = Paint()
             ..color = color
             //..strokeWidth = 1
             ..strokeWidth = 1 / chartStyle.devicePixelRatio
-            ..style = PaintingStyle.stroke;
+            ..style = style;
 
         return paint;
     }
