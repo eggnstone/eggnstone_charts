@@ -3,6 +3,7 @@
 /all_lint_rules.yaml
 /analysis_options.yaml
 /doc/
+/images/
 /test/
 /widgetbook/windows/
 flutter_package.json
