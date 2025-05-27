@@ -1,6 +1,6 @@
 # eggnstone_charts
 
-## 0.1.2
+## 0.1.3
 
 - Adding floating data tip.
 
