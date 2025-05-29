@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import '../ChartInfo.dart';
 import '../ChartStyle.dart';
 import '../Specifics/DoubleChartData.dart';
-import '../Specifics/DoubleMinMax.dart';
 import 'GenericChartData.dart';
 import 'GenericLineChartPainter.dart';
 
@@ -27,7 +26,6 @@ class GenericLineChart<TX, TY, TD extends GenericChartData<TX, TY>> extends Stat
 
 class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extends State<GenericLineChart<TX, TY, TD>>
 {
-    DoubleMinMax? _graphMinMax;
     Offset? _lastPosition;
 
     @override
@@ -36,8 +34,9 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
         //logDebug('GenericLineChart.build()');
 
         final DoubleChartData doubleData = widget.data.getDoubleChartData();
-        final Color borderColor = widget.style.borderColor ?? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black);
-        final Color textColor = widget.style.textColor ?? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black);
+        final Brightness brightness = Theme.of(context).brightness;
+        final Color borderColor = brightness == Brightness.dark ? widget.style.borderColorDark : widget.style.borderColor;
+        final Color textColor = brightness == Brightness.dark ? widget.style.textColorDark : widget.style.textColor;
 
         final Widget? titleWidget = widget.info.title.isNotEmpty
             ? Text(widget.info.title, style: TextStyle(color: textColor, fontSize: widget.style.fontSize), textScaler: const TextScaler.linear(1.5))
@@ -55,8 +54,8 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
                                 customData: widget.data,
                                 doubleData: doubleData,
                                 chartStyle: widget.style.copyWith(borderColor: borderColor, textColor: textColor),
-                                pointerPosition: _lastPosition,
-                                onGraphMinMaxCalculated: _onGraphMinMaxCalculated
+                                brightness: brightness,
+                                pointerPosition: _lastPosition
                             )
                         ),
                         onHover: _onHover,
@@ -67,22 +66,13 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
         );
     }
 
-    void _onGraphMinMaxCalculated(DoubleMinMax graphMinMax)
-    {
-        if (_graphMinMax == graphMinMax)
-            return;
-
-        //logDebug('GenericLineChart.onGraphMinMaxCalculated: $graphMinMax');
-        Future<void>.delayed(Duration.zero, () => setState(() => _graphMinMax = graphMinMax));
-    }
-
     void _onExit(PointerExitEvent event)
-    => _updatePosition(event.localPosition, 'onExit');
+    => _updatePosition(null, 'onExit');
 
     void _onHover(PointerHoverEvent event)
     => _updatePosition(event.localPosition, 'onHover');
 
-    void _updatePosition(Offset localPosition, String source)
+    void _updatePosition(Offset? localPosition, String source)
     {
         //logDebug('$localPosition from $source');
         setState(() => _lastPosition = localPosition);

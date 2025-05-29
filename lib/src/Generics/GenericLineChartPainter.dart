@@ -31,18 +31,24 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     static const double paddingBetweenTicksY = 2;
     static const double tickLineLengthY = 8;
 
+    static const double dataTipPadding = 4;
+    static const double dataTipPointerGapLeft = 2;
+    static const double dataTipPointerGapRight = 12;
+    static const double dataTipPointerGapTop = 4;
+    static const double dataTipPointerGapBottom = 24;
+
     final ChartStyle chartStyle;
     final GenericChartData<TX, TY> customData;
     final DoubleChartData doubleData;
+    final Brightness? brightness;
     final Offset? pointerPosition;
-    final GraphMinMaxCalculatedCallback? onGraphMinMaxCalculated;
 
     GenericLineChartPainter({
         required this.chartStyle,
         required this.customData,
         required this.doubleData,
-        this.pointerPosition,
-        this.onGraphMinMaxCalculated
+        this.brightness,
+        this.pointerPosition
     });
 
     @override
@@ -53,14 +59,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         try
         {
             _paintOrThrow(canvas, size);
-
-            /*final TextPainter tp = TextPainter(
-                text: TextSpan(style: const TextStyle(color: Colors.red, fontSize: 20), text: '${DateTime.now().toIso8601String()} pointerPosition: $pointerPosition'),
-                textDirection: TextDirection.ltr
-            );
-            tp.layout();
-            canvas.drawRect(Rect.fromLTWH(0, 0, tp.width + 20, tp.height + 20), _createPaint(Colors.black, PaintingStyle.fill));
-            tp.paint(canvas, const Offset(10, 10));*/
         }
         on ChartsUserException catch (e, stackTrace)
         {
@@ -104,18 +102,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (DEBUG)
             logDebug('  graphMinMax:       $graphMinMax');
 
-        onGraphMinMaxCalculated?.call(graphMinMax);
-
-        //final List<PositionedTextPainter<TX>> xAxisPainters = <PositionedTextPainter<TX>>[];
         final List<PositionedTextPainter<TX>> xAxisPainters = _createXAxisTicks(graphMinMax);
-
-        //final List<PositionedTextPainter<TY>> yAxisPainters = <PositionedTextPainter<TY>>[];
         final List<PositionedTextPainter<TY>> yAxisPainters = _createYAxisTicks(graphMinMax);
 
         final PaintInfo paintInfo = PaintInfo(
             canvas: canvas,
             size: size,
             graphMinMax: graphMinMax,
+            backgroundPaint: _createBackgroundPaint(),
             borderPaint: _createBorderPaint(),
             gridPaint: _createGridPaint(),
             gridPaint2: _createGridPaint2()
@@ -142,6 +136,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         tpRight.paint(canvas, Offset(size.width - paddingHorizontalOuter - tpRight.width, graphMinMax.maxY / 2));
         tpBottom.paint(canvas, Offset(graphMinMax.maxX / 2, size.height - paddingVerticalOuter - tpBottom.height));
         */
+
+        _drawDataTip(paintInfo);
     }
 
     @override
@@ -306,7 +302,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
             final Paint linePaint = Paint()
                 ..color = color
-                ..strokeWidth = (chartStyle.lineWidth == null ? 2 : chartStyle.lineWidth!) / chartStyle.devicePixelRatio
+                ..strokeWidth = chartStyle.lineWidth / chartStyle.devicePixelRatio
                 ..style = PaintingStyle.fill;
 
             double lastX = paintInfo.graphMinMax.minX + (line.points[0].x - doubleData.minMax.minX) / doubleData.minMax.getWidth() * paintInfo.graphMinMax.getWidth();
@@ -335,14 +331,17 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - tp.height / 2));
     }
 
-    Paint _createBorderPaint()
-    => _createPaint(chartStyle.borderColor ?? Colors.red);
+    Paint _createBackgroundPaint()
+    => _createPaint(brightness == Brightness.dark ? chartStyle.backgroundColorDark : chartStyle.backgroundColor, PaintingStyle.fill);
 
-    Paint _createGridPaint()
-    => _createPaint(chartStyle.gridColor?.withAlpha(128) ?? chartStyle.borderColor?.withAlpha(128) ?? Colors.grey.withAlpha(128));
+    Paint _createBorderPaint()
+    => _createPaint(brightness == Brightness.dark ? chartStyle.borderColorDark : chartStyle.borderColor);
+
+    Paint _createGridPaint() 
+    => _createPaint((brightness == Brightness.dark ? chartStyle.gridColorDark : chartStyle.gridColor).withAlpha(128));
 
     Paint _createGridPaint2()
-    => _createPaint(chartStyle.gridColor?.withAlpha(32) ?? chartStyle.borderColor?.withAlpha(32) ?? Colors.grey.withAlpha(32));
+    => _createPaint((brightness == Brightness.dark ? chartStyle.gridColorDark : chartStyle.gridColor).withAlpha(32));
 
     Paint _createPaint(Color color, [PaintingStyle style = PaintingStyle.stroke])
     {
@@ -391,7 +390,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         }
 
         final PositionedTextPainter<T>? lastPainter = _createTickPainter<T>(
-            //doubleData.minMax,
             dataTools,
             chartStyle,
             tools,
@@ -449,7 +447,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             }
 
             final PositionedTextPainter<T>? tickPainter = _createTickPainter<T>(
-                //doubleData.minMax,
                 dataTools,
                 chartStyle,
                 tools,
@@ -501,7 +498,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     }
 
     static PositionedTextPainter<T>? _createTickPainter<T>(
-        //GenericMinMax<double, double> doubleDataMinMax,
         DataTools dataTools,
         ChartStyle chartStyle,
         GenericTools<T> tools, {
@@ -517,8 +513,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final double textPosition = axis == Axis.horizontal ? dataTools.dataToPixelX(doubleDataValue) : dataTools.dataToPixelY(doubleDataValue);
         final double textPositionStart = textPosition - (axis == Axis.horizontal ? textPainter.width : textPainter.height) / 2;
         final double textPositionEnd = textPosition + (axis == Axis.horizontal ? textPainter.width : textPainter.height) / 2;
-        /*final double doubleDataMin = axis == Axis.horizontal ? doubleDataMinMax.minX : doubleDataMinMax.minY;
-        final double doubleDataMax = axis == Axis.horizontal ? doubleDataMinMax.maxX : doubleDataMinMax.maxY;*/
 
         if (textPositionStart < textPositionMin)
         {
@@ -536,18 +530,54 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             return PositionedTextPainter<T>(position: textPosition, textPainter: null);
         }
 
-        /*if (doubleDataValue < doubleDataMin)
-        {
-            logWarning('doubleDataValue( $doubleDataValue) < doubleDataMin ($doubleDataMin)');
-            return PositionedTextPainter<T>(position: textPosition, textPainter: null);
-        }
-
-        if (doubleDataValue > doubleDataMax)
-        {
-            logWarning('doubleDataValue ($doubleDataValue) > doubleDataMax ($doubleDataMax)');
-            return PositionedTextPainter<T>(position: textPosition, textPainter: null);
-        }*/
-
         return PositionedTextPainter<T>(position: textPosition, textPainter: textPainter);
+    }
+
+    void _drawDataTip(PaintInfo paintInfo)
+    {
+        if (pointerPosition == null)
+            return;
+
+        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
+        final double doubleDataX = dataTools.pixelToDataX(pointerPosition!.dx);
+        final double doubleDataY = dataTools.pixelToDataY(pointerPosition!.dy);
+        if (doubleDataX < doubleData.minMax.minX
+            || doubleDataX > doubleData.minMax.maxX 
+            || doubleDataY < doubleData.minMax.minY 
+            || doubleDataY > doubleData.minMax.maxY)
+            return;
+
+        final TX customDataX = customData.toolsX.toCustomValue(doubleDataX);
+        final TY customDataY = customData.toolsY.toCustomValue(doubleDataY);
+        final String customDataXString = customData.toolsX.format(customDataX).replaceAll('\n', '');
+        final String customDataYString = customData.toolsY.format(customDataY).replaceAll('\n', '');
+
+        final String dataTipText = 'X: $customDataXString\nY: $customDataYString';
+        final TextPainter textPainter = _createAndLayoutTextPainter(dataTipText, chartStyle);
+
+        final double dataTipWidth = textPainter.width + 2 * dataTipPadding;
+        final double dataTipHeight = textPainter.height + 2 * dataTipPadding;
+
+        final double candidateLeft = pointerPosition!.dx + dataTipPointerGapRight;
+        final double candidateTop = pointerPosition!.dy + dataTipPointerGapBottom;
+
+        double finalDataTipLeft = candidateLeft;
+        double finalDataTipTop = candidateTop;
+
+        if (candidateLeft + dataTipWidth > paintInfo.size.width)
+            finalDataTipLeft = pointerPosition!.dx - dataTipWidth - dataTipPointerGapLeft;
+
+        if (candidateTop + dataTipHeight > paintInfo.size.height)
+            finalDataTipTop = pointerPosition!.dy - dataTipHeight - dataTipPointerGapTop;
+
+        paintInfo.canvas.drawRRect(
+            RRect.fromRectAndRadius(
+                Rect.fromLTWH(finalDataTipLeft, finalDataTipTop, dataTipWidth, dataTipHeight),
+                const Radius.circular(4)
+            ),
+            paintInfo.backgroundPaint
+        );
+
+        textPainter.paint(paintInfo.canvas, Offset(finalDataTipLeft + dataTipPadding, finalDataTipTop + dataTipPadding));
     }
 }
