@@ -14,6 +14,7 @@ import '../Specifics/DoubleChartData.dart';
 import '../Specifics/DoubleLineData.dart';
 import '../Specifics/DoubleMinMax.dart';
 import 'GenericChartData.dart';
+import 'GenericLineData.dart';
 import 'GenericTools.dart';
 
 typedef GraphMinMaxCalculatedCallback = void Function(DoubleMinMax graphMinMax);
@@ -54,7 +55,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         required this.customData,
         required this.doubleData,
         this.brightness,
-        this.dataTipFormat = 'X: %x\nY: %y',
+        this.dataTipFormat = '%s\nX: %x\nY: %y',
         this.highlightDistanceX = 20,
         this.highlightDistanceY = 20,
         this.pointerPosition
@@ -147,7 +148,10 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         */
 
         if (closestLineInfo != null && closestLineInfo.closestPointInfo.distance.dx < highlightDistanceX && closestLineInfo.closestPointInfo.distance.dy < highlightDistanceY) 
-            _drawDataTip(paintInfo, closestLineInfo.closestPointInfo);
+        {
+            final GenericLineData<TX, TY> line = customData.lines[closestLineInfo.lineIndex];
+            _drawDataTip(paintInfo, line.label, closestLineInfo.closestPointInfo);
+        }
     }
 
     @override
@@ -599,7 +603,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return PositionedTextPainter<T>(position: textPosition, textPainter: textPainter);
     }
 
-    void _drawDataTip(PaintInfo paintInfo, ClosestPointInfo closestPointInfo)
+    void _drawDataTip(PaintInfo paintInfo, String label, ClosestPointInfo closestPointInfo)
     {
         if (pointerPosition == null)
             return;
@@ -619,7 +623,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final String customDataXString = customData.toolsX.formatDataTip(customDataX);
         final String customDataYString = customData.toolsY.formatDataTip(customDataY);
 
-        final String dataTipText = dataTipFormat.replaceFirst('%x', customDataXString).replaceFirst('%y', customDataYString);
+        final String dataTipText = dataTipFormat.replaceFirst('%s', label).replaceFirst('%x', customDataXString).replaceFirst('%y', customDataYString);
         final TextPainter textPainter = _createAndLayoutTextPainter(dataTipText, chartStyle);
 
         final double dataTipWidth = textPainter.width + 2 * dataTipPaddingX;

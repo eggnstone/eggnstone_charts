@@ -124,7 +124,7 @@ class _$ChartInfoCopyWithImpl<$Res> implements $ChartInfoCopyWith<$Res> {
 class _ChartInfo implements ChartInfo {
   const _ChartInfo(
       {required this.title,
-      this.dataTipFormat = 'X: %x\nY: %y',
+      this.dataTipFormat = '%s\nX: %x\nY: %y',
       this.xAxisNameBottom = '',
       this.xAxisNameTop = '',
       this.yAxisNameLeft = '',

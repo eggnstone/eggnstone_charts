@@ -117,7 +117,14 @@ DateTimeChartData _createDateTimeChartData(
 )
 {
     final List<DateTimeLineData> convertedDateTimeLines = lines
-        .mapIndexed((int index, List<DateTimePoint> points) => DateTimeLineData('Data Series #${index + 1}', points.map((DateTimePoint dp) => invert ? DateTimePoint(dp.x, -dp.y) : dp).toImmutableList()))
+        .mapIndexed(
+            (int index, List<DateTimePoint> points) 
+            => DateTimeLineData(
+                Colors.pink,
+                'Data Series #${index + 1}',
+                points.map((DateTimePoint dp) => invert ? DateTimePoint(dp.x, -dp.y) : dp).toImmutableList()
+            )
+        )
         .toList();
 
     final int rangeX = context.knobs.int.slider(label: 'Range X', initialValue: rangeInitialValueX, min: rangeMinX, max: rangeMaxX, divisions: rangeStepsX);

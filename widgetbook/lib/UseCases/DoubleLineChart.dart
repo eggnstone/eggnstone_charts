@@ -194,7 +194,14 @@ DoubleChartData _createDoubleChartData(
 )
 {
     final List<DoubleLineData> convertedDoubleLines = lines
-        .mapIndexed((int index, List<DoublePoint> points) => DoubleLineData('Data Series #${index + 1}', points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()))
+        .mapIndexed(
+            (int index, List<DoublePoint> points) 
+            => DoubleLineData(
+                Colors.pink,
+                'Data Series #${index + 1}', 
+                points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()
+            )
+        )
         .toList();
 
     final double rangeX = context.knobs.int.slider(label: 'Range X', initialValue: rangeInitialValueX, min: rangeMinX, max: rangeMaxX, divisions: rangeStepsX).toDouble();
