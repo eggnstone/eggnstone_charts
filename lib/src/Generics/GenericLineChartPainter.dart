@@ -347,7 +347,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         final double lineWidth = highlightIndex == null ? chartStyle.lineWidth : 2 * chartStyle.lineWidth;
         final Paint linePaint = _createPaint(color, strokeWidth: lineWidth, paintingStyle: PaintingStyle.fill);
-        final double pointRadius = highlightIndex == 0 ? 2 * chartStyle.pointRadius : chartStyle.pointRadius;
+        final double pointRadius = highlightIndex == null ? chartStyle.pointRadius : highlightIndex == 0 ? 2 * chartStyle.pointRadius : 1.5 * chartStyle.pointRadius;
         paintInfo.canvas.drawCircle(Offset(lastX, lastY), pointRadius, linePaint);
 
         final Offset? distance = _calculateDistanceToPointer(lastX, lastY);
@@ -378,7 +378,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
             _drawLineSegment(paintInfo.canvas, linePaint, lastX, lastY, currentX, currentY);
 
-            final double pointRadius = highlightIndex == pointIndex ? 2 * chartStyle.pointRadius : chartStyle.pointRadius;
+            final double pointRadius = highlightIndex == null ? chartStyle.pointRadius : highlightIndex == pointIndex ? 2 * chartStyle.pointRadius : 1.5 * chartStyle.pointRadius;
             paintInfo.canvas.drawCircle(Offset(currentX, currentY), pointRadius, linePaint);
 
             lastX = currentX;
