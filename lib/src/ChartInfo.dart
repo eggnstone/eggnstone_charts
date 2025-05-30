@@ -7,6 +7,7 @@ abstract class ChartInfo with _$ChartInfo
 {
     const factory ChartInfo({
         required String title,
+        @Default('X: %x\nY: %y') String dataTipFormat,
         @Default('') String xAxisNameBottom,
         @Default('') String xAxisNameTop,
         @Default('') String yAxisNameLeft,

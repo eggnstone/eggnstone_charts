@@ -125,8 +125,8 @@ DateTimeChartData _createDateTimeChartData(
     return DateTimeChartData(
         colors: colors.toImmutableList(),
         lines: convertedDateTimeLines.toImmutableList(),
-        toolsX: DateTimeTools(DateTimeFormatter(DateFormat('dd.\nMM.\nyyyy'))),
-        toolsY: DoubleTools(DoubleFormatter(0, invert: invert)),
+        toolsX: DateTimeTools(DateTimeFormatter(DateFormat('dd.\nMM.\nyyyy')), DateTimeFormatter(DateFormat('dd.MM.yyyy'))),
+        toolsY: DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert)),
         minMax: DateTimeMinMax(
             minX: referenceDateTime.add(Duration(days: minX)),
             maxX: referenceDateTime.add(Duration(days: rangeX)),

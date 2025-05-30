@@ -16,6 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ChartInfo {
   String get title;
+  String get dataTipFormat;
   String get xAxisNameBottom;
   String get xAxisNameTop;
   String get yAxisNameLeft;
@@ -34,6 +35,8 @@ mixin _$ChartInfo {
         (other.runtimeType == runtimeType &&
             other is ChartInfo &&
             (identical(other.title, title) || other.title == title) &&
+            (identical(other.dataTipFormat, dataTipFormat) ||
+                other.dataTipFormat == dataTipFormat) &&
             (identical(other.xAxisNameBottom, xAxisNameBottom) ||
                 other.xAxisNameBottom == xAxisNameBottom) &&
             (identical(other.xAxisNameTop, xAxisNameTop) ||
@@ -45,12 +48,12 @@ mixin _$ChartInfo {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, title, xAxisNameBottom,
-      xAxisNameTop, yAxisNameLeft, yAxisNameRight);
+  int get hashCode => Object.hash(runtimeType, title, dataTipFormat,
+      xAxisNameBottom, xAxisNameTop, yAxisNameLeft, yAxisNameRight);
 
   @override
   String toString() {
-    return 'ChartInfo(title: $title, xAxisNameBottom: $xAxisNameBottom, xAxisNameTop: $xAxisNameTop, yAxisNameLeft: $yAxisNameLeft, yAxisNameRight: $yAxisNameRight)';
+    return 'ChartInfo(title: $title, dataTipFormat: $dataTipFormat, xAxisNameBottom: $xAxisNameBottom, xAxisNameTop: $xAxisNameTop, yAxisNameLeft: $yAxisNameLeft, yAxisNameRight: $yAxisNameRight)';
   }
 }
 
@@ -61,6 +64,7 @@ abstract mixin class $ChartInfoCopyWith<$Res> {
   @useResult
   $Res call(
       {String title,
+      String dataTipFormat,
       String xAxisNameBottom,
       String xAxisNameTop,
       String yAxisNameLeft,
@@ -80,6 +84,7 @@ class _$ChartInfoCopyWithImpl<$Res> implements $ChartInfoCopyWith<$Res> {
   @override
   $Res call({
     Object? title = null,
+    Object? dataTipFormat = null,
     Object? xAxisNameBottom = null,
     Object? xAxisNameTop = null,
     Object? yAxisNameLeft = null,
@@ -89,6 +94,10 @@ class _$ChartInfoCopyWithImpl<$Res> implements $ChartInfoCopyWith<$Res> {
       title: null == title
           ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      dataTipFormat: null == dataTipFormat
+          ? _self.dataTipFormat
+          : dataTipFormat // ignore: cast_nullable_to_non_nullable
               as String,
       xAxisNameBottom: null == xAxisNameBottom
           ? _self.xAxisNameBottom
@@ -115,6 +124,7 @@ class _$ChartInfoCopyWithImpl<$Res> implements $ChartInfoCopyWith<$Res> {
 class _ChartInfo implements ChartInfo {
   const _ChartInfo(
       {required this.title,
+      this.dataTipFormat = 'X: %x\nY: %y',
       this.xAxisNameBottom = '',
       this.xAxisNameTop = '',
       this.yAxisNameLeft = '',
@@ -122,6 +132,9 @@ class _ChartInfo implements ChartInfo {
 
   @override
   final String title;
+  @override
+  @JsonKey()
+  final String dataTipFormat;
   @override
   @JsonKey()
   final String xAxisNameBottom;
@@ -149,6 +162,8 @@ class _ChartInfo implements ChartInfo {
         (other.runtimeType == runtimeType &&
             other is _ChartInfo &&
             (identical(other.title, title) || other.title == title) &&
+            (identical(other.dataTipFormat, dataTipFormat) ||
+                other.dataTipFormat == dataTipFormat) &&
             (identical(other.xAxisNameBottom, xAxisNameBottom) ||
                 other.xAxisNameBottom == xAxisNameBottom) &&
             (identical(other.xAxisNameTop, xAxisNameTop) ||
@@ -160,12 +175,12 @@ class _ChartInfo implements ChartInfo {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, title, xAxisNameBottom,
-      xAxisNameTop, yAxisNameLeft, yAxisNameRight);
+  int get hashCode => Object.hash(runtimeType, title, dataTipFormat,
+      xAxisNameBottom, xAxisNameTop, yAxisNameLeft, yAxisNameRight);
 
   @override
   String toString() {
-    return 'ChartInfo(title: $title, xAxisNameBottom: $xAxisNameBottom, xAxisNameTop: $xAxisNameTop, yAxisNameLeft: $yAxisNameLeft, yAxisNameRight: $yAxisNameRight)';
+    return 'ChartInfo(title: $title, dataTipFormat: $dataTipFormat, xAxisNameBottom: $xAxisNameBottom, xAxisNameTop: $xAxisNameTop, yAxisNameLeft: $yAxisNameLeft, yAxisNameRight: $yAxisNameRight)';
   }
 }
 
@@ -179,6 +194,7 @@ abstract mixin class _$ChartInfoCopyWith<$Res>
   @useResult
   $Res call(
       {String title,
+      String dataTipFormat,
       String xAxisNameBottom,
       String xAxisNameTop,
       String yAxisNameLeft,
@@ -198,6 +214,7 @@ class __$ChartInfoCopyWithImpl<$Res> implements _$ChartInfoCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   $Res call({
     Object? title = null,
+    Object? dataTipFormat = null,
     Object? xAxisNameBottom = null,
     Object? xAxisNameTop = null,
     Object? yAxisNameLeft = null,
@@ -207,6 +224,10 @@ class __$ChartInfoCopyWithImpl<$Res> implements _$ChartInfoCopyWith<$Res> {
       title: null == title
           ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      dataTipFormat: null == dataTipFormat
+          ? _self.dataTipFormat
+          : dataTipFormat // ignore: cast_nullable_to_non_nullable
               as String,
       xAxisNameBottom: null == xAxisNameBottom
           ? _self.xAxisNameBottom

@@ -2,11 +2,9 @@ import '../Generics/GenericTools.dart';
 
 class DateTimeTools extends GenericTools<DateTime>
 {
-    DateTimeTools(super.formatter);
+    DateTimeTools(super.formatter, super.dataTipFormatter);
 
-    @override
-    String format(DateTime value)
-    => formatter.format(value);
+
 
     @override
     double getNextDoubleValue(double value)

@@ -4,11 +4,9 @@ import '../Generics/GenericTools.dart';
 
 class DoubleTools extends GenericTools<double>
 {
-    DoubleTools(super.formatter);
+    DoubleTools(super.formatter, super.dataTipFormatter);
 
-    @override
-    String format(double value)
-    => formatter.format(value);
+
 
     @override
     double getNextDoubleValue(double value)

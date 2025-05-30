@@ -64,8 +64,8 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
         return DoubleChartData(
             colors: colors,
             lines: doubleLines.toImmutableList(),
-            toolsX: DoubleTools(const DoubleFormatter(0)),
-            toolsY: DoubleTools(const DoubleFormatter(0)),
+            toolsX: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
+            toolsY: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
             minMax: doubleMinxMax
         );
     }

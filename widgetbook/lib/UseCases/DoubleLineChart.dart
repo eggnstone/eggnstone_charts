@@ -202,8 +202,8 @@ DoubleChartData _createDoubleChartData(
     return DoubleChartData(
         colors: colors.toImmutableList(),
         lines: convertedDoubleLines.toImmutableList(),
-        toolsX: DoubleTools(const DoubleFormatter(0)),
-        toolsY: DoubleTools(DoubleFormatter(0, invert: invert)),
+        toolsX: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
+        toolsY: DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert)),
         minMax: DoubleMinMax(
             minX: minX,
             maxX: rangeX,

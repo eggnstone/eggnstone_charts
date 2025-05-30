@@ -31,7 +31,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     static const double paddingBetweenTicksY = 2;
     static const double tickLineLengthY = 8;
 
-    static const double dataTipPadding = 4;
+    static const double dataTipPaddingX = 6;
+    static const double dataTipPaddingY = 4;
     static const double dataTipPointerGapLeft = 2;
     static const double dataTipPointerGapRight = 12;
     static const double dataTipPointerGapTop = 4;
@@ -39,6 +40,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
     final ChartStyle chartStyle;
     final GenericChartData<TX, TY> customData;
+    final String dataTipFormat;
     final DoubleChartData doubleData;
     final Brightness? brightness;
     final Offset? pointerPosition;
@@ -48,6 +50,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         required this.customData,
         required this.doubleData,
         this.brightness,
+        this.dataTipFormat = 'X: %x\nY: %y',
         this.pointerPosition
     });
 
@@ -549,14 +552,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         final TX customDataX = customData.toolsX.toCustomValue(doubleDataX);
         final TY customDataY = customData.toolsY.toCustomValue(doubleDataY);
-        final String customDataXString = customData.toolsX.format(customDataX).replaceAll('\n', '');
-        final String customDataYString = customData.toolsY.format(customDataY).replaceAll('\n', '');
+        final String customDataXString = customData.toolsX.formatDataTip(customDataX);
+        final String customDataYString = customData.toolsY.formatDataTip(customDataY);
 
-        final String dataTipText = 'X: $customDataXString\nY: $customDataYString';
+        final String dataTipText = dataTipFormat.replaceFirst('%x', customDataXString).replaceFirst('%y', customDataYString);
         final TextPainter textPainter = _createAndLayoutTextPainter(dataTipText, chartStyle);
 
-        final double dataTipWidth = textPainter.width + 2 * dataTipPadding;
-        final double dataTipHeight = textPainter.height + 2 * dataTipPadding;
+        final double dataTipWidth = textPainter.width + 2 * dataTipPaddingX;
+        final double dataTipHeight = textPainter.height + 2 * dataTipPaddingY;
 
         final double candidateLeft = pointerPosition!.dx + dataTipPointerGapRight;
         final double candidateTop = pointerPosition!.dy + dataTipPointerGapBottom;
@@ -570,14 +573,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (candidateTop + dataTipHeight > paintInfo.size.height)
             finalDataTipTop = pointerPosition!.dy - dataTipHeight - dataTipPointerGapTop;
 
-        paintInfo.canvas.drawRRect(
-            RRect.fromRectAndRadius(
-                Rect.fromLTWH(finalDataTipLeft, finalDataTipTop, dataTipWidth, dataTipHeight),
-                const Radius.circular(4)
-            ),
-            paintInfo.backgroundPaint
+        final RRect rRect = RRect.fromRectAndRadius(
+            Rect.fromLTWH(finalDataTipLeft, finalDataTipTop, dataTipWidth, dataTipHeight),
+            const Radius.circular(4)
         );
 
-        textPainter.paint(paintInfo.canvas, Offset(finalDataTipLeft + dataTipPadding, finalDataTipTop + dataTipPadding));
+        paintInfo.canvas.drawRRect(rRect, paintInfo.borderPaint);
+        paintInfo.canvas.drawRRect(rRect, paintInfo.backgroundPaint);
+        textPainter.paint(paintInfo.canvas, Offset(finalDataTipLeft + dataTipPaddingX, finalDataTipTop + dataTipPaddingY));
     }
 }
