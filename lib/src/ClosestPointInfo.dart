@@ -9,7 +9,6 @@ abstract class ClosestPointInfo with _$ClosestPointInfo
 {
     const factory ClosestPointInfo({
         required Offset distance,
-        required int lineIndex,
         required int pointIndex,
         required Offset position
     }) = _ClosestPointInfo;

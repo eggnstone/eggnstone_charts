@@ -16,7 +16,6 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ClosestPointInfo {
   Offset get distance;
-  int get lineIndex;
   int get pointIndex;
   Offset get position;
 
@@ -35,8 +34,6 @@ mixin _$ClosestPointInfo {
             other is ClosestPointInfo &&
             (identical(other.distance, distance) ||
                 other.distance == distance) &&
-            (identical(other.lineIndex, lineIndex) ||
-                other.lineIndex == lineIndex) &&
             (identical(other.pointIndex, pointIndex) ||
                 other.pointIndex == pointIndex) &&
             (identical(other.position, position) ||
@@ -44,12 +41,11 @@ mixin _$ClosestPointInfo {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, distance, lineIndex, pointIndex, position);
+  int get hashCode => Object.hash(runtimeType, distance, pointIndex, position);
 
   @override
   String toString() {
-    return 'ClosestPointInfo(distance: $distance, lineIndex: $lineIndex, pointIndex: $pointIndex, position: $position)';
+    return 'ClosestPointInfo(distance: $distance, pointIndex: $pointIndex, position: $position)';
   }
 }
 
@@ -59,7 +55,7 @@ abstract mixin class $ClosestPointInfoCopyWith<$Res> {
           ClosestPointInfo value, $Res Function(ClosestPointInfo) _then) =
       _$ClosestPointInfoCopyWithImpl;
   @useResult
-  $Res call({Offset distance, int lineIndex, int pointIndex, Offset position});
+  $Res call({Offset distance, int pointIndex, Offset position});
 }
 
 /// @nodoc
@@ -76,7 +72,6 @@ class _$ClosestPointInfoCopyWithImpl<$Res>
   @override
   $Res call({
     Object? distance = null,
-    Object? lineIndex = null,
     Object? pointIndex = null,
     Object? position = null,
   }) {
@@ -85,10 +80,6 @@ class _$ClosestPointInfoCopyWithImpl<$Res>
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
               as Offset,
-      lineIndex: null == lineIndex
-          ? _self.lineIndex
-          : lineIndex // ignore: cast_nullable_to_non_nullable
-              as int,
       pointIndex: null == pointIndex
           ? _self.pointIndex
           : pointIndex // ignore: cast_nullable_to_non_nullable
@@ -106,14 +97,11 @@ class _$ClosestPointInfoCopyWithImpl<$Res>
 class _ClosestPointInfo implements ClosestPointInfo {
   const _ClosestPointInfo(
       {required this.distance,
-      required this.lineIndex,
       required this.pointIndex,
       required this.position});
 
   @override
   final Offset distance;
-  @override
-  final int lineIndex;
   @override
   final int pointIndex;
   @override
@@ -134,8 +122,6 @@ class _ClosestPointInfo implements ClosestPointInfo {
             other is _ClosestPointInfo &&
             (identical(other.distance, distance) ||
                 other.distance == distance) &&
-            (identical(other.lineIndex, lineIndex) ||
-                other.lineIndex == lineIndex) &&
             (identical(other.pointIndex, pointIndex) ||
                 other.pointIndex == pointIndex) &&
             (identical(other.position, position) ||
@@ -143,12 +129,11 @@ class _ClosestPointInfo implements ClosestPointInfo {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, distance, lineIndex, pointIndex, position);
+  int get hashCode => Object.hash(runtimeType, distance, pointIndex, position);
 
   @override
   String toString() {
-    return 'ClosestPointInfo(distance: $distance, lineIndex: $lineIndex, pointIndex: $pointIndex, position: $position)';
+    return 'ClosestPointInfo(distance: $distance, pointIndex: $pointIndex, position: $position)';
   }
 }
 
@@ -160,7 +145,7 @@ abstract mixin class _$ClosestPointInfoCopyWith<$Res>
       __$ClosestPointInfoCopyWithImpl;
   @override
   @useResult
-  $Res call({Offset distance, int lineIndex, int pointIndex, Offset position});
+  $Res call({Offset distance, int pointIndex, Offset position});
 }
 
 /// @nodoc
@@ -177,7 +162,6 @@ class __$ClosestPointInfoCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? distance = null,
-    Object? lineIndex = null,
     Object? pointIndex = null,
     Object? position = null,
   }) {
@@ -186,10 +170,6 @@ class __$ClosestPointInfoCopyWithImpl<$Res>
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
               as Offset,
-      lineIndex: null == lineIndex
-          ? _self.lineIndex
-          : lineIndex // ignore: cast_nullable_to_non_nullable
-              as int,
       pointIndex: null == pointIndex
           ? _self.pointIndex
           : pointIndex // ignore: cast_nullable_to_non_nullable

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../ChartStyle.dart';
 import '../ChartsUserException.dart';
+import '../ClosestLineInfo.dart';
 import '../ClosestPointInfo.dart';
 import '../DataTools.dart';
 import '../PaintInfo.dart';
@@ -54,8 +55,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         required this.doubleData,
         this.brightness,
         this.dataTipFormat = 'X: %x\nY: %y',
-        this.highlightDistanceX = 10,
-        this.highlightDistanceY = 10,
+        this.highlightDistanceX = 20,
+        this.highlightDistanceY = 20,
         this.pointerPosition
     });
 
@@ -131,7 +132,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         _paintTextPaintersTop(paintInfo, xAxisPainters);
         _paintTextPaintersBottom(paintInfo, xAxisPainters);
 
-        final ClosestPointInfo? closestPointInfo = _drawLines(paintInfo);
+        final ClosestLineInfo? closestLineInfo = _drawLines(paintInfo);
 
         /*
         final TextPainter tpLeft = _createAndLayoutTextPainter('Left');
@@ -145,8 +146,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         tpBottom.paint(canvas, Offset(graphMinMax.maxX / 2, size.height - paddingVerticalOuter - tpBottom.height));
         */
 
-        if (closestPointInfo != null && closestPointInfo.distance.dx < highlightDistanceX && closestPointInfo.distance.dy < highlightDistanceY)
-            _drawDataTip(paintInfo);
+        if (closestLineInfo != null && closestLineInfo.closestPointInfo.distance.dx < highlightDistanceX && closestLineInfo.closestPointInfo.distance.dy < highlightDistanceY) 
+            _drawDataTip(paintInfo, closestLineInfo.closestPointInfo);
     }
 
     @override
@@ -295,9 +296,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         }
     }
 
-    ClosestPointInfo? _drawLines(PaintInfo paintInfo)
+    ClosestLineInfo? _drawLines(PaintInfo paintInfo)
     {
-        ClosestPointInfo? closestPointInfoGlobal;
+        ClosestLineInfo? closestLineInfo;
 
         for (int lineIndex = 0; lineIndex < doubleData.lines.size; lineIndex++)
         {
@@ -313,27 +314,27 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 color = doubleData.colors[lineIndex];
 
             final ClosestPointInfo? closestPointInfo = _drawLine(paintInfo, line, color);
-            if (_isCloserGlobal(closestPointInfo, closestPointInfoGlobal)) 
-                closestPointInfoGlobal = closestPointInfo!.copyWith(lineIndex: lineIndex);
+            if (_isLineCloser(closestPointInfo, closestLineInfo))
+                closestLineInfo = ClosestLineInfo(closestPointInfo: closestPointInfo!, lineIndex: lineIndex);
         }
 
-        if (closestPointInfoGlobal != null && closestPointInfoGlobal.distance.dx < highlightDistanceX && closestPointInfoGlobal.distance.dy < highlightDistanceY)
+        if (closestLineInfo != null && closestLineInfo.closestPointInfo.distance.dx < highlightDistanceX && closestLineInfo.closestPointInfo.distance.dy < highlightDistanceY)
         {
-            final DoubleLineData line = doubleData.lines[closestPointInfoGlobal.lineIndex];
+            final DoubleLineData line = doubleData.lines[closestLineInfo.lineIndex];
 
             Color color;
-            if (closestPointInfoGlobal.lineIndex < 0 || closestPointInfoGlobal.lineIndex >= doubleData.colors.size)
+            if (closestLineInfo.lineIndex < 0 || closestLineInfo.lineIndex >= doubleData.colors.size)
             {
-                logError('GenericLineChartPainter.linePaint() lineIndex: ${closestPointInfoGlobal.lineIndex} out of range for colors.size: ${doubleData.colors.size}');
+                logError('GenericLineChartPainter.linePaint() lineIndex: ${closestLineInfo.lineIndex} out of range for colors.size: ${doubleData.colors.size}');
                 color = Colors.black;
             }
             else
-                color = doubleData.colors[closestPointInfoGlobal.lineIndex];
+                color = doubleData.colors[closestLineInfo.lineIndex];
 
-            _drawLine(paintInfo, line, color, highlightIndex: closestPointInfoGlobal.pointIndex);
+            _drawLine(paintInfo, line, color, highlightIndex: closestLineInfo.closestPointInfo.pointIndex);
         }
 
-        return closestPointInfoGlobal;
+        return closestLineInfo;
     }
 
     ClosestPointInfo? _drawLine(PaintInfo paintInfo, DoubleLineData line, Color color, {int? highlightIndex})
@@ -352,7 +353,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final Offset? distance = _calculateDistanceToPointer(lastX, lastY);
         ClosestPointInfo? closestPointInfo = distance == null ? null : ClosestPointInfo(
                 distance: distance,
-                lineIndex: -1,
                 pointIndex: 0,
                 position: Offset(lastX, lastY)
             );
@@ -366,12 +366,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             /*logDebug('  $pointIndex: $currentX , $currentY (dist: ${distance?.dx} , ${distance?.dy})'
                 ' compared to  '
                 '${closestPointInfo?.position.dx} , ${closestPointInfo?.position.dy} (dist: ${closestPointInfo?.distance.dx} , ${closestPointInfo?.distance.dy})');*/
-            if (_isCloser(distance, closestPointInfo))
+            if (_isPointCloser(distance, closestPointInfo))
             {
                 //logDebug('    is closer: distance: $distance, closestPointInfo: $closestPointInfo, pointIndex: $pointIndex');
                 closestPointInfo = ClosestPointInfo(
                     distance: distance!,
-                    lineIndex: -1,
                     pointIndex: pointIndex,
                     position: Offset(currentX, currentY)
                 );
@@ -600,10 +599,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return PositionedTextPainter<T>(position: textPosition, textPainter: textPainter);
     }
 
-    void _drawDataTip(PaintInfo paintInfo)
+    void _drawDataTip(PaintInfo paintInfo, ClosestPointInfo closestPointInfo)
     {
         if (pointerPosition == null)
             return;
+
+        final double closestX2 = closestPointInfo.position.dx;
+        final double closestY2 = closestPointInfo.position.dy;
 
         final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
         if (dataTools.pixelToDataX(pointerPosition!.dx + tickLineLengthX) < doubleData.minMax.minX
@@ -612,12 +614,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             || dataTools.pixelToDataY(pointerPosition!.dy + tickLineLengthY) > doubleData.minMax.maxY)
             return;
 
-        final TX customDataX = customData.toolsX.toCustomValue(dataTools.pixelToDataX(pointerPosition!.dx));
-        final TY customDataY = customData.toolsY.toCustomValue(dataTools.pixelToDataY(pointerPosition!.dy));
+        final TX customDataX = customData.toolsX.toCustomValue(dataTools.pixelToDataX(closestX2));
+        final TY customDataY = customData.toolsY.toCustomValue(dataTools.pixelToDataY(closestY2));
         final String customDataXString = customData.toolsX.formatDataTip(customDataX);
         final String customDataYString = customData.toolsY.formatDataTip(customDataY);
 
-        //final String dataTipFormat = dataTipStyle?.format ?? 'X: %x\nY: %y';
         final String dataTipText = dataTipFormat.replaceFirst('%x', customDataXString).replaceFirst('%y', customDataYString);
         final TextPainter textPainter = _createAndLayoutTextPainter(dataTipText, chartStyle);
 
@@ -657,10 +658,10 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return Offset((pointerPosition!.dx - x).abs(), (pointerPosition!.dy - y).abs());
     }
 
-    bool _isCloser(Offset? distance, ClosestPointInfo? closestPointInfo)
+    bool _isPointCloser(Offset? distance, ClosestPointInfo? closestPointInfo)
     {
         /*if (pointerPosition != null)
-            logDebug('_isCloser: distance: $distance, closestPointInfo: $closestPointInfo');*/
+            logDebug('_isPointCloser: distance: $distance, closestPointInfo: $closestPointInfo');*/
 
         if (distance == null)
             return false;
@@ -668,21 +669,21 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (closestPointInfo == null)
             return true;
 
-        //logDebug('_isCloser: distance: $distance, closestPointInfo: $closestPointInfo   closer: ${distance < closestPointInfo.distance}');
+        //logDebug('_isPointCloser: distance: $distance, closestPointInfo: $closestPointInfo   closer: ${distance < closestPointInfo.distance}');
         return distance.distanceSquared < closestPointInfo.distance.distanceSquared;
     }
 
-    bool _isCloserGlobal(ClosestPointInfo? closestPointInfo, ClosestPointInfo? closestPointInfoGlobal)
+    bool _isLineCloser(ClosestPointInfo? closestPointInfo, ClosestLineInfo? closestLineInfo)
     {
         /*if (pointerPosition != null)
-            logDebug('_isCloserGlobal: closestPointInfo: $closestPointInfo, closestPointInfoGlobal: $closestPointInfoGlobal');*/
+            logDebug('_isLineCloser: closestPointInfo: $closestPointInfo, closestPointInfoGlobal: $closestPointInfoGlobal');*/
 
         if (closestPointInfo == null)
             return false;
 
-        if (closestPointInfoGlobal == null)
+        if (closestLineInfo?.closestPointInfo == null)
             return true;
 
-        return closestPointInfo.distance < closestPointInfoGlobal.distance;
+        return closestPointInfo.distance.distanceSquared < closestLineInfo!.closestPointInfo.distance.distanceSquared;
     }
 }
