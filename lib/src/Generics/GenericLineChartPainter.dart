@@ -112,8 +112,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             canvas: canvas,
             size: size,
             graphMinMax: graphMinMax,
-            backgroundPaint: _createBackgroundPaint(),
             borderPaint: _createBorderPaint(),
+            dataTipBackgroundPaint: _createDataTipBackgroundPaint(),
             gridPaint: _createGridPaint(),
             gridPaint2: _createGridPaint2()
         );
@@ -334,8 +334,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - tp.height / 2));
     }
 
-    Paint _createBackgroundPaint()
-    => _createPaint(brightness == Brightness.dark ? chartStyle.backgroundColorDark : chartStyle.backgroundColor, PaintingStyle.fill);
+    Paint _createDataTipBackgroundPaint()
+    => _createPaint(brightness == Brightness.dark ? chartStyle.dataTipBackgroundColorDark : chartStyle.dataTipBackgroundColor, PaintingStyle.fill);
 
     Paint _createBorderPaint()
     => _createPaint(brightness == Brightness.dark ? chartStyle.borderColorDark : chartStyle.borderColor);
@@ -542,19 +542,18 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             return;
 
         final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
-        final double doubleDataX = dataTools.pixelToDataX(pointerPosition!.dx);
-        final double doubleDataY = dataTools.pixelToDataY(pointerPosition!.dy);
-        if (doubleDataX < doubleData.minMax.minX
-            || doubleDataX > doubleData.minMax.maxX 
-            || doubleDataY < doubleData.minMax.minY 
-            || doubleDataY > doubleData.minMax.maxY)
+        if (dataTools.pixelToDataX(pointerPosition!.dx + tickLineLengthX) < doubleData.minMax.minX
+            || dataTools.pixelToDataX(pointerPosition!.dx - tickLineLengthX) > doubleData.minMax.maxX
+            || dataTools.pixelToDataY(pointerPosition!.dy - tickLineLengthY) < doubleData.minMax.minY
+            || dataTools.pixelToDataY(pointerPosition!.dy + tickLineLengthY) > doubleData.minMax.maxY)
             return;
 
-        final TX customDataX = customData.toolsX.toCustomValue(doubleDataX);
-        final TY customDataY = customData.toolsY.toCustomValue(doubleDataY);
+        final TX customDataX = customData.toolsX.toCustomValue(dataTools.pixelToDataX(pointerPosition!.dx));
+        final TY customDataY = customData.toolsY.toCustomValue(dataTools.pixelToDataY(pointerPosition!.dy));
         final String customDataXString = customData.toolsX.formatDataTip(customDataX);
         final String customDataYString = customData.toolsY.formatDataTip(customDataY);
 
+        //final String dataTipFormat = dataTipStyle?.format ?? 'X: %x\nY: %y';
         final String dataTipText = dataTipFormat.replaceFirst('%x', customDataXString).replaceFirst('%y', customDataYString);
         final TextPainter textPainter = _createAndLayoutTextPainter(dataTipText, chartStyle);
 
@@ -579,7 +578,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         );
 
         paintInfo.canvas.drawRRect(rRect, paintInfo.borderPaint);
-        paintInfo.canvas.drawRRect(rRect, paintInfo.backgroundPaint);
+        paintInfo.canvas.drawRRect(rRect, paintInfo.dataTipBackgroundPaint);
         textPainter.paint(paintInfo.canvas, Offset(finalDataTipLeft + dataTipPaddingX, finalDataTipTop + dataTipPaddingY));
     }
 }

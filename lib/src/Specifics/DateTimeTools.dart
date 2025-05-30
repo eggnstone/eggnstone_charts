@@ -4,8 +4,6 @@ class DateTimeTools extends GenericTools<DateTime>
 {
     DateTimeTools(super.formatter, super.dataTipFormatter);
 
-
-
     @override
     double getNextDoubleValue(double value)
     => toDoubleValue(getNextNiceCustomValue(toCustomValue(value)));

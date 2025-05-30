@@ -19,10 +19,10 @@ mixin _$ChartStyle {
   double get fontSize;
   double get pointRadius;
   double get lineWidth;
-  Color get backgroundColor;
-  Color get backgroundColorDark;
   Color get borderColor;
   Color get borderColorDark;
+  Color get dataTipBackgroundColor;
+  Color get dataTipBackgroundColorDark;
   Color get gridColor;
   Color get gridColorDark;
   Color get textColor;
@@ -48,14 +48,16 @@ mixin _$ChartStyle {
                 other.pointRadius == pointRadius) &&
             (identical(other.lineWidth, lineWidth) ||
                 other.lineWidth == lineWidth) &&
-            (identical(other.backgroundColor, backgroundColor) ||
-                other.backgroundColor == backgroundColor) &&
-            (identical(other.backgroundColorDark, backgroundColorDark) ||
-                other.backgroundColorDark == backgroundColorDark) &&
             (identical(other.borderColor, borderColor) ||
                 other.borderColor == borderColor) &&
             (identical(other.borderColorDark, borderColorDark) ||
                 other.borderColorDark == borderColorDark) &&
+            (identical(other.dataTipBackgroundColor, dataTipBackgroundColor) ||
+                other.dataTipBackgroundColor == dataTipBackgroundColor) &&
+            (identical(other.dataTipBackgroundColorDark,
+                    dataTipBackgroundColorDark) ||
+                other.dataTipBackgroundColorDark ==
+                    dataTipBackgroundColorDark) &&
             (identical(other.gridColor, gridColor) ||
                 other.gridColor == gridColor) &&
             (identical(other.gridColorDark, gridColorDark) ||
@@ -73,10 +75,10 @@ mixin _$ChartStyle {
       fontSize,
       pointRadius,
       lineWidth,
-      backgroundColor,
-      backgroundColorDark,
       borderColor,
       borderColorDark,
+      dataTipBackgroundColor,
+      dataTipBackgroundColorDark,
       gridColor,
       gridColorDark,
       textColor,
@@ -84,7 +86,7 @@ mixin _$ChartStyle {
 
   @override
   String toString() {
-    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, pointRadius: $pointRadius, lineWidth: $lineWidth, backgroundColor: $backgroundColor, backgroundColorDark: $backgroundColorDark, borderColor: $borderColor, borderColorDark: $borderColorDark, gridColor: $gridColor, gridColorDark: $gridColorDark, textColor: $textColor, textColorDark: $textColorDark)';
+    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, pointRadius: $pointRadius, lineWidth: $lineWidth, borderColor: $borderColor, borderColorDark: $borderColorDark, dataTipBackgroundColor: $dataTipBackgroundColor, dataTipBackgroundColorDark: $dataTipBackgroundColorDark, gridColor: $gridColor, gridColorDark: $gridColorDark, textColor: $textColor, textColorDark: $textColorDark)';
   }
 }
 
@@ -99,10 +101,10 @@ abstract mixin class $ChartStyleCopyWith<$Res> {
       double fontSize,
       double pointRadius,
       double lineWidth,
-      Color backgroundColor,
-      Color backgroundColorDark,
       Color borderColor,
       Color borderColorDark,
+      Color dataTipBackgroundColor,
+      Color dataTipBackgroundColorDark,
       Color gridColor,
       Color gridColorDark,
       Color textColor,
@@ -125,10 +127,10 @@ class _$ChartStyleCopyWithImpl<$Res> implements $ChartStyleCopyWith<$Res> {
     Object? fontSize = null,
     Object? pointRadius = null,
     Object? lineWidth = null,
-    Object? backgroundColor = null,
-    Object? backgroundColorDark = null,
     Object? borderColor = null,
     Object? borderColorDark = null,
+    Object? dataTipBackgroundColor = null,
+    Object? dataTipBackgroundColorDark = null,
     Object? gridColor = null,
     Object? gridColorDark = null,
     Object? textColor = null,
@@ -151,14 +153,6 @@ class _$ChartStyleCopyWithImpl<$Res> implements $ChartStyleCopyWith<$Res> {
           ? _self.lineWidth
           : lineWidth // ignore: cast_nullable_to_non_nullable
               as double,
-      backgroundColor: null == backgroundColor
-          ? _self.backgroundColor
-          : backgroundColor // ignore: cast_nullable_to_non_nullable
-              as Color,
-      backgroundColorDark: null == backgroundColorDark
-          ? _self.backgroundColorDark
-          : backgroundColorDark // ignore: cast_nullable_to_non_nullable
-              as Color,
       borderColor: null == borderColor
           ? _self.borderColor
           : borderColor // ignore: cast_nullable_to_non_nullable
@@ -166,6 +160,14 @@ class _$ChartStyleCopyWithImpl<$Res> implements $ChartStyleCopyWith<$Res> {
       borderColorDark: null == borderColorDark
           ? _self.borderColorDark
           : borderColorDark // ignore: cast_nullable_to_non_nullable
+              as Color,
+      dataTipBackgroundColor: null == dataTipBackgroundColor
+          ? _self.dataTipBackgroundColor
+          : dataTipBackgroundColor // ignore: cast_nullable_to_non_nullable
+              as Color,
+      dataTipBackgroundColorDark: null == dataTipBackgroundColorDark
+          ? _self.dataTipBackgroundColorDark
+          : dataTipBackgroundColorDark // ignore: cast_nullable_to_non_nullable
               as Color,
       gridColor: null == gridColor
           ? _self.gridColor
@@ -195,10 +197,10 @@ class _ChartStyle implements ChartStyle {
       required this.fontSize,
       required this.pointRadius,
       this.lineWidth = 2,
-      this.backgroundColor = Colors.white,
-      this.backgroundColorDark = Colors.black,
       this.borderColor = Colors.black,
       this.borderColorDark = Colors.white,
+      this.dataTipBackgroundColor = Colors.white,
+      this.dataTipBackgroundColorDark = Colors.black,
       this.gridColor = Colors.grey,
       this.gridColorDark = Colors.grey,
       this.textColor = Colors.black,
@@ -215,16 +217,16 @@ class _ChartStyle implements ChartStyle {
   final double lineWidth;
   @override
   @JsonKey()
-  final Color backgroundColor;
-  @override
-  @JsonKey()
-  final Color backgroundColorDark;
-  @override
-  @JsonKey()
   final Color borderColor;
   @override
   @JsonKey()
   final Color borderColorDark;
+  @override
+  @JsonKey()
+  final Color dataTipBackgroundColor;
+  @override
+  @JsonKey()
+  final Color dataTipBackgroundColorDark;
   @override
   @JsonKey()
   final Color gridColor;
@@ -259,14 +261,16 @@ class _ChartStyle implements ChartStyle {
                 other.pointRadius == pointRadius) &&
             (identical(other.lineWidth, lineWidth) ||
                 other.lineWidth == lineWidth) &&
-            (identical(other.backgroundColor, backgroundColor) ||
-                other.backgroundColor == backgroundColor) &&
-            (identical(other.backgroundColorDark, backgroundColorDark) ||
-                other.backgroundColorDark == backgroundColorDark) &&
             (identical(other.borderColor, borderColor) ||
                 other.borderColor == borderColor) &&
             (identical(other.borderColorDark, borderColorDark) ||
                 other.borderColorDark == borderColorDark) &&
+            (identical(other.dataTipBackgroundColor, dataTipBackgroundColor) ||
+                other.dataTipBackgroundColor == dataTipBackgroundColor) &&
+            (identical(other.dataTipBackgroundColorDark,
+                    dataTipBackgroundColorDark) ||
+                other.dataTipBackgroundColorDark ==
+                    dataTipBackgroundColorDark) &&
             (identical(other.gridColor, gridColor) ||
                 other.gridColor == gridColor) &&
             (identical(other.gridColorDark, gridColorDark) ||
@@ -284,10 +288,10 @@ class _ChartStyle implements ChartStyle {
       fontSize,
       pointRadius,
       lineWidth,
-      backgroundColor,
-      backgroundColorDark,
       borderColor,
       borderColorDark,
+      dataTipBackgroundColor,
+      dataTipBackgroundColorDark,
       gridColor,
       gridColorDark,
       textColor,
@@ -295,7 +299,7 @@ class _ChartStyle implements ChartStyle {
 
   @override
   String toString() {
-    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, pointRadius: $pointRadius, lineWidth: $lineWidth, backgroundColor: $backgroundColor, backgroundColorDark: $backgroundColorDark, borderColor: $borderColor, borderColorDark: $borderColorDark, gridColor: $gridColor, gridColorDark: $gridColorDark, textColor: $textColor, textColorDark: $textColorDark)';
+    return 'ChartStyle(devicePixelRatio: $devicePixelRatio, fontSize: $fontSize, pointRadius: $pointRadius, lineWidth: $lineWidth, borderColor: $borderColor, borderColorDark: $borderColorDark, dataTipBackgroundColor: $dataTipBackgroundColor, dataTipBackgroundColorDark: $dataTipBackgroundColorDark, gridColor: $gridColor, gridColorDark: $gridColorDark, textColor: $textColor, textColorDark: $textColorDark)';
   }
 }
 
@@ -312,10 +316,10 @@ abstract mixin class _$ChartStyleCopyWith<$Res>
       double fontSize,
       double pointRadius,
       double lineWidth,
-      Color backgroundColor,
-      Color backgroundColorDark,
       Color borderColor,
       Color borderColorDark,
+      Color dataTipBackgroundColor,
+      Color dataTipBackgroundColorDark,
       Color gridColor,
       Color gridColorDark,
       Color textColor,
@@ -338,10 +342,10 @@ class __$ChartStyleCopyWithImpl<$Res> implements _$ChartStyleCopyWith<$Res> {
     Object? fontSize = null,
     Object? pointRadius = null,
     Object? lineWidth = null,
-    Object? backgroundColor = null,
-    Object? backgroundColorDark = null,
     Object? borderColor = null,
     Object? borderColorDark = null,
+    Object? dataTipBackgroundColor = null,
+    Object? dataTipBackgroundColorDark = null,
     Object? gridColor = null,
     Object? gridColorDark = null,
     Object? textColor = null,
@@ -364,14 +368,6 @@ class __$ChartStyleCopyWithImpl<$Res> implements _$ChartStyleCopyWith<$Res> {
           ? _self.lineWidth
           : lineWidth // ignore: cast_nullable_to_non_nullable
               as double,
-      backgroundColor: null == backgroundColor
-          ? _self.backgroundColor
-          : backgroundColor // ignore: cast_nullable_to_non_nullable
-              as Color,
-      backgroundColorDark: null == backgroundColorDark
-          ? _self.backgroundColorDark
-          : backgroundColorDark // ignore: cast_nullable_to_non_nullable
-              as Color,
       borderColor: null == borderColor
           ? _self.borderColor
           : borderColor // ignore: cast_nullable_to_non_nullable
@@ -379,6 +375,14 @@ class __$ChartStyleCopyWithImpl<$Res> implements _$ChartStyleCopyWith<$Res> {
       borderColorDark: null == borderColorDark
           ? _self.borderColorDark
           : borderColorDark // ignore: cast_nullable_to_non_nullable
+              as Color,
+      dataTipBackgroundColor: null == dataTipBackgroundColor
+          ? _self.dataTipBackgroundColor
+          : dataTipBackgroundColor // ignore: cast_nullable_to_non_nullable
+              as Color,
+      dataTipBackgroundColorDark: null == dataTipBackgroundColorDark
+          ? _self.dataTipBackgroundColorDark
+          : dataTipBackgroundColorDark // ignore: cast_nullable_to_non_nullable
               as Color,
       gridColor: null == gridColor
           ? _self.gridColor

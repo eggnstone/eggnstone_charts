@@ -12,8 +12,8 @@ abstract class PaintInfo with _$PaintInfo
         required Canvas canvas,
         required Size size,
         required DoubleMinMax graphMinMax,
-        required Paint backgroundPaint,
         required Paint borderPaint,
+        required Paint dataTipBackgroundPaint,
         required Paint gridPaint,
         required Paint gridPaint2
     }) = _PaintInfo;

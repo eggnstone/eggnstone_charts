@@ -18,8 +18,8 @@ mixin _$PaintInfo {
   Canvas get canvas;
   Size get size;
   DoubleMinMax get graphMinMax;
-  Paint get backgroundPaint;
   Paint get borderPaint;
+  Paint get dataTipBackgroundPaint;
   Paint get gridPaint;
   Paint get gridPaint2;
 
@@ -39,10 +39,10 @@ mixin _$PaintInfo {
             (identical(other.size, size) || other.size == size) &&
             (identical(other.graphMinMax, graphMinMax) ||
                 other.graphMinMax == graphMinMax) &&
-            (identical(other.backgroundPaint, backgroundPaint) ||
-                other.backgroundPaint == backgroundPaint) &&
             (identical(other.borderPaint, borderPaint) ||
                 other.borderPaint == borderPaint) &&
+            (identical(other.dataTipBackgroundPaint, dataTipBackgroundPaint) ||
+                other.dataTipBackgroundPaint == dataTipBackgroundPaint) &&
             (identical(other.gridPaint, gridPaint) ||
                 other.gridPaint == gridPaint) &&
             (identical(other.gridPaint2, gridPaint2) ||
@@ -51,11 +51,11 @@ mixin _$PaintInfo {
 
   @override
   int get hashCode => Object.hash(runtimeType, canvas, size, graphMinMax,
-      backgroundPaint, borderPaint, gridPaint, gridPaint2);
+      borderPaint, dataTipBackgroundPaint, gridPaint, gridPaint2);
 
   @override
   String toString() {
-    return 'PaintInfo(canvas: $canvas, size: $size, graphMinMax: $graphMinMax, backgroundPaint: $backgroundPaint, borderPaint: $borderPaint, gridPaint: $gridPaint, gridPaint2: $gridPaint2)';
+    return 'PaintInfo(canvas: $canvas, size: $size, graphMinMax: $graphMinMax, borderPaint: $borderPaint, dataTipBackgroundPaint: $dataTipBackgroundPaint, gridPaint: $gridPaint, gridPaint2: $gridPaint2)';
   }
 }
 
@@ -68,8 +68,8 @@ abstract mixin class $PaintInfoCopyWith<$Res> {
       {Canvas canvas,
       Size size,
       DoubleMinMax graphMinMax,
-      Paint backgroundPaint,
       Paint borderPaint,
+      Paint dataTipBackgroundPaint,
       Paint gridPaint,
       Paint gridPaint2});
 }
@@ -89,8 +89,8 @@ class _$PaintInfoCopyWithImpl<$Res> implements $PaintInfoCopyWith<$Res> {
     Object? canvas = null,
     Object? size = null,
     Object? graphMinMax = null,
-    Object? backgroundPaint = null,
     Object? borderPaint = null,
+    Object? dataTipBackgroundPaint = null,
     Object? gridPaint = null,
     Object? gridPaint2 = null,
   }) {
@@ -107,13 +107,13 @@ class _$PaintInfoCopyWithImpl<$Res> implements $PaintInfoCopyWith<$Res> {
           ? _self.graphMinMax
           : graphMinMax // ignore: cast_nullable_to_non_nullable
               as DoubleMinMax,
-      backgroundPaint: null == backgroundPaint
-          ? _self.backgroundPaint
-          : backgroundPaint // ignore: cast_nullable_to_non_nullable
-              as Paint,
       borderPaint: null == borderPaint
           ? _self.borderPaint
           : borderPaint // ignore: cast_nullable_to_non_nullable
+              as Paint,
+      dataTipBackgroundPaint: null == dataTipBackgroundPaint
+          ? _self.dataTipBackgroundPaint
+          : dataTipBackgroundPaint // ignore: cast_nullable_to_non_nullable
               as Paint,
       gridPaint: null == gridPaint
           ? _self.gridPaint
@@ -134,8 +134,8 @@ class _PaintInfo implements PaintInfo {
       {required this.canvas,
       required this.size,
       required this.graphMinMax,
-      required this.backgroundPaint,
       required this.borderPaint,
+      required this.dataTipBackgroundPaint,
       required this.gridPaint,
       required this.gridPaint2});
 
@@ -146,9 +146,9 @@ class _PaintInfo implements PaintInfo {
   @override
   final DoubleMinMax graphMinMax;
   @override
-  final Paint backgroundPaint;
-  @override
   final Paint borderPaint;
+  @override
+  final Paint dataTipBackgroundPaint;
   @override
   final Paint gridPaint;
   @override
@@ -171,10 +171,10 @@ class _PaintInfo implements PaintInfo {
             (identical(other.size, size) || other.size == size) &&
             (identical(other.graphMinMax, graphMinMax) ||
                 other.graphMinMax == graphMinMax) &&
-            (identical(other.backgroundPaint, backgroundPaint) ||
-                other.backgroundPaint == backgroundPaint) &&
             (identical(other.borderPaint, borderPaint) ||
                 other.borderPaint == borderPaint) &&
+            (identical(other.dataTipBackgroundPaint, dataTipBackgroundPaint) ||
+                other.dataTipBackgroundPaint == dataTipBackgroundPaint) &&
             (identical(other.gridPaint, gridPaint) ||
                 other.gridPaint == gridPaint) &&
             (identical(other.gridPaint2, gridPaint2) ||
@@ -183,11 +183,11 @@ class _PaintInfo implements PaintInfo {
 
   @override
   int get hashCode => Object.hash(runtimeType, canvas, size, graphMinMax,
-      backgroundPaint, borderPaint, gridPaint, gridPaint2);
+      borderPaint, dataTipBackgroundPaint, gridPaint, gridPaint2);
 
   @override
   String toString() {
-    return 'PaintInfo(canvas: $canvas, size: $size, graphMinMax: $graphMinMax, backgroundPaint: $backgroundPaint, borderPaint: $borderPaint, gridPaint: $gridPaint, gridPaint2: $gridPaint2)';
+    return 'PaintInfo(canvas: $canvas, size: $size, graphMinMax: $graphMinMax, borderPaint: $borderPaint, dataTipBackgroundPaint: $dataTipBackgroundPaint, gridPaint: $gridPaint, gridPaint2: $gridPaint2)';
   }
 }
 
@@ -203,8 +203,8 @@ abstract mixin class _$PaintInfoCopyWith<$Res>
       {Canvas canvas,
       Size size,
       DoubleMinMax graphMinMax,
-      Paint backgroundPaint,
       Paint borderPaint,
+      Paint dataTipBackgroundPaint,
       Paint gridPaint,
       Paint gridPaint2});
 }
@@ -224,8 +224,8 @@ class __$PaintInfoCopyWithImpl<$Res> implements _$PaintInfoCopyWith<$Res> {
     Object? canvas = null,
     Object? size = null,
     Object? graphMinMax = null,
-    Object? backgroundPaint = null,
     Object? borderPaint = null,
+    Object? dataTipBackgroundPaint = null,
     Object? gridPaint = null,
     Object? gridPaint2 = null,
   }) {
@@ -242,13 +242,13 @@ class __$PaintInfoCopyWithImpl<$Res> implements _$PaintInfoCopyWith<$Res> {
           ? _self.graphMinMax
           : graphMinMax // ignore: cast_nullable_to_non_nullable
               as DoubleMinMax,
-      backgroundPaint: null == backgroundPaint
-          ? _self.backgroundPaint
-          : backgroundPaint // ignore: cast_nullable_to_non_nullable
-              as Paint,
       borderPaint: null == borderPaint
           ? _self.borderPaint
           : borderPaint // ignore: cast_nullable_to_non_nullable
+              as Paint,
+      dataTipBackgroundPaint: null == dataTipBackgroundPaint
+          ? _self.dataTipBackgroundPaint
+          : dataTipBackgroundPaint // ignore: cast_nullable_to_non_nullable
               as Paint,
       gridPaint: null == gridPaint
           ? _self.gridPaint

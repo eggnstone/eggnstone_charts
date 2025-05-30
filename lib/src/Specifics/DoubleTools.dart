@@ -6,8 +6,6 @@ class DoubleTools extends GenericTools<double>
 {
     DoubleTools(super.formatter, super.dataTipFormatter);
 
-
-
     @override
     double getNextDoubleValue(double value)
     => getNextNiceCustomValue(value);
