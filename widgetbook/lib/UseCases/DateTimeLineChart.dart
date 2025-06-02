@@ -8,8 +8,12 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
 // UseCases
 
+@UseCase(path: 'Errors', name: 'One date only', type: DateTimeLineChart)
+Widget buildDateTimeChartOnlyOneDate(BuildContext context)
+=> _buildChart('One date only', _createSampleDataOnlyOneDate(context));
+
 @UseCase(path: '', name: 'Normal', type: DateTimeLineChart)
-Widget buildDateTimeChart(BuildContext context)
+Widget buildDateTimeChartNormal(BuildContext context)
 => _buildChart('Normal', _createSampleData(context));
 
 @UseCase(path: '', name: 'Inverted', type: DateTimeLineChart)
@@ -48,6 +52,22 @@ DateTimeChartData _createSampleData(BuildContext context, {bool invert = false})
     );
 }
 
+DateTimeChartData _createSampleDataOnlyOneDate(BuildContext context, {bool invert = false})
+{
+    final DateTime now = DateTime.now();
+    return _createDateTimeChartData(
+        context,
+        referenceDateTime: now,
+        colors: <Color>[Colors.red],
+        lines: <List<DateTimePoint>>[_createLineWithOnlyOneDate(now)],
+        invert: invert,
+        minX: 0,
+        rangeMinX: 0,
+        rangeMaxX: 2,
+        rangeStepsX: 2
+    );
+}
+
 DateTimeChartData _createDocOneData(BuildContext context)
 {
     final DateTime now = DateTime.now();
@@ -70,6 +90,12 @@ DateTimeChartData _createDocOneData(BuildContext context)
 }
 
 // Raw data
+
+List<DateTimePoint> _createLineWithOnlyOneDate(DateTime referenceDateTime)
+=> <DateTimePoint>
+[
+    DateTimePoint(referenceDateTime, 1)
+];
 
 List<DateTimePoint> _createLine1(DateTime referenceDateTime)
 => <DateTimePoint>
@@ -116,10 +142,10 @@ DateTimeChartData _createDateTimeChartData(
     }
 )
 {
-    final List<DateTimeLineData> convertedDateTimeLines = lines
+    final List<GenericLineData<DateTime, double>> convertedDateTimeLines = lines
         .mapIndexed(
             (int index, List<DateTimePoint> points) 
-            => DateTimeLineData(
+            => GenericLineData<DateTime, double>(
                 Colors.pink,
                 'Data Series #${index + 1}',
                 points.map((DateTimePoint dp) => invert ? DateTimePoint(dp.x, -dp.y) : dp).toImmutableList()

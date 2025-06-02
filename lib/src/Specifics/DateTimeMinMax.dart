@@ -15,7 +15,7 @@ class DateTimeMinMax extends GenericMinMax<DateTime, double>
 
     @override
     DateTime getWidth()
-    => throw UnimplementedError('DateTimeMinMax.getWidth');
+    => DateTime.fromMillisecondsSinceEpoch(maxX.difference(minX).inMilliseconds);
 
     @override
     String toString()

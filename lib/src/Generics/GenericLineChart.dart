@@ -33,7 +33,9 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
     {
         //logDebug('GenericLineChart.build()');
 
+        final TD customData = widget.data;
         final DoubleChartData doubleData = widget.data.getDoubleChartData();
+
         final Brightness brightness = Theme.of(context).brightness;
         final Color borderColor = brightness == Brightness.dark ? widget.style.borderColorDark : widget.style.borderColor;
         final Color textColor = brightness == Brightness.dark ? widget.style.textColorDark : widget.style.textColor;
@@ -51,7 +53,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
                         child: CustomPaint(
                             size: Size.infinite,
                             painter: GenericLineChartPainter<TX, TY>(
-                                customData: widget.data,
+                                customData: customData,
                                 dataTipFormat: widget.info.dataTipFormat,
                                 doubleData: doubleData,
                                 chartStyle: widget.style.copyWith(borderColor: borderColor, textColor: textColor),
