@@ -20,6 +20,10 @@ Widget buildDateTimeChartNormal(BuildContext context)
 Widget buildDateTimeChartInverted(BuildContext context)
 => _buildChart('Inverted', _createSampleData(context, invert: true));
 
+@UseCase(path: '', name: 'One date only (fixed)', type: DateTimeLineChart)
+Widget buildDateTimeChartOnlyOneDateFixed(BuildContext context)
+=> _buildChart('One date only (fixed)', _createSampleDataOnlyOneDateFixed(context));
+
 @UseCase(path: '', name: 'Doc 1', type: DateTimeLineChart)
 Widget buildDateTimeChartDocOne(BuildContext context)
 => Center(
@@ -59,6 +63,23 @@ DateTimeChartData _createSampleDataOnlyOneDate(BuildContext context, {bool inver
         context,
         referenceDateTime: now,
         colors: <Color>[Colors.red],
+        lines: <List<DateTimePoint>>[_createLineWithOnlyOneDate(now)],
+        invert: invert,
+        minX: 0,
+        rangeMinX: 0,
+        rangeMaxX: 2,
+        rangeStepsX: 2
+    );
+}
+
+DateTimeChartData _createSampleDataOnlyOneDateFixed(BuildContext context, {bool invert = false})
+{
+    final DateTime now = DateTime.now();
+    return _createDateTimeChartData(
+        context,
+        referenceDateTime: now,
+        colors: <Color>[Colors.red],
+        fixMinMax: true,
         lines: <List<DateTimePoint>>[_createLineWithOnlyOneDate(now)],
         invert: invert,
         minX: 0,
@@ -128,6 +149,7 @@ DateTimeChartData _createDateTimeChartData(
         required DateTime referenceDateTime,
         required List<Color> colors,
         required List<List<DateTimePoint>> lines,
+        bool fixMinMax = false,
         int minX = -10,
         double minY = 0,
         int rangeMinX = -5,
@@ -155,14 +177,29 @@ DateTimeChartData _createDateTimeChartData(
 
     final int rangeX = context.knobs.int.slider(label: 'Range X', initialValue: rangeInitialValueX, min: rangeMinX, max: rangeMaxX, divisions: rangeStepsX);
     final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: rangeInitialValueY, min: rangeMinY, max: rangeMaxY, divisions: rangeStepsY).toDouble();
+
+    final DateTimeTools toolsX = DateTimeTools(DateTimeFormatter(DateFormat('dd.\nMM.\nyyyy')), DateTimeFormatter(DateFormat('dd.MM.yyyy')));
+    final DoubleTools toolsY = DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert));
+    DateTime dateTimeMinX = referenceDateTime.add(Duration(days: minX));
+    DateTime dateTimeMaxX = referenceDateTime.add(Duration(days: rangeX));
+
+    if (fixMinMax && dateTimeMinX == dateTimeMaxX)
+    {
+        final DateTime fixedMinDate = toolsX.getPreviousNiceCustomValue(dateTimeMinX);
+        final DateTime fixedMaxDate = toolsX.getNextNiceCustomValue(dateTimeMaxX);
+        //logDebug('minDate == maxDate ($minDate) => using fixed minDate: $fixedMinDate, maxDate: $fixedMaxDate');
+        dateTimeMinX = fixedMinDate;
+        dateTimeMaxX = fixedMaxDate;
+    }
+
     return DateTimeChartData(
         colors: colors.toImmutableList(),
         lines: convertedDateTimeLines.toImmutableList(),
-        toolsX: DateTimeTools(DateTimeFormatter(DateFormat('dd.\nMM.\nyyyy')), DateTimeFormatter(DateFormat('dd.MM.yyyy'))),
-        toolsY: DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert)),
+        toolsX: toolsX,
+        toolsY: toolsY,
         minMax: DateTimeMinMax(
-            minX: referenceDateTime.add(Duration(days: minX)),
-            maxX: referenceDateTime.add(Duration(days: rangeX)),
+            minX: dateTimeMinX,
+            maxX: dateTimeMaxX,
             minY: invert ? -rangeY : minY,
             maxY: invert ? minY : rangeY
         )
