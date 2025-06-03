@@ -147,7 +147,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         tpBottom.paint(canvas, Offset(graphMinMax.maxX / 2, size.height - paddingVerticalOuter - tpBottom.height));
         */
 
-        if (closestLineInfo != null && closestLineInfo.closestPointInfo.distance.dx < highlightDistanceX && closestLineInfo.closestPointInfo.distance.dy < highlightDistanceY) 
+        if (closestLineInfo != null && closestLineInfo.closestPointInfo.distance.dx < highlightDistanceX && closestLineInfo.closestPointInfo.distance.dy < highlightDistanceY)
         {
             final GenericLineData<TX, TY> line = customData.lines[closestLineInfo.lineIndex];
             _drawDataTip(paintInfo, line.label, closestLineInfo.closestPointInfo);
@@ -237,16 +237,16 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final PositionedTextPainter<T> painter = painters[i];
             final TextPainter? textPainter = painter.textPainter;
 
-            if (painter.position > paintInfo.graphMinMax.minY && painter.position < paintInfo.graphMinMax.maxY)
+            if (painter.linePosition > paintInfo.graphMinMax.minY && painter.linePosition < paintInfo.graphMinMax.maxY)
             {
                 final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
-                _drawLineSegment(paintInfo.canvas, gridPaint, paintInfo.graphMinMax.minX, painter.position, paintInfo.graphMinMax.maxX, painter.position);
+                _drawLineSegment(paintInfo.canvas, gridPaint, paintInfo.graphMinMax.minX, painter.linePosition, paintInfo.graphMinMax.maxX, painter.linePosition);
             }
 
             if (textPainter != null)
             {
-                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.minX - tickLineLengthX, painter.position, paintInfo.graphMinMax.minX, painter.position);
-                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.minX - tickLineLengthX - paddingBetweenTickLabelAndTickLineX - textPainter.width, painter.position - textPainter.height / 2));
+                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.minX - tickLineLengthX, painter.linePosition, paintInfo.graphMinMax.minX, painter.linePosition);
+                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.minX - tickLineLengthX - paddingBetweenTickLabelAndTickLineX - textPainter.width, painter.textPosition - textPainter.height / 2));
             }
         }
     }
@@ -259,8 +259,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final TextPainter? textPainter = painter.textPainter;
             if (textPainter != null)
             {
-                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, painter.position, paintInfo.graphMinMax.minY - tickLineLengthY, painter.position, paintInfo.graphMinMax.minY);
-                textPainter.paint(paintInfo.canvas, Offset(painter.position - textPainter.width / 2, paintInfo.graphMinMax.minY - tickLineLengthY - paddingBetweenTickLabelAndTickLineY - textPainter.height));
+                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, painter.linePosition, paintInfo.graphMinMax.minY - tickLineLengthY, painter.linePosition, paintInfo.graphMinMax.minY);
+                textPainter.paint(paintInfo.canvas, Offset(painter.textPosition - textPainter.width / 2, paintInfo.graphMinMax.minY - tickLineLengthY - paddingBetweenTickLabelAndTickLineY - textPainter.height));
             }
         }
     }
@@ -273,8 +273,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final TextPainter? textPainter = painter.textPainter;
             if (textPainter != null)
             {
-                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.maxX, painter.position, paintInfo.graphMinMax.maxX + tickLineLengthX, painter.position);
-                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.maxX + tickLineLengthX + paddingBetweenTickLabelAndTickLineX, painter.position - textPainter.height / 2));
+                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.maxX, painter.linePosition, paintInfo.graphMinMax.maxX + tickLineLengthX, painter.linePosition);
+                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.maxX + tickLineLengthX + paddingBetweenTickLabelAndTickLineX, painter.textPosition - textPainter.height / 2));
             }
         }
     }
@@ -286,16 +286,16 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final PositionedTextPainter<T> painter = painters[i];
             final TextPainter? textPainter = painter.textPainter;
 
-            if (painter.position > paintInfo.graphMinMax.minX && painter.position < paintInfo.graphMinMax.maxX)
+            if (painter.linePosition > paintInfo.graphMinMax.minX && painter.linePosition < paintInfo.graphMinMax.maxX)
             {
                 final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
-                _drawLineSegment(paintInfo.canvas, gridPaint, painter.position, paintInfo.graphMinMax.minY, painter.position, paintInfo.graphMinMax.maxY);
+                _drawLineSegment(paintInfo.canvas, gridPaint, painter.linePosition, paintInfo.graphMinMax.minY, painter.linePosition, paintInfo.graphMinMax.maxY);
             }
 
             if (textPainter != null)
             {
-                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, painter.position, paintInfo.graphMinMax.maxY, painter.position, paintInfo.graphMinMax.maxY + tickLineLengthY);
-                textPainter.paint(paintInfo.canvas, Offset(painter.position - textPainter.width / 2, paintInfo.graphMinMax.maxY + tickLineLengthY + paddingBetweenTickLabelAndTickLineY));
+                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, painter.linePosition, paintInfo.graphMinMax.maxY, painter.linePosition, paintInfo.graphMinMax.maxY + tickLineLengthY);
+                textPainter.paint(paintInfo.canvas, Offset(painter.textPosition - textPainter.width / 2, paintInfo.graphMinMax.maxY + tickLineLengthY + paddingBetweenTickLabelAndTickLineY));
             }
         }
     }
@@ -466,7 +466,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             axis: axis,
             textPositionMin: textPositionMin,
             textPositionMax: textPositionMax,
-            customDataValue: customDataLast
+            customDataValue: customDataLast,
+            isLast: true
         );
 
         if (lastPainter == null)
@@ -487,7 +488,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         else
         {
             if (DEBUG)
-                logDebug('    Tick painter for $customDataLast at ${lastPainter.textStart.toStringAsFixed(1)} / ${lastPainter.position.toStringAsFixed(1)} / ${lastPainter.textEnd.toStringAsFixed(1)}');
+                logDebug('    Tick painter for $customDataLast at ${lastPainter.linePosition.toStringAsFixed(1)} // ${lastPainter.textStart.toStringAsFixed(1)} / ${lastPainter.textPosition.toStringAsFixed(1)} / ${lastPainter.textEnd.toStringAsFixed(1)}');
 
             tickPainters.add(lastPainter);
             if (axis == Axis.horizontal)
@@ -523,7 +524,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 axis: axis,
                 textPositionMin: textPositionMin,
                 textPositionMax: textPositionMax,
-                customDataValue: customDataValue
+                customDataValue: customDataValue,
+                isFirst: count == 1
             );
 
             if (tickPainter == null)
@@ -540,19 +542,19 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
                 if (axis == Axis.horizontal)
                 {
-                    if (tickPainter.position >= graphMinMax.maxX)
+                    if (tickPainter.linePosition >= graphMinMax.maxX)
                         break;
                 }
                 else
                 {
-                    if (tickPainter.position <= graphMinMax.minY)
+                    if (tickPainter.linePosition <= graphMinMax.minY)
                         break;
                 }
             }
             else
             {
                 if (DEBUG)
-                    logDebug('    Tick painter for $customDataValue at ${tickPainter.textStart.toStringAsFixed(1)} / ${tickPainter.position.toStringAsFixed(1)} / ${tickPainter.textEnd.toStringAsFixed(1)}');
+                    logDebug('    Tick painter for $customDataValue at ${lastPainter.linePosition.toStringAsFixed(1)} // ${tickPainter.textStart.toStringAsFixed(1)} / ${tickPainter.textPosition.toStringAsFixed(1)} / ${tickPainter.textEnd.toStringAsFixed(1)}');
 
                 tickPainters.add(tickPainter);
                 if (axis == Axis.horizontal)
@@ -574,7 +576,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             required Axis axis,
             required double textPositionMax,
             required double textPositionMin,
-            required T customDataValue
+            required T customDataValue,
+            bool isFirst = false,
+            bool isLast = false
         }
     )
     {
@@ -584,23 +588,31 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final double textPositionStart = textPosition - (axis == Axis.horizontal ? textPainter.width : textPainter.height) / 2;
         final double textPositionEnd = textPosition + (axis == Axis.horizontal ? textPainter.width : textPainter.height) / 2;
 
-        if (textPositionStart < textPositionMin)
+        final double overflowMin = textPositionMin - textPositionStart;
+        if (overflowMin > 0)
         {
             if (DEBUG)
                 logDebug('textPositionStart ($textPositionStart) < textPositionMin ($textPositionMin)');
 
-            return PositionedTextPainter<T>(position: textPosition, textPainter: null);
+            if (!isFirst)
+                return PositionedTextPainter<T>(linePosition: textPosition, textPosition: textPosition, textPainter: null);
+
+            return PositionedTextPainter<T>(linePosition: textPosition, textPosition: textPosition + overflowMin, textPainter: textPainter);
         }
 
-        if (textPositionEnd > textPositionMax)
+        final double overflowMax = textPositionEnd - textPositionMax;
+        if (overflowMax > 0)
         {
             if (DEBUG)
                 logDebug('textPositionEnd ($textPositionEnd) > textPositionMax ($textPositionMax)');
 
-            return PositionedTextPainter<T>(position: textPosition, textPainter: null);
+            if (!isLast)
+                return PositionedTextPainter<T>(linePosition: textPosition, textPosition: textPosition, textPainter: null);
+
+            return PositionedTextPainter<T>(linePosition: textPosition, textPosition: textPosition - overflowMax, textPainter: textPainter);
         }
 
-        return PositionedTextPainter<T>(position: textPosition, textPainter: textPainter);
+        return PositionedTextPainter<T>(linePosition: textPosition, textPosition: textPosition, textPainter: textPainter);
     }
 
     void _drawDataTip(PaintInfo paintInfo, String label, ClosestPointInfo closestPointInfo)

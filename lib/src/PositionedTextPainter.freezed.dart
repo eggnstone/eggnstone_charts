@@ -15,10 +15,8 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$PositionedTextPainter<T> {
-  double
-      get position; /*required double textPosition,
-        required double textStart,
-        required double textEnd,*/
+  double get linePosition;
+  double get textPosition;
   TextPainter? get textPainter;
 
   /// Create a copy of PositionedTextPainter
@@ -34,18 +32,21 @@ mixin _$PositionedTextPainter<T> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is PositionedTextPainter<T> &&
-            (identical(other.position, position) ||
-                other.position == position) &&
+            (identical(other.linePosition, linePosition) ||
+                other.linePosition == linePosition) &&
+            (identical(other.textPosition, textPosition) ||
+                other.textPosition == textPosition) &&
             (identical(other.textPainter, textPainter) ||
                 other.textPainter == textPainter));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, position, textPainter);
+  int get hashCode =>
+      Object.hash(runtimeType, linePosition, textPosition, textPainter);
 
   @override
   String toString() {
-    return 'PositionedTextPainter<$T>(position: $position, textPainter: $textPainter)';
+    return 'PositionedTextPainter<$T>(linePosition: $linePosition, textPosition: $textPosition, textPainter: $textPainter)';
   }
 }
 
@@ -55,7 +56,8 @@ abstract mixin class $PositionedTextPainterCopyWith<T, $Res> {
           $Res Function(PositionedTextPainter<T>) _then) =
       _$PositionedTextPainterCopyWithImpl;
   @useResult
-  $Res call({double position, TextPainter? textPainter});
+  $Res call(
+      {double linePosition, double textPosition, TextPainter? textPainter});
 }
 
 /// @nodoc
@@ -71,13 +73,18 @@ class _$PositionedTextPainterCopyWithImpl<T, $Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? position = null,
+    Object? linePosition = null,
+    Object? textPosition = null,
     Object? textPainter = freezed,
   }) {
     return _then(_self.copyWith(
-      position: null == position
-          ? _self.position
-          : position // ignore: cast_nullable_to_non_nullable
+      linePosition: null == linePosition
+          ? _self.linePosition
+          : linePosition // ignore: cast_nullable_to_non_nullable
+              as double,
+      textPosition: null == textPosition
+          ? _self.textPosition
+          : textPosition // ignore: cast_nullable_to_non_nullable
               as double,
       textPainter: freezed == textPainter
           ? _self.textPainter
@@ -91,14 +98,15 @@ class _$PositionedTextPainterCopyWithImpl<T, $Res>
 
 class _PositionedTextPainter<T> extends PositionedTextPainter<T> {
   const _PositionedTextPainter(
-      {required this.position, required this.textPainter})
+      {required this.linePosition,
+      required this.textPosition,
+      required this.textPainter})
       : super._();
 
   @override
-  final double position;
-/*required double textPosition,
-        required double textStart,
-        required double textEnd,*/
+  final double linePosition;
+  @override
+  final double textPosition;
   @override
   final TextPainter? textPainter;
 
@@ -116,18 +124,21 @@ class _PositionedTextPainter<T> extends PositionedTextPainter<T> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _PositionedTextPainter<T> &&
-            (identical(other.position, position) ||
-                other.position == position) &&
+            (identical(other.linePosition, linePosition) ||
+                other.linePosition == linePosition) &&
+            (identical(other.textPosition, textPosition) ||
+                other.textPosition == textPosition) &&
             (identical(other.textPainter, textPainter) ||
                 other.textPainter == textPainter));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, position, textPainter);
+  int get hashCode =>
+      Object.hash(runtimeType, linePosition, textPosition, textPainter);
 
   @override
   String toString() {
-    return 'PositionedTextPainter<$T>(position: $position, textPainter: $textPainter)';
+    return 'PositionedTextPainter<$T>(linePosition: $linePosition, textPosition: $textPosition, textPainter: $textPainter)';
   }
 }
 
@@ -139,7 +150,8 @@ abstract mixin class _$PositionedTextPainterCopyWith<T, $Res>
       __$PositionedTextPainterCopyWithImpl;
   @override
   @useResult
-  $Res call({double position, TextPainter? textPainter});
+  $Res call(
+      {double linePosition, double textPosition, TextPainter? textPainter});
 }
 
 /// @nodoc
@@ -155,13 +167,18 @@ class __$PositionedTextPainterCopyWithImpl<T, $Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? position = null,
+    Object? linePosition = null,
+    Object? textPosition = null,
     Object? textPainter = freezed,
   }) {
     return _then(_PositionedTextPainter<T>(
-      position: null == position
-          ? _self.position
-          : position // ignore: cast_nullable_to_non_nullable
+      linePosition: null == linePosition
+          ? _self.linePosition
+          : linePosition // ignore: cast_nullable_to_non_nullable
+              as double,
+      textPosition: null == textPosition
+          ? _self.textPosition
+          : textPosition // ignore: cast_nullable_to_non_nullable
               as double,
       textPainter: freezed == textPainter
           ? _self.textPainter
