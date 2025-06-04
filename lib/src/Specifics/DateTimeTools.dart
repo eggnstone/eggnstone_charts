@@ -2,15 +2,19 @@ import '../Generics/GenericTools.dart';
 
 class DateTimeTools extends GenericTools<DateTime>
 {
-    DateTimeTools(super.formatter, super.dataTipFormatter);
+    final bool useUtc;
+
+    DateTimeTools(super.formatter, super.dataTipFormatter, {required this.useUtc});
 
     @override
     double getNextDoubleValue(double value)
     => toDoubleValue(getNextNiceCustomValue(toCustomValue(value)));
 
     @override
-    DateTime getNextNiceCustomValue(DateTime value)
-    => DateTime(value.year, value.month, value.day).add(const Duration(days: 1));
+    DateTime getNextNiceCustomValue(DateTime value) 
+    => useUtc
+        ? DateTime.utc(value.year, value.month, value.day).add(const Duration(days: 1))
+        : DateTime(value.year, value.month, value.day).add(const Duration(days: 1));
 
     @override
     DateTime getNextNiceCustomValueOrSame(DateTime value)
@@ -35,7 +39,9 @@ class DateTimeTools extends GenericTools<DateTime>
             value.microsecond == 0)
             return value.subtract(const Duration(days: 1));
 
-        return DateTime(value.year, value.month, value.day);
+        return useUtc
+            ? DateTime.utc(value.year, value.month, value.day)
+            : DateTime(value.year, value.month, value.day);
     }
 
     @override
@@ -48,7 +54,9 @@ class DateTimeTools extends GenericTools<DateTime>
             value.microsecond == 0)
             return value;
 
-        return DateTime(value.year, value.month, value.day);
+        return useUtc
+            ? DateTime.utc(value.year, value.month, value.day)
+            : DateTime(value.year, value.month, value.day);
     }
 
     @override
@@ -61,7 +69,7 @@ class DateTimeTools extends GenericTools<DateTime>
 
     @override
     DateTime toCustomValue(double value)
-    => DateTime.fromMillisecondsSinceEpoch(value.toInt());
+    => DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: useUtc);
 
     @override
     double toDoubleValue(DateTime value)

@@ -11,8 +11,11 @@ class DateTimeFormatter implements GenericFormatter<DateTime>
     @override
     String format(dynamic value)
     {
-        if (value is DateTime)
+        if (value is DateTime) 
+        {
             return dateTimeFormat.format(value);
+            //return '$value ${value.isUtc ? 'UTC' : 'not-utc'}\n' + dateTimeFormat.format(value);
+        }
 
         return 'DateTimeFormatter ?';
     }

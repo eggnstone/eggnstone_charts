@@ -1,3 +1,4 @@
+import '../ChartsException.dart';
 import '../Generics/GenericMinMax.dart';
 
 class DateTimeMinMax extends GenericMinMax<DateTime, double>
@@ -14,8 +15,13 @@ class DateTimeMinMax extends GenericMinMax<DateTime, double>
     => maxY - minY;
 
     @override
-    DateTime getWidth()
-    => DateTime.fromMillisecondsSinceEpoch(maxX.difference(minX).inMilliseconds);
+    DateTime getWidth() 
+    {
+        if (minX.isUtc != maxX.isUtc) 
+            throw ChartsException('minX and maxX must both be either UTC or non-UTC DateTime objects.');
+
+        return DateTime.fromMillisecondsSinceEpoch(maxX.difference(minX).inMilliseconds, isUtc: minX.isUtc);
+    }
 
     @override
     String toString()

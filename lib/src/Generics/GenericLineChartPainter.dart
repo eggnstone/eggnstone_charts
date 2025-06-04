@@ -554,7 +554,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             else
             {
                 if (DEBUG)
-                    logDebug('    Tick painter for $customDataValue at ${lastPainter.linePosition.toStringAsFixed(1)} // ${tickPainter.textStart.toStringAsFixed(1)} / ${tickPainter.textPosition.toStringAsFixed(1)} / ${tickPainter.textEnd.toStringAsFixed(1)}');
+                    logDebug('    Tick painter for $customDataValue at ${tickPainter.linePosition.toStringAsFixed(1)} // ${tickPainter.textStart.toStringAsFixed(1)} / ${tickPainter.textPosition.toStringAsFixed(1)} / ${tickPainter.textEnd.toStringAsFixed(1)}');
 
                 tickPainters.add(tickPainter);
                 if (axis == Axis.horizontal)

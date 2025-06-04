@@ -59,6 +59,10 @@ final directories = <_i1.WidgetbookNode>[
         name: 'One date only (fixed)',
         builder: _i2.buildDateTimeChartOnlyOneDateFixed,
       ),
+      _i1.WidgetbookUseCase(
+        name: 'Two dates only',
+        builder: _i2.buildDateTimeChartOnlyTwoDates,
+      ),
     ],
   ),
   _i1.WidgetbookComponent(

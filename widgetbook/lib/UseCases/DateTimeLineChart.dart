@@ -24,6 +24,10 @@ Widget buildDateTimeChartInverted(BuildContext context)
 Widget buildDateTimeChartOnlyOneDateFixed(BuildContext context)
 => _buildChart('One date only (fixed)', _createSampleDataOnlyOneDateFixed(context));
 
+@UseCase(path: '', name: 'Two dates only', type: DateTimeLineChart)
+Widget buildDateTimeChartOnlyTwoDates(BuildContext context)
+=> _buildChart('Two dates only', _createSampleDataOnlyTwoDates(context));
+
 @UseCase(path: '', name: 'Doc 1', type: DateTimeLineChart)
 Widget buildDateTimeChartDocOne(BuildContext context)
 => Center(
@@ -89,6 +93,24 @@ DateTimeChartData _createSampleDataOnlyOneDateFixed(BuildContext context, {bool 
     );
 }
 
+DateTimeChartData _createSampleDataOnlyTwoDates(BuildContext context, {bool invert = false})
+{
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    return _createDateTimeChartData(
+        context,
+        referenceDateTime: today,
+        colors: <Color>[Colors.red],
+        fixMinMax: true,
+        lines: <List<DateTimePoint>>[_createLineWithOnlyTwoDates(today)],
+        invert: invert,
+        minX: -1,
+        rangeMinX: 0,
+        rangeMaxX: 2,
+        rangeStepsX: 2
+    );
+}
+
 DateTimeChartData _createDocOneData(BuildContext context)
 {
     final DateTime now = DateTime.now();
@@ -116,6 +138,13 @@ List<DateTimePoint> _createLineWithOnlyOneDate(DateTime referenceDateTime)
 => <DateTimePoint>
 [
     DateTimePoint(referenceDateTime, 1)
+];
+
+List<DateTimePoint> _createLineWithOnlyTwoDates(DateTime referenceDateTime)
+=> <DateTimePoint>
+[
+    DateTimePoint(referenceDateTime.subtract(const Duration(days: 1)), 1),
+    DateTimePoint(referenceDateTime, 2)
 ];
 
 List<DateTimePoint> _createLine1(DateTime referenceDateTime)
@@ -178,7 +207,7 @@ DateTimeChartData _createDateTimeChartData(
     final int rangeX = context.knobs.int.slider(label: 'Range X', initialValue: rangeInitialValueX, min: rangeMinX, max: rangeMaxX, divisions: rangeStepsX);
     final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: rangeInitialValueY, min: rangeMinY, max: rangeMaxY, divisions: rangeStepsY).toDouble();
 
-    final DateTimeTools toolsX = DateTimeTools(DateTimeFormatter(DateFormat('dd.\nMM.\nyyyy')), DateTimeFormatter(DateFormat('dd.MM.yyyy')));
+    final DateTimeTools toolsX = DateTimeTools(DateTimeFormatter(DateFormat('dd.\nMM.\nyyyy')), DateTimeFormatter(DateFormat('dd.MM.yyyy')), useUtc: true);
     final DoubleTools toolsY = DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert));
     DateTime dateTimeMinX = referenceDateTime.add(Duration(days: minX));
     DateTime dateTimeMaxX = referenceDateTime.add(Duration(days: rangeX));
