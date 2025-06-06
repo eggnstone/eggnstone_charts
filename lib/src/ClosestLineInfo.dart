@@ -8,7 +8,7 @@ part 'ClosestLineInfo.freezed.dart';
 abstract class ClosestLineInfo with _$ClosestLineInfo
 {
     const factory ClosestLineInfo({
-        required ClosestPointInfo closestPointInfo,
+        required ClosestPointInfo closestPoint,
         required int lineIndex
     }) = _ClosestLineInfo;
 }

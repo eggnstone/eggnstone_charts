@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ClosestLineInfo {
-  ClosestPointInfo get closestPointInfo;
+  ClosestPointInfo get closestPoint;
   int get lineIndex;
 
   /// Create a copy of ClosestLineInfo
@@ -31,18 +31,18 @@ mixin _$ClosestLineInfo {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is ClosestLineInfo &&
-            (identical(other.closestPointInfo, closestPointInfo) ||
-                other.closestPointInfo == closestPointInfo) &&
+            (identical(other.closestPoint, closestPoint) ||
+                other.closestPoint == closestPoint) &&
             (identical(other.lineIndex, lineIndex) ||
                 other.lineIndex == lineIndex));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, closestPointInfo, lineIndex);
+  int get hashCode => Object.hash(runtimeType, closestPoint, lineIndex);
 
   @override
   String toString() {
-    return 'ClosestLineInfo(closestPointInfo: $closestPointInfo, lineIndex: $lineIndex)';
+    return 'ClosestLineInfo(closestPoint: $closestPoint, lineIndex: $lineIndex)';
   }
 }
 
@@ -52,9 +52,9 @@ abstract mixin class $ClosestLineInfoCopyWith<$Res> {
           ClosestLineInfo value, $Res Function(ClosestLineInfo) _then) =
       _$ClosestLineInfoCopyWithImpl;
   @useResult
-  $Res call({ClosestPointInfo closestPointInfo, int lineIndex});
+  $Res call({ClosestPointInfo closestPoint, int lineIndex});
 
-  $ClosestPointInfoCopyWith<$Res> get closestPointInfo;
+  $ClosestPointInfoCopyWith<$Res> get closestPoint;
 }
 
 /// @nodoc
@@ -70,13 +70,13 @@ class _$ClosestLineInfoCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? closestPointInfo = null,
+    Object? closestPoint = null,
     Object? lineIndex = null,
   }) {
     return _then(_self.copyWith(
-      closestPointInfo: null == closestPointInfo
-          ? _self.closestPointInfo
-          : closestPointInfo // ignore: cast_nullable_to_non_nullable
+      closestPoint: null == closestPoint
+          ? _self.closestPoint
+          : closestPoint // ignore: cast_nullable_to_non_nullable
               as ClosestPointInfo,
       lineIndex: null == lineIndex
           ? _self.lineIndex
@@ -89,9 +89,9 @@ class _$ClosestLineInfoCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ClosestPointInfoCopyWith<$Res> get closestPointInfo {
-    return $ClosestPointInfoCopyWith<$Res>(_self.closestPointInfo, (value) {
-      return _then(_self.copyWith(closestPointInfo: value));
+  $ClosestPointInfoCopyWith<$Res> get closestPoint {
+    return $ClosestPointInfoCopyWith<$Res>(_self.closestPoint, (value) {
+      return _then(_self.copyWith(closestPoint: value));
     });
   }
 }
@@ -99,11 +99,10 @@ class _$ClosestLineInfoCopyWithImpl<$Res>
 /// @nodoc
 
 class _ClosestLineInfo implements ClosestLineInfo {
-  const _ClosestLineInfo(
-      {required this.closestPointInfo, required this.lineIndex});
+  const _ClosestLineInfo({required this.closestPoint, required this.lineIndex});
 
   @override
-  final ClosestPointInfo closestPointInfo;
+  final ClosestPointInfo closestPoint;
   @override
   final int lineIndex;
 
@@ -120,18 +119,18 @@ class _ClosestLineInfo implements ClosestLineInfo {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _ClosestLineInfo &&
-            (identical(other.closestPointInfo, closestPointInfo) ||
-                other.closestPointInfo == closestPointInfo) &&
+            (identical(other.closestPoint, closestPoint) ||
+                other.closestPoint == closestPoint) &&
             (identical(other.lineIndex, lineIndex) ||
                 other.lineIndex == lineIndex));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, closestPointInfo, lineIndex);
+  int get hashCode => Object.hash(runtimeType, closestPoint, lineIndex);
 
   @override
   String toString() {
-    return 'ClosestLineInfo(closestPointInfo: $closestPointInfo, lineIndex: $lineIndex)';
+    return 'ClosestLineInfo(closestPoint: $closestPoint, lineIndex: $lineIndex)';
   }
 }
 
@@ -143,10 +142,10 @@ abstract mixin class _$ClosestLineInfoCopyWith<$Res>
       __$ClosestLineInfoCopyWithImpl;
   @override
   @useResult
-  $Res call({ClosestPointInfo closestPointInfo, int lineIndex});
+  $Res call({ClosestPointInfo closestPoint, int lineIndex});
 
   @override
-  $ClosestPointInfoCopyWith<$Res> get closestPointInfo;
+  $ClosestPointInfoCopyWith<$Res> get closestPoint;
 }
 
 /// @nodoc
@@ -162,13 +161,13 @@ class __$ClosestLineInfoCopyWithImpl<$Res>
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? closestPointInfo = null,
+    Object? closestPoint = null,
     Object? lineIndex = null,
   }) {
     return _then(_ClosestLineInfo(
-      closestPointInfo: null == closestPointInfo
-          ? _self.closestPointInfo
-          : closestPointInfo // ignore: cast_nullable_to_non_nullable
+      closestPoint: null == closestPoint
+          ? _self.closestPoint
+          : closestPoint // ignore: cast_nullable_to_non_nullable
               as ClosestPointInfo,
       lineIndex: null == lineIndex
           ? _self.lineIndex
@@ -181,9 +180,9 @@ class __$ClosestLineInfoCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $ClosestPointInfoCopyWith<$Res> get closestPointInfo {
-    return $ClosestPointInfoCopyWith<$Res>(_self.closestPointInfo, (value) {
-      return _then(_self.copyWith(closestPointInfo: value));
+  $ClosestPointInfoCopyWith<$Res> get closestPoint {
+    return $ClosestPointInfoCopyWith<$Res>(_self.closestPoint, (value) {
+      return _then(_self.copyWith(closestPoint: value));
     });
   }
 }
