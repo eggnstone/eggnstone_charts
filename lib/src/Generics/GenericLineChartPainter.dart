@@ -17,6 +17,7 @@ import 'GenericChartData.dart';
 import 'GenericLineData.dart';
 import 'GenericTools.dart';
 
+typedef ClosestLineInfoCalculatedCallback = void Function(ClosestLineInfo? closestLineInfo);
 typedef GraphMinMaxCalculatedCallback = void Function(DoubleMinMax graphMinMax);
 
 class GenericLineChartPainter<TX, TY> extends CustomPainter
@@ -49,6 +50,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     final double highlightDistanceX;
     final double highlightDistanceY;
     final Offset? pointerPosition;
+    final ClosestLineInfoCalculatedCallback? onClosestLineInfoCalculated;
     final GraphMinMaxCalculatedCallback? onGraphMinMaxCalculated;
 
     GenericLineChartPainter({
@@ -60,6 +62,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         this.highlightDistanceX = 20,
         this.highlightDistanceY = 20,
         this.pointerPosition,
+        this.onClosestLineInfoCalculated,
         this.onGraphMinMaxCalculated
     });
 
@@ -137,6 +140,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         _paintTextPaintersBottom(paintInfo, xAxisPainters);
 
         final ClosestLineInfo? closestLineInfo = _drawLines(paintInfo);
+        onClosestLineInfoCalculated?.call(closestLineInfo);
 
         /*
         final TextPainter tpLeft = _createAndLayoutTextPainter('Left');

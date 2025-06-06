@@ -258,7 +258,8 @@ Widget _buildChart(String title, DateTimeChartData data)
     );
 }
 
-void _onTap<TX, TY>(Offset location, TX dataX, TY dataY)
+void _onTap<TX, TY>(Offset location, TX dataX, TY dataY, ClosestLineInfo? closestLineInfo)
 {
-    logDebug('Tapped at location: $location, dataX: $dataX, dataY: $dataY');
+    logDebug('Tapped at $location, dataX: $dataX, dataY: $dataY');
+    logDebug('  closestLineInfo: $closestLineInfo');
 }

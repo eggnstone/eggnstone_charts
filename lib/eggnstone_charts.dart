@@ -3,6 +3,7 @@ library;
 
 export 'src/ChartInfo.dart';
 export 'src/ChartStyle.dart';
+export 'src/ClosestLineInfo.dart';
 // do not export: PositionedTextPainter
 
 export 'src/Generics/GenericChartData.dart';

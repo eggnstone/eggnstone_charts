@@ -15,7 +15,7 @@ class DateTimeMinMax extends GenericMinMax<DateTime, double>
     => maxY - minY;
 
     @override
-    DateTime getWidth() 
+    DateTime getWidth()
     {
         if (minX.isUtc != maxX.isUtc) 
             throw ChartsException('minX and maxX must both be either UTC or non-UTC DateTime objects.');

@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 
 import '../ChartInfo.dart';
 import '../ChartStyle.dart';
+import '../ClosestLineInfo.dart';
 import '../DataTools.dart';
 import '../Specifics/DoubleChartData.dart';
 import '../Specifics/DoubleMinMax.dart';
 import 'GenericChartData.dart';
 import 'GenericLineChartPainter.dart';
 
-typedef TapCallback = void Function<TX, TY>(Offset location, TX dataX, TY dataY);
+typedef TapCallback = void Function<TX, TY>(Offset location, TX dataX, TY dataY, ClosestLineInfo? closestLineInfo);
 
 class GenericLineChart<TX, TY, TD extends GenericChartData<TX, TY>> extends StatefulWidget
 {
@@ -37,6 +38,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
 
     DataTools? _dataTools;
     Offset? _lastPosition;
+    ClosestLineInfo? _closestLineInfo;
 
     @override
     void initState()
@@ -73,6 +75,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
                                     chartStyle: widget.style.copyWith(borderColor: borderColor, textColor: textColor),
                                     brightness: brightness,
                                     pointerPosition: _lastPosition,
+                                    onClosestLineInfoCalculated: _onClosestLineInfoCalculated,
                                     onGraphMinMaxCalculated: _onGraphMinMaxCalculated
                                 )
                             ),
@@ -113,7 +116,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
         final TY customDataY = _customData.toolsY.toCustomValue(_dataTools!.pixelToDataY(_lastPosition!.dy));
 
         //logDebug('  $_lastPosition => $customDataX, $customDataY');
-        widget.onTap!.call(_lastPosition!, customDataX, customDataY);
+        widget.onTap!.call(_lastPosition!, customDataX, customDataY, _closestLineInfo);
     }
 
     void _onTapDown(TapDownDetails details)
@@ -152,4 +155,8 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
         //logDebug('onPanStart(${details.localPosition})');
         _updatePosition(details.localPosition);
     }
+
+    // ignore: use_setters_to_change_properties
+    void _onClosestLineInfoCalculated(ClosestLineInfo? closestLineInfo)
+    => _closestLineInfo = closestLineInfo;
 }
