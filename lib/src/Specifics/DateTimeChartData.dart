@@ -25,7 +25,7 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
     });
 
     @override
-    DoubleChartData getDoubleChartData()
+    DoubleChartData createDoubleChartData()
     {
         final List<DoubleLineData> doubleLines = <DoubleLineData>[];
 

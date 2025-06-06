@@ -36,6 +36,6 @@ class GenericChartData<TX, TY> with _$GenericChartData<TX, TY>
         required this.minMax
     });
 
-    DoubleChartData getDoubleChartData()
-    => throw UnimplementedError('GenericChartData.getDoubleChartData');
+    DoubleChartData createDoubleChartData()
+    => throw UnimplementedError('GenericChartData.createDoubleChartData');
 }

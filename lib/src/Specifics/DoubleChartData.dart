@@ -11,6 +11,6 @@ class DoubleChartData extends GenericChartData<double, double>
     });
 
     @override
-    DoubleChartData getDoubleChartData()
+    DoubleChartData createDoubleChartData()
     => this;
 }

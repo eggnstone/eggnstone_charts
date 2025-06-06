@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:eggnstone_charts/eggnstone_charts.dart';
+import 'package:eggnstone_dart/eggnstone_dart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:kt_dart/collection.dart';
@@ -249,5 +250,15 @@ Widget _buildChart(String title, DateTimeChartData data)
         pointRadius: 4
     );
 
-    return DateTimeLineChart(data: data, info: info, style: style);
+    return DateTimeLineChart(
+        data: data, 
+        info: info,
+        style: style,
+        onTap: _onTap
+    );
+}
+
+void _onTap<TX, TY>(Offset location, TX dataX, TY dataY)
+{
+    logDebug('Tapped at location: $location, dataX: $dataX, dataY: $dataY');
 }

@@ -49,6 +49,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     final double highlightDistanceX;
     final double highlightDistanceY;
     final Offset? pointerPosition;
+    final GraphMinMaxCalculatedCallback? onGraphMinMaxCalculated;
 
     GenericLineChartPainter({
         required this.chartStyle,
@@ -58,7 +59,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         this.dataTipFormat = '%s\nX: %x\nY: %y',
         this.highlightDistanceX = 20,
         this.highlightDistanceY = 20,
-        this.pointerPosition
+        this.pointerPosition,
+        this.onGraphMinMaxCalculated
     });
 
     @override
@@ -109,6 +111,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             ]
         );
 
+        onGraphMinMaxCalculated?.call(graphMinMax);
         if (DEBUG)
             logDebug('  graphMinMax:       $graphMinMax');
 
@@ -620,8 +623,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (pointerPosition == null)
             return;
 
-        final double closestX2 = closestPointInfo.position.dx;
-        final double closestY2 = closestPointInfo.position.dy;
+        final double closestX = closestPointInfo.position.dx;
+        final double closestY = closestPointInfo.position.dy;
 
         final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
         if (dataTools.pixelToDataX(pointerPosition!.dx + tickLineLengthX) < doubleData.minMax.minX
@@ -630,8 +633,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             || dataTools.pixelToDataY(pointerPosition!.dy + tickLineLengthY) > doubleData.minMax.maxY)
             return;
 
-        final TX customDataX = customData.toolsX.toCustomValue(dataTools.pixelToDataX(closestX2));
-        final TY customDataY = customData.toolsY.toCustomValue(dataTools.pixelToDataY(closestY2));
+        final TX customDataX = customData.toolsX.toCustomValue(dataTools.pixelToDataX(closestX));
+        final TY customDataY = customData.toolsY.toCustomValue(dataTools.pixelToDataY(closestY));
         final String customDataXString = customData.toolsX.formatDataTip(customDataX);
         final String customDataYString = customData.toolsY.formatDataTip(customDataY);
 
