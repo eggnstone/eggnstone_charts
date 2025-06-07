@@ -1,0 +1,15 @@
+name: example
+description: "An example for eggnstone_charts"
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  eggnstone_charts:
+    path: ..
+  kt_dart: ^1.1.0

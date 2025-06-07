@@ -1,5 +1,9 @@
 # eggnstone_charts
 
+## 0.1.5
+
+- Added example.
+
 ## 0.1.4
 
 - Better data tip and ticks.
