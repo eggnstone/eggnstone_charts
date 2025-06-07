@@ -6,11 +6,11 @@ part 'ChartInfo.freezed.dart';
 abstract class ChartInfo with _$ChartInfo
 {
     const factory ChartInfo({
-        required String title,
         @Default('%s\nX: %x\nY: %y') String dataTipFormat,
-        @Default('') String xAxisNameBottom,
-        @Default('') String xAxisNameTop,
-        @Default('') String yAxisNameLeft,
-        @Default('') String yAxisNameRight
+        @Default('') String labelBottom,
+        @Default('') String labelLeft,
+        @Default('') String labelRight,
+        @Default('') String labelTop,
+        @Default('') String title
     }) = _ChartInfo;
 }

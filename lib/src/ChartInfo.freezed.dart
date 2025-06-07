@@ -15,12 +15,12 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ChartInfo {
-  String get title;
   String get dataTipFormat;
-  String get xAxisNameBottom;
-  String get xAxisNameTop;
-  String get yAxisNameLeft;
-  String get yAxisNameRight;
+  String get labelBottom;
+  String get labelLeft;
+  String get labelRight;
+  String get labelTop;
+  String get title;
 
   /// Create a copy of ChartInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -34,26 +34,26 @@ mixin _$ChartInfo {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is ChartInfo &&
-            (identical(other.title, title) || other.title == title) &&
             (identical(other.dataTipFormat, dataTipFormat) ||
                 other.dataTipFormat == dataTipFormat) &&
-            (identical(other.xAxisNameBottom, xAxisNameBottom) ||
-                other.xAxisNameBottom == xAxisNameBottom) &&
-            (identical(other.xAxisNameTop, xAxisNameTop) ||
-                other.xAxisNameTop == xAxisNameTop) &&
-            (identical(other.yAxisNameLeft, yAxisNameLeft) ||
-                other.yAxisNameLeft == yAxisNameLeft) &&
-            (identical(other.yAxisNameRight, yAxisNameRight) ||
-                other.yAxisNameRight == yAxisNameRight));
+            (identical(other.labelBottom, labelBottom) ||
+                other.labelBottom == labelBottom) &&
+            (identical(other.labelLeft, labelLeft) ||
+                other.labelLeft == labelLeft) &&
+            (identical(other.labelRight, labelRight) ||
+                other.labelRight == labelRight) &&
+            (identical(other.labelTop, labelTop) ||
+                other.labelTop == labelTop) &&
+            (identical(other.title, title) || other.title == title));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, title, dataTipFormat,
-      xAxisNameBottom, xAxisNameTop, yAxisNameLeft, yAxisNameRight);
+  int get hashCode => Object.hash(runtimeType, dataTipFormat, labelBottom,
+      labelLeft, labelRight, labelTop, title);
 
   @override
   String toString() {
-    return 'ChartInfo(title: $title, dataTipFormat: $dataTipFormat, xAxisNameBottom: $xAxisNameBottom, xAxisNameTop: $xAxisNameTop, yAxisNameLeft: $yAxisNameLeft, yAxisNameRight: $yAxisNameRight)';
+    return 'ChartInfo(dataTipFormat: $dataTipFormat, labelBottom: $labelBottom, labelLeft: $labelLeft, labelRight: $labelRight, labelTop: $labelTop, title: $title)';
   }
 }
 
@@ -63,12 +63,12 @@ abstract mixin class $ChartInfoCopyWith<$Res> {
       _$ChartInfoCopyWithImpl;
   @useResult
   $Res call(
-      {String title,
-      String dataTipFormat,
-      String xAxisNameBottom,
-      String xAxisNameTop,
-      String yAxisNameLeft,
-      String yAxisNameRight});
+      {String dataTipFormat,
+      String labelBottom,
+      String labelLeft,
+      String labelRight,
+      String labelTop,
+      String title});
 }
 
 /// @nodoc
@@ -83,37 +83,37 @@ class _$ChartInfoCopyWithImpl<$Res> implements $ChartInfoCopyWith<$Res> {
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? title = null,
     Object? dataTipFormat = null,
-    Object? xAxisNameBottom = null,
-    Object? xAxisNameTop = null,
-    Object? yAxisNameLeft = null,
-    Object? yAxisNameRight = null,
+    Object? labelBottom = null,
+    Object? labelLeft = null,
+    Object? labelRight = null,
+    Object? labelTop = null,
+    Object? title = null,
   }) {
     return _then(_self.copyWith(
-      title: null == title
-          ? _self.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
       dataTipFormat: null == dataTipFormat
           ? _self.dataTipFormat
           : dataTipFormat // ignore: cast_nullable_to_non_nullable
               as String,
-      xAxisNameBottom: null == xAxisNameBottom
-          ? _self.xAxisNameBottom
-          : xAxisNameBottom // ignore: cast_nullable_to_non_nullable
+      labelBottom: null == labelBottom
+          ? _self.labelBottom
+          : labelBottom // ignore: cast_nullable_to_non_nullable
               as String,
-      xAxisNameTop: null == xAxisNameTop
-          ? _self.xAxisNameTop
-          : xAxisNameTop // ignore: cast_nullable_to_non_nullable
+      labelLeft: null == labelLeft
+          ? _self.labelLeft
+          : labelLeft // ignore: cast_nullable_to_non_nullable
               as String,
-      yAxisNameLeft: null == yAxisNameLeft
-          ? _self.yAxisNameLeft
-          : yAxisNameLeft // ignore: cast_nullable_to_non_nullable
+      labelRight: null == labelRight
+          ? _self.labelRight
+          : labelRight // ignore: cast_nullable_to_non_nullable
               as String,
-      yAxisNameRight: null == yAxisNameRight
-          ? _self.yAxisNameRight
-          : yAxisNameRight // ignore: cast_nullable_to_non_nullable
+      labelTop: null == labelTop
+          ? _self.labelTop
+          : labelTop // ignore: cast_nullable_to_non_nullable
+              as String,
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -123,30 +123,31 @@ class _$ChartInfoCopyWithImpl<$Res> implements $ChartInfoCopyWith<$Res> {
 
 class _ChartInfo implements ChartInfo {
   const _ChartInfo(
-      {required this.title,
-      this.dataTipFormat = '%s\nX: %x\nY: %y',
-      this.xAxisNameBottom = '',
-      this.xAxisNameTop = '',
-      this.yAxisNameLeft = '',
-      this.yAxisNameRight = ''});
+      {this.dataTipFormat = '%s\nX: %x\nY: %y',
+      this.labelBottom = '',
+      this.labelLeft = '',
+      this.labelRight = '',
+      this.labelTop = '',
+      this.title = ''});
 
-  @override
-  final String title;
   @override
   @JsonKey()
   final String dataTipFormat;
   @override
   @JsonKey()
-  final String xAxisNameBottom;
+  final String labelBottom;
   @override
   @JsonKey()
-  final String xAxisNameTop;
+  final String labelLeft;
   @override
   @JsonKey()
-  final String yAxisNameLeft;
+  final String labelRight;
   @override
   @JsonKey()
-  final String yAxisNameRight;
+  final String labelTop;
+  @override
+  @JsonKey()
+  final String title;
 
   /// Create a copy of ChartInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -161,26 +162,26 @@ class _ChartInfo implements ChartInfo {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _ChartInfo &&
-            (identical(other.title, title) || other.title == title) &&
             (identical(other.dataTipFormat, dataTipFormat) ||
                 other.dataTipFormat == dataTipFormat) &&
-            (identical(other.xAxisNameBottom, xAxisNameBottom) ||
-                other.xAxisNameBottom == xAxisNameBottom) &&
-            (identical(other.xAxisNameTop, xAxisNameTop) ||
-                other.xAxisNameTop == xAxisNameTop) &&
-            (identical(other.yAxisNameLeft, yAxisNameLeft) ||
-                other.yAxisNameLeft == yAxisNameLeft) &&
-            (identical(other.yAxisNameRight, yAxisNameRight) ||
-                other.yAxisNameRight == yAxisNameRight));
+            (identical(other.labelBottom, labelBottom) ||
+                other.labelBottom == labelBottom) &&
+            (identical(other.labelLeft, labelLeft) ||
+                other.labelLeft == labelLeft) &&
+            (identical(other.labelRight, labelRight) ||
+                other.labelRight == labelRight) &&
+            (identical(other.labelTop, labelTop) ||
+                other.labelTop == labelTop) &&
+            (identical(other.title, title) || other.title == title));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, title, dataTipFormat,
-      xAxisNameBottom, xAxisNameTop, yAxisNameLeft, yAxisNameRight);
+  int get hashCode => Object.hash(runtimeType, dataTipFormat, labelBottom,
+      labelLeft, labelRight, labelTop, title);
 
   @override
   String toString() {
-    return 'ChartInfo(title: $title, dataTipFormat: $dataTipFormat, xAxisNameBottom: $xAxisNameBottom, xAxisNameTop: $xAxisNameTop, yAxisNameLeft: $yAxisNameLeft, yAxisNameRight: $yAxisNameRight)';
+    return 'ChartInfo(dataTipFormat: $dataTipFormat, labelBottom: $labelBottom, labelLeft: $labelLeft, labelRight: $labelRight, labelTop: $labelTop, title: $title)';
   }
 }
 
@@ -193,12 +194,12 @@ abstract mixin class _$ChartInfoCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String title,
-      String dataTipFormat,
-      String xAxisNameBottom,
-      String xAxisNameTop,
-      String yAxisNameLeft,
-      String yAxisNameRight});
+      {String dataTipFormat,
+      String labelBottom,
+      String labelLeft,
+      String labelRight,
+      String labelTop,
+      String title});
 }
 
 /// @nodoc
@@ -213,37 +214,37 @@ class __$ChartInfoCopyWithImpl<$Res> implements _$ChartInfoCopyWith<$Res> {
   @override
   @pragma('vm:prefer-inline')
   $Res call({
-    Object? title = null,
     Object? dataTipFormat = null,
-    Object? xAxisNameBottom = null,
-    Object? xAxisNameTop = null,
-    Object? yAxisNameLeft = null,
-    Object? yAxisNameRight = null,
+    Object? labelBottom = null,
+    Object? labelLeft = null,
+    Object? labelRight = null,
+    Object? labelTop = null,
+    Object? title = null,
   }) {
     return _then(_ChartInfo(
-      title: null == title
-          ? _self.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
       dataTipFormat: null == dataTipFormat
           ? _self.dataTipFormat
           : dataTipFormat // ignore: cast_nullable_to_non_nullable
               as String,
-      xAxisNameBottom: null == xAxisNameBottom
-          ? _self.xAxisNameBottom
-          : xAxisNameBottom // ignore: cast_nullable_to_non_nullable
+      labelBottom: null == labelBottom
+          ? _self.labelBottom
+          : labelBottom // ignore: cast_nullable_to_non_nullable
               as String,
-      xAxisNameTop: null == xAxisNameTop
-          ? _self.xAxisNameTop
-          : xAxisNameTop // ignore: cast_nullable_to_non_nullable
+      labelLeft: null == labelLeft
+          ? _self.labelLeft
+          : labelLeft // ignore: cast_nullable_to_non_nullable
               as String,
-      yAxisNameLeft: null == yAxisNameLeft
-          ? _self.yAxisNameLeft
-          : yAxisNameLeft // ignore: cast_nullable_to_non_nullable
+      labelRight: null == labelRight
+          ? _self.labelRight
+          : labelRight // ignore: cast_nullable_to_non_nullable
               as String,
-      yAxisNameRight: null == yAxisNameRight
-          ? _self.yAxisNameRight
-          : yAxisNameRight // ignore: cast_nullable_to_non_nullable
+      labelTop: null == labelTop
+          ? _self.labelTop
+          : labelTop // ignore: cast_nullable_to_non_nullable
+              as String,
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }

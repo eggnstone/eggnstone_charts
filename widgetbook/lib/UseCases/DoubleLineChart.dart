@@ -10,39 +10,39 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
 @UseCase(path: 'Errors', name: 'No data', type: DoubleLineChart)
 Widget buildDoubleChartNoData(BuildContext context)
-=> _buildChart('No Data', _createNoData(context));
+=> _buildChart(context, 'No Data', _createNoData(context));
 
 @UseCase(path: 'Errors', name: 'Mismatch of lines and colors', type: DoubleLineChart)
 Widget buildDoubleChartMismatchOfLinesAndColors(BuildContext context)
-=> _buildChart('Mismatch of lines and colors', _createMismatchOfLinesAndColorsData(context));
+=> _buildChart(context, 'Mismatch of lines and colors', _createMismatchOfLinesAndColorsData(context));
 
 @UseCase(path: '', name: '2 dots', type: DoubleLineChart)
 Widget buildDoubleChartTwoDots(BuildContext context)
-=> _buildChart('2 dots', _createTwoDotsData(context));
+=> _buildChart(context, '2 dots', _createTwoDotsData(context));
 
 @UseCase(path: '', name: '1 dot', type: DoubleLineChart)
 Widget buildDoubleChartOneDot(BuildContext context)
-=> _buildChart('1 dot', _createOneDotData(context));
+=> _buildChart(context, '1 dot', _createOneDotData(context));
 
 @UseCase(path: '', name: '2 lines', type: DoubleLineChart)
 Widget buildDoubleChartTwoLines(BuildContext context)
-=> _buildChart('2 lines', _createTwoLinesData(context));
+=> _buildChart(context, '2 lines', _createTwoLinesData(context));
 
 @UseCase(path: '', name: '2 lines, 2 dots', type: DoubleLineChart)
 Widget buildDoubleChartTwoLinesTwoDots(BuildContext context)
-=> _buildChart('2 lines, 2 dots', _createTwoLinesTwoDotsData(context));
+=> _buildChart(context, '2 lines, 2 dots', _createTwoLinesTwoDotsData(context));
 
 @UseCase(path: '', name: '1 line', type: DoubleLineChart)
 Widget buildDoubleChartOneLine(BuildContext context)
-=> _buildChart('1 line', _createOneLineData(context));
+=> _buildChart(context, '1 line', _createOneLineData(context));
 
 @UseCase(path: '', name: '1 line, inverted', type: DoubleLineChart)
 Widget buildDoubleChartOneLineInverted(BuildContext context)
-=> _buildChart('1 line, inverted', _createOneLineData(context, invert: true));
+=> _buildChart(context, '1 line, inverted', _createOneLineData(context, invert: true));
 
 @UseCase(path: '', name: '1 line, 1 dot', type: DoubleLineChart)
 Widget buildDoubleChartOneLineOneDot(BuildContext context)
-=> _buildChart('1 line, 1 dot', _createOneLineOneDotData(context));
+=> _buildChart(context, '1 line, 1 dot', _createOneLineOneDotData(context));
 
 @UseCase(path: '', name: 'Doc 1', type: DoubleLineChart)
 Widget buildDoubleChartDocOne(BuildContext context)
@@ -51,6 +51,7 @@ Widget buildDoubleChartDocOne(BuildContext context)
         width: 200,
         height: 200,
         child: _buildChart(
+            context,
             'Double Sample',
             _createDocOneData(context)
         )
@@ -223,16 +224,34 @@ DoubleChartData _createDoubleChartData(
 
 //
 
-Widget _buildChart(String title, DoubleChartData data)
+Widget _buildChart(BuildContext context, String title, DoubleChartData data)
 {
+    final bool showLabelBottom = context.knobs.boolean(label: 'Show label bottom', initialValue: true);
+    final bool showLabelLeft = context.knobs.boolean(label: 'Show label left', initialValue: true);
+    final bool showLabelRight = context.knobs.boolean(label: 'Show label right');
+    final bool showLabelTop = context.knobs.boolean(label: 'Show label top');
+
+    final bool showTicksBottom = context.knobs.boolean(label: 'Show ticks bottom', initialValue: true);
+    final bool showTicksLeft = context.knobs.boolean(label: 'Show ticks left', initialValue: true);
+    final bool showTicksRight = context.knobs.boolean(label: 'Show ticks right');
+    final bool showTicksTop = context.knobs.boolean(label: 'Show ticks top');
+
     final ChartInfo info = ChartInfo(
-        title: title
+        title: title,
+        labelBottom: showLabelBottom ? 'Bottom Label' : '',
+        labelLeft: showLabelLeft ? 'Left Label' : '',
+        labelRight: showLabelRight ? 'Right Label' : '',
+        labelTop: showLabelTop ? 'Top Label' : ''
     );
 
-    const ChartStyle style = ChartStyle(
+    final ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
         fontSize: 12,
-        pointRadius: 4
+        pointRadius: 4,
+        showTicksBottom: showTicksBottom,
+        showTicksLeft: showTicksLeft,
+        showTicksRight: showTicksRight,
+        showTicksTop: showTicksTop
     );
 
     return DoubleLineChart(

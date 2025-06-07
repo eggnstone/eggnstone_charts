@@ -10,13 +10,17 @@ abstract class ChartStyle with _$ChartStyle
         required double devicePixelRatio,
         required double fontSize,
         required double pointRadius,
-        @Default(2) double lineWidth,
         @Default(Colors.black) Color borderColor,
         @Default(Colors.white) Color borderColorDark,
         @Default(Colors.white) Color dataTipBackgroundColor,
         @Default(Colors.black) Color dataTipBackgroundColorDark,
         @Default(Colors.grey) Color gridColor,
         @Default(Colors.grey) Color gridColorDark,
+        @Default(2) double lineWidth,
+        @Default(false) bool showTicksBottom,
+        @Default(false) bool showTicksLeft,
+        @Default(false) bool showTicksRight,
+        @Default(false) bool showTicksTop,
         @Default(Colors.black) Color textColor,
         @Default(Colors.white) Color textColorDark
     }) = _ChartStyle;

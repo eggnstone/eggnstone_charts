@@ -11,23 +11,23 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 
 @UseCase(path: 'Errors', name: 'One date only', type: DateTimeLineChart)
 Widget buildDateTimeChartOnlyOneDate(BuildContext context)
-=> _buildChart('One date only', _createSampleDataOnlyOneDate(context));
+=> _buildChart(context, 'One date only', _createSampleDataOnlyOneDate(context));
 
 @UseCase(path: '', name: 'Normal', type: DateTimeLineChart)
 Widget buildDateTimeChartNormal(BuildContext context)
-=> _buildChart('Normal', _createSampleData(context));
+=> _buildChart(context, 'Normal', _createSampleData(context));
 
 @UseCase(path: '', name: 'Inverted', type: DateTimeLineChart)
 Widget buildDateTimeChartInverted(BuildContext context)
-=> _buildChart('Inverted', _createSampleData(context, invert: true));
+=> _buildChart(context, 'Inverted', _createSampleData(context, invert: true));
 
 @UseCase(path: '', name: 'One date only (fixed)', type: DateTimeLineChart)
 Widget buildDateTimeChartOnlyOneDateFixed(BuildContext context)
-=> _buildChart('One date only (fixed)', _createSampleDataOnlyOneDateFixed(context));
+=> _buildChart(context, 'One date only (fixed)', _createSampleDataOnlyOneDateFixed(context));
 
 @UseCase(path: '', name: 'Two dates only', type: DateTimeLineChart)
 Widget buildDateTimeChartOnlyTwoDates(BuildContext context)
-=> _buildChart('Two dates only', _createSampleDataOnlyTwoDates(context));
+=> _buildChart(context, 'Two dates only', _createSampleDataOnlyTwoDates(context));
 
 @UseCase(path: '', name: 'Doc 1', type: DateTimeLineChart)
 Widget buildDateTimeChartDocOne(BuildContext context)
@@ -36,6 +36,7 @@ Widget buildDateTimeChartDocOne(BuildContext context)
         width: 200,
         height: 300,
         child: _buildChart(
+            context,
             'DateTime Sample',
             _createDocOneData(context)
         )
@@ -238,16 +239,34 @@ DateTimeChartData _createDateTimeChartData(
 
 //
 
-Widget _buildChart(String title, DateTimeChartData data)
+Widget _buildChart(BuildContext context, String title, DateTimeChartData data)
 {
+    final bool showLabelBottom = context.knobs.boolean(label: 'Show label bottom', initialValue: true);
+    final bool showLabelLeft = context.knobs.boolean(label: 'Show label left', initialValue: true);
+    final bool showLabelRight = context.knobs.boolean(label: 'Show label right');
+    final bool showLabelTop = context.knobs.boolean(label: 'Show label top');
+
+    final bool showTicksBottom = context.knobs.boolean(label: 'Show ticks bottom', initialValue: true);
+    final bool showTicksLeft = context.knobs.boolean(label: 'Show ticks left', initialValue: true);
+    final bool showTicksRight = context.knobs.boolean(label: 'Show ticks right');
+    final bool showTicksTop = context.knobs.boolean(label: 'Show ticks top');
+
     final ChartInfo info = ChartInfo(
-        title: title
+        title: title,
+        labelBottom: showLabelBottom ? 'Bottom Label' : '',
+        labelLeft: showLabelLeft ? 'Left Label' : '',
+        labelRight: showLabelRight ? 'Right Label' : '',
+        labelTop: showLabelTop ? 'Top Label' : ''
     );
 
-    const ChartStyle style = ChartStyle(
+    final ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
         fontSize: 12,
-        pointRadius: 4
+        pointRadius: 4,
+        showTicksBottom: showTicksBottom,
+        showTicksLeft: showTicksLeft,
+        showTicksRight: showTicksRight,
+        showTicksTop: showTicksTop
     );
 
     return DateTimeLineChart(

@@ -50,6 +50,10 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     final double highlightDistanceX;
     final double highlightDistanceY;
     final Offset? pointerPosition;
+    final bool showTicksBottom;
+    final bool showTicksLeft;
+    final bool showTicksRight;
+    final bool showTicksTop;
     final ClosestLineCalculatedCallback? onClosestLineCalculated;
     final GraphMinMaxCalculatedCallback? onGraphMinMaxCalculated;
 
@@ -62,6 +66,10 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         this.highlightDistanceX = 20,
         this.highlightDistanceY = 20,
         this.pointerPosition,
+        this.showTicksBottom = true,
+        this.showTicksLeft = true,
+        this.showTicksRight = false,
+        this.showTicksTop = false,        
         this.onClosestLineCalculated,
         this.onGraphMinMaxCalculated
     });
@@ -111,7 +119,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             <TextPainter>[
                 _createAndLayoutTextPainter(customData.toolsY.format(customData.minMax.minY), chartStyle),
                 _createAndLayoutTextPainter(customData.toolsY.format(customData.minMax.maxY), chartStyle)
-            ]
+            ],
+            showTicksBottom: showTicksBottom,
+            showTicksLeft: showTicksLeft,
+            showTicksRight: showTicksRight,
+            showTicksTop: showTicksTop
         );
 
         onGraphMinMaxCalculated?.call(graphMinMax);
@@ -133,11 +145,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), paintInfo.borderPaint);
 
-        _paintTextPaintersLeft(paintInfo, yAxisPainters);
-        _paintTextPaintersRight(paintInfo, yAxisPainters);
+        _paintTextPaintersLeft(paintInfo, yAxisPainters, showTicks: showTicksLeft);
+        _paintTextPaintersRight(paintInfo, yAxisPainters, showTicks: showTicksRight);
 
-        _paintTextPaintersTop(paintInfo, xAxisPainters);
-        _paintTextPaintersBottom(paintInfo, xAxisPainters);
+        _paintTextPaintersTop(paintInfo, xAxisPainters, showTicks: showTicksTop);
+        _paintTextPaintersBottom(paintInfo, xAxisPainters, showTicks: showTicksBottom);
 
         final ClosestLineInfo? closestLine = _calcClosestLine(paintInfo);
         onClosestLineCalculated?.call(closestLine);
@@ -193,15 +205,42 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return tp;
     }
 
-    DoubleMinMax _calcGraphMinMax(Size size, List<TextPainter> xAxisPainters, List<TextPainter> yAxisPainters)
+    static DoubleMinMax _calcGraphMinMax(
+        Size size,
+        List<TextPainter> xAxisPainters, 
+        List<TextPainter> yAxisPainters, {
+            bool showTicksBottom = false,
+            bool showTicksLeft = false,
+            bool showTicksRight = false,
+            bool showTicksTop = false
+        }
+    )
     {
-        final double maxYAxisPainterWidth = _calcMaxPainterWidth(yAxisPainters);
-        final double chartStartX = maxYAxisPainterWidth + paddingBetweenTickLabelAndTickLineX + tickLineLengthX;
-        final double chartEndX = size.width - maxYAxisPainterWidth - paddingBetweenTickLabelAndTickLineX - tickLineLengthX;
+        double chartStartX = showTicksBottom || showTicksTop ? additionalSpaceForLabelX : 1;
+        double chartEndX = showTicksBottom || showTicksTop ? size.width - additionalSpaceForLabelX : size.width - 1;
+        if (showTicksLeft || showTicksRight)
+        {
+            final double maxYAxisPainterWidth = _calcMaxPainterWidth(yAxisPainters);
 
-        final double maxXAxisPainterHeight = _calcMaxPainterHeight(xAxisPainters);
-        final double chartStartY = maxXAxisPainterHeight + tickLineLengthY + paddingBetweenTickLabelAndTickLineY;
-        final double chartEndY = size.height - maxXAxisPainterHeight - tickLineLengthY - paddingBetweenTickLabelAndTickLineY;
+            if (showTicksLeft)
+                chartStartX = maxYAxisPainterWidth + additionalSpaceForLabelX;
+
+            if (showTicksRight)
+                chartEndX = size.width - maxYAxisPainterWidth - additionalSpaceForLabelX;
+        }
+
+        double chartStartY = showTicksLeft || showTicksRight ? additionalSpaceForLabelY : 1;
+        double chartEndY = showTicksLeft || showTicksRight ? size.height - additionalSpaceForLabelY : size.height - 1;
+        if (showTicksBottom || showTicksTop)
+        {
+            final double maxXAxisPainterHeight = _calcMaxPainterHeight(xAxisPainters);
+
+            if (showTicksTop)
+                chartStartY = maxXAxisPainterHeight + additionalSpaceForLabelY;
+
+            if (showTicksBottom)
+                chartEndY = size.height - maxXAxisPainterHeight - additionalSpaceForLabelY;
+        }
 
         /*logDebug('maxYAxisPainterWidth:  $maxYAxisPainterWidth');
         logDebug('maxXAxisPainterHeight: $maxXAxisPainterHeight');
@@ -218,7 +257,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         );
     }
 
-    double _calcMaxPainterHeight<T>(List<TextPainter> painters)
+    static double _calcMaxPainterHeight<T>(List<TextPainter> painters)
     {
         double maxHeight = 0;
 
@@ -228,7 +267,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return maxHeight;
     }
 
-    double _calcMaxPainterWidth<T>(List<TextPainter> painters)
+    static double _calcMaxPainterWidth<T>(List<TextPainter> painters)
     {
         double maxWidth = 0;
 
@@ -238,7 +277,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return maxWidth;
     }
 
-    void _paintTextPaintersLeft<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
+    void _paintTextPaintersLeft<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
     {
         for (int i = 0; i < painters.length; i++)
         {
@@ -251,43 +290,43 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 _drawLineSegment(paintInfo.canvas, gridPaint, paintInfo.graphMinMax.minX, painter.linePosition, paintInfo.graphMinMax.maxX, painter.linePosition);
             }
 
-            if (textPainter != null)
+            if (textPainter != null && showTicks)
             {
                 _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.minX - tickLineLengthX, painter.linePosition, paintInfo.graphMinMax.minX, painter.linePosition);
-                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.minX - tickLineLengthX - paddingBetweenTickLabelAndTickLineX - textPainter.width, painter.textPosition - textPainter.height / 2));
+                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.minX - additionalSpaceForLabelX - textPainter.width, painter.textPosition - textPainter.height / 2));
             }
         }
     }
 
-    void _paintTextPaintersTop<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
+    void _paintTextPaintersTop<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
     {
         for (int i = 0; i < painters.length; i++)
         {
             final PositionedTextPainter<T> painter = painters[i];
             final TextPainter? textPainter = painter.textPainter;
-            if (textPainter != null)
+            if (textPainter != null && showTicks)
             {
                 _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, painter.linePosition, paintInfo.graphMinMax.minY - tickLineLengthY, painter.linePosition, paintInfo.graphMinMax.minY);
-                textPainter.paint(paintInfo.canvas, Offset(painter.textPosition - textPainter.width / 2, paintInfo.graphMinMax.minY - tickLineLengthY - paddingBetweenTickLabelAndTickLineY - textPainter.height));
+                textPainter.paint(paintInfo.canvas, Offset(painter.textPosition - textPainter.width / 2, paintInfo.graphMinMax.minY - additionalSpaceForLabelY - textPainter.height));
             }
         }
     }
 
-    void _paintTextPaintersRight<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
+    void _paintTextPaintersRight<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
     {
         for (int i = 0; i < painters.length; i++)
         {
             final PositionedTextPainter<T> painter = painters[i];
             final TextPainter? textPainter = painter.textPainter;
-            if (textPainter != null)
+            if (textPainter != null && showTicks)
             {
                 _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.maxX, painter.linePosition, paintInfo.graphMinMax.maxX + tickLineLengthX, painter.linePosition);
-                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.maxX + tickLineLengthX + paddingBetweenTickLabelAndTickLineX, painter.textPosition - textPainter.height / 2));
+                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.maxX + additionalSpaceForLabelX, painter.textPosition - textPainter.height / 2));
             }
         }
     }
 
-    void _paintTextPaintersBottom<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
+    void _paintTextPaintersBottom<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
     {
         for (int i = 0; i < painters.length; i++)
         {
@@ -300,10 +339,10 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 _drawLineSegment(paintInfo.canvas, gridPaint, painter.linePosition, paintInfo.graphMinMax.minY, painter.linePosition, paintInfo.graphMinMax.maxY);
             }
 
-            if (textPainter != null)
+            if (textPainter != null && showTicks)
             {
                 _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, painter.linePosition, paintInfo.graphMinMax.maxY, painter.linePosition, paintInfo.graphMinMax.maxY + tickLineLengthY);
-                textPainter.paint(paintInfo.canvas, Offset(painter.textPosition - textPainter.width / 2, paintInfo.graphMinMax.maxY + tickLineLengthY + paddingBetweenTickLabelAndTickLineY));
+                textPainter.paint(paintInfo.canvas, Offset(painter.textPosition - textPainter.width / 2, paintInfo.graphMinMax.maxY + additionalSpaceForLabelY));
             }
         }
     }
@@ -381,13 +420,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
             final Offset distance = _calcDistanceToPoint(currentX, currentY, pointerPosition!);
             if (_isCloser(distance, closestPoint?.distance))
-            {
                 closestPoint = ClosestPointInfo(
                     distance: distance,
                     pointIndex: pointIndex,
                     position: Offset(currentX, currentY)
                 );
-            }
 
             lastX = currentX;
             lastY = currentY;

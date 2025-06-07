@@ -59,36 +59,62 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
             ? Text(widget.info.title, style: TextStyle(color: textColor, fontSize: widget.style.fontSize), textScaler: const TextScaler.linear(1.5))
             : null;
 
+        final Widget? labelBottomWidget = widget.info.labelBottom.isEmpty ? null : Text(widget.info.labelBottom);
+        final Widget? labelLeftWidget = widget.info.labelLeft.isEmpty ? null : RotatedBox(quarterTurns: 3, child: Text(widget.info.labelLeft));
+        final Widget? labelRightWidget = widget.info.labelRight.isEmpty ? null : RotatedBox(quarterTurns: 3, child: Text(widget.info.labelRight));
+        final Widget? labelTopWidget = widget.info.labelTop.isEmpty ? null : Text(widget.info.labelTop);
+
+        final Widget graphWidget = GestureDetector(
+            child: MouseRegion(
+                child: CustomPaint(
+                    size: Size.infinite,
+                    painter: GenericLineChartPainter<TX, TY>(
+                        customData: _customData,
+                        dataTipFormat: widget.info.dataTipFormat,
+                        doubleData: _doubleData,
+                        chartStyle: widget.style.copyWith(borderColor: borderColor, textColor: textColor),
+                        brightness: brightness,
+                        pointerPosition: _lastPosition,
+                        showTicksBottom: widget.style.showTicksBottom,
+                        showTicksLeft: widget.style.showTicksLeft,
+                        showTicksRight: widget.style.showTicksRight,
+                        showTicksTop: widget.style.showTicksTop,
+                        onClosestLineCalculated: _onClosestLineCalculated,
+                        onGraphMinMaxCalculated: _onGraphMinMaxCalculated
+                    )
+                ),
+                onHover: _onHover,
+                onExit: _onExit
+            ),
+            onPanEnd: _onPanEnd,
+            onPanUpdate: _onPanUpdate,
+            onPanStart: _onPanStart,
+            onTapDown: _onTapDown,
+            onTapUp: _onTapUp
+        );
+
+        final Widget middleWidget = labelLeftWidget == null && labelRightWidget == null
+            ? graphWidget
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                    if (labelLeftWidget != null) labelLeftWidget,
+                    if (labelLeftWidget != null) const SizedBox(width: 8),
+                    Expanded(child: graphWidget),
+                    if (labelRightWidget != null) const SizedBox(width: 8),
+                    if (labelRightWidget != null) labelRightWidget
+                ]
+            );
+
         return Column(
             children: <Widget>[
                 if (titleWidget != null) titleWidget,
                 if (titleWidget != null) const SizedBox(height: 8),
-                Expanded(
-                    child: GestureDetector(
-                        child: MouseRegion(
-                            child: CustomPaint(
-                                size: Size.infinite,
-                                painter: GenericLineChartPainter<TX, TY>(
-                                    customData: _customData,
-                                    dataTipFormat: widget.info.dataTipFormat,
-                                    doubleData: _doubleData,
-                                    chartStyle: widget.style.copyWith(borderColor: borderColor, textColor: textColor),
-                                    brightness: brightness,
-                                    pointerPosition: _lastPosition,
-                                    onClosestLineCalculated: _onClosestLineCalculated,
-                                    onGraphMinMaxCalculated: _onGraphMinMaxCalculated
-                                )
-                            ),
-                            onHover: _onHover,
-                            onExit: _onExit
-                        ),
-                        onPanEnd: _onPanEnd,
-                        onPanUpdate: _onPanUpdate,
-                        onPanStart: _onPanStart,
-                        onTapDown: _onTapDown,
-                        onTapUp: _onTapUp
-                    )
-                )
+                if (labelTopWidget != null) labelTopWidget,
+                if (labelTopWidget != null) const SizedBox(height: 8),
+                Expanded(child: middleWidget),
+                if (labelBottomWidget != null) const SizedBox(height: 8),
+                if (labelBottomWidget != null) labelBottomWidget
             ]
         );
     }
