@@ -17,7 +17,6 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
     static const bool DEBUG = false;
 
     DateTimeChartData({
-        required super.colors,
         required super.lines,
         required super.toolsX,
         required super.toolsY,
@@ -62,7 +61,6 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
         );
 
         return DoubleChartData(
-            colors: colors,
             lines: doubleLines.toImmutableList(),
             toolsX: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
             toolsY: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),

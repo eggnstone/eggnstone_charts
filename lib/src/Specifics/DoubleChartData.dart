@@ -3,7 +3,6 @@ import '../Generics/GenericChartData.dart';
 class DoubleChartData extends GenericChartData<double, double>
 {
     DoubleChartData({
-        required super.colors,
         required super.lines,
         required super.toolsX,
         required super.toolsY,

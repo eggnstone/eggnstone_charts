@@ -104,9 +104,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             logDebug('  doubleData.minMax: ${doubleData.minMax}');
         }
 
-        if (customData.lines.size != customData.colors.size)
-            throw ChartsUserException('Mismatch between lines and colors');
-
         if (customData.lines.isEmpty())
             throw ChartsUserException('No data');
 
@@ -155,19 +152,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         onClosestLineCalculated?.call(closestLine);
         _drawLines(paintInfo, closestLine);
 
-        /*
-        final TextPainter tpLeft = _createAndLayoutTextPainter('Left');
-        final TextPainter tpTop = _createAndLayoutTextPainter('Top');
-        final TextPainter tpRight = _createAndLayoutTextPainter('Right');
-        final TextPainter tpBottom = _createAndLayoutTextPainter('Bottom');
-
-        tpLeft.paint(canvas, Offset(paddingHorizontalOuter, graphMinMax.maxY / 2));
-        tpTop.paint(canvas, Offset(graphMinMax.maxX / 2, paddingVerticalOuter));
-        tpRight.paint(canvas, Offset(size.width - paddingHorizontalOuter - tpRight.width, graphMinMax.maxY / 2));
-        tpBottom.paint(canvas, Offset(graphMinMax.maxX / 2, size.height - paddingVerticalOuter - tpBottom.height));
-        */
-
-        if (closestLine != null && closestLine.closestPoint.distance.dx < highlightDistanceX && closestLine.closestPoint.distance.dy < highlightDistanceY)
+        if (closestLine != null && closestLine.closestPoint.distance.dx <= highlightDistanceX && closestLine.closestPoint.distance.dy <= highlightDistanceY)
         {
             final GenericLineData<TX, TY> line = customData.lines[closestLine.lineIndex];
             _drawDataTip(paintInfo, line.label, closestLine.closestPoint);
@@ -359,41 +344,32 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 closestLine = ClosestLineInfo(closestPoint: closestPointOfCurrentLine!, lineIndex: lineIndex);
         }
 
+        //todo
+
         return closestLine;
     }
 
     void _drawLines(PaintInfo paintInfo, ClosestLineInfo? closestLine)
     {
+        int? highlightLineIndex;
+        int? highlightPointIndex;
+        if (closestLine != null && closestLine.closestPoint.distance.dx <= highlightDistanceX && closestLine.closestPoint.distance.dy <= highlightDistanceY)
+        {
+            highlightLineIndex = closestLine.lineIndex;
+            highlightPointIndex = closestLine.closestPoint.pointIndex;
+        }
+
         for (int lineIndex = 0; lineIndex < doubleData.lines.size; lineIndex++)
         {
             final DoubleLineData line = doubleData.lines[lineIndex];
-
-            Color color;
-            if (lineIndex < 0 || lineIndex >= doubleData.colors.size)
-            {
-                logError('GenericLineChartPainter.linePaint() lineIndex: $lineIndex out of range for colors.size: ${doubleData.colors.size}');
-                color = Colors.black;
-            }
-            else
-                color = doubleData.colors[lineIndex];
-
-            _drawLine(paintInfo, line, color);
+            if (lineIndex != highlightLineIndex)
+                _drawLine(paintInfo, line);
         }
 
-        if (closestLine != null && closestLine.closestPoint.distance.dx < highlightDistanceX && closestLine.closestPoint.distance.dy < highlightDistanceY)
+        if (highlightLineIndex != null)
         {
-            final DoubleLineData line = doubleData.lines[closestLine.lineIndex];
-
-            Color color;
-            if (closestLine.lineIndex < 0 || closestLine.lineIndex >= doubleData.colors.size)
-            {
-                logError('GenericLineChartPainter.linePaint() lineIndex: ${closestLine.lineIndex} out of range for colors.size: ${doubleData.colors.size}');
-                color = Colors.black;
-            }
-            else
-                color = doubleData.colors[closestLine.lineIndex];
-
-            _drawLine(paintInfo, line, color, highlightIndex: closestLine.closestPoint.pointIndex);
+            final DoubleLineData line = doubleData.lines[highlightLineIndex];
+            _drawLine(paintInfo, line, highlightPointIndex: highlightPointIndex);
         }
     }
 
@@ -433,15 +409,15 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return closestPoint;
     }
 
-    void _drawLine(PaintInfo paintInfo, DoubleLineData line, Color color, {int? highlightIndex})
+    void _drawLine(PaintInfo paintInfo, DoubleLineData line, {int? highlightPointIndex})
     {
         final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
         double lastX = dataTools.dataToPixelX(line.points[0].x);
         double lastY = dataTools.dataToPixelY(line.points[0].y);
 
-        final double lineWidth = highlightIndex == null ? chartStyle.lineWidth : 2 * chartStyle.lineWidth;
-        final Paint linePaint = _createPaint(color, strokeWidth: lineWidth, paintingStyle: PaintingStyle.fill);
-        final double pointRadius = highlightIndex == null ? chartStyle.pointRadius : highlightIndex == 0 ? 2 * chartStyle.pointRadius : 1.5 * chartStyle.pointRadius;
+        final double lineWidth = highlightPointIndex == null ? chartStyle.lineWidth : 2 * chartStyle.lineWidth;
+        final Paint linePaint = _createPaint(line.color, strokeWidth: lineWidth, paintingStyle: PaintingStyle.fill);
+        final double pointRadius = highlightPointIndex == null ? chartStyle.pointRadius : highlightPointIndex == 0 ? 2 * chartStyle.pointRadius : 1.5 * chartStyle.pointRadius;
         paintInfo.canvas.drawCircle(Offset(lastX, lastY), pointRadius, linePaint);
 
         for (int pointIndex = 1; pointIndex < line.points.size; pointIndex++)
@@ -451,7 +427,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
             _drawLineSegment(paintInfo.canvas, linePaint, lastX, lastY, currentX, currentY);
 
-            final double pointRadius = highlightIndex == null ? chartStyle.pointRadius : highlightIndex == pointIndex ? 2 * chartStyle.pointRadius : 1.5 * chartStyle.pointRadius;
+            final double pointRadius = highlightPointIndex == null ? chartStyle.pointRadius : highlightPointIndex == pointIndex ? 2 * chartStyle.pointRadius : 1.5 * chartStyle.pointRadius;
             paintInfo.canvas.drawCircle(Offset(currentX, currentY), pointRadius, linePaint);
 
             lastX = currentX;

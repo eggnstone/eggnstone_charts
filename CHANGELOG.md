@@ -1,5 +1,9 @@
 # eggnstone_charts
 
+## 0.1.6
+
+- Refactored colors.
+
 ## 0.1.5
 
 - Added example.

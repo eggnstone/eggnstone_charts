@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kt_dart/collection.dart';
 
@@ -14,9 +12,6 @@ part 'GenericChartData.freezed.dart';
 class GenericChartData<TX, TY> with _$GenericChartData<TX, TY>
 {
     @override
-    final KtList<Color> colors;
-
-    @override
     final KtList<GenericLineData<TX, TY>> lines;
 
     @override
@@ -29,7 +24,6 @@ class GenericChartData<TX, TY> with _$GenericChartData<TX, TY>
     final GenericMinMax<TX, TY> minMax;
 
     const GenericChartData({
-        required this.colors,
         required this.lines,
         required this.toolsX,
         required this.toolsY,

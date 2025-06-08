@@ -15,7 +15,6 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$GenericChartData<TX, TY> {
-  KtList<Color> get colors;
   KtList<GenericLineData<TX, TY>> get lines;
   GenericTools<TX> get toolsX;
   GenericTools<TY> get toolsY;
@@ -34,7 +33,6 @@ mixin _$GenericChartData<TX, TY> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is GenericChartData<TX, TY> &&
-            (identical(other.colors, colors) || other.colors == colors) &&
             (identical(other.lines, lines) || other.lines == lines) &&
             (identical(other.toolsX, toolsX) || other.toolsX == toolsX) &&
             (identical(other.toolsY, toolsY) || other.toolsY == toolsY) &&
@@ -42,12 +40,11 @@ mixin _$GenericChartData<TX, TY> {
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, colors, lines, toolsX, toolsY, minMax);
+  int get hashCode => Object.hash(runtimeType, lines, toolsX, toolsY, minMax);
 
   @override
   String toString() {
-    return 'GenericChartData<$TX, $TY>(colors: $colors, lines: $lines, toolsX: $toolsX, toolsY: $toolsY, minMax: $minMax)';
+    return 'GenericChartData<$TX, $TY>(lines: $lines, toolsX: $toolsX, toolsY: $toolsY, minMax: $minMax)';
   }
 }
 
@@ -58,8 +55,7 @@ abstract mixin class $GenericChartDataCopyWith<TX, TY, $Res> {
       _$GenericChartDataCopyWithImpl;
   @useResult
   $Res call(
-      {KtList<Color> colors,
-      KtList<GenericLineData<TX, TY>> lines,
+      {KtList<GenericLineData<TX, TY>> lines,
       GenericTools<TX> toolsX,
       GenericTools<TY> toolsY,
       GenericMinMax<TX, TY> minMax});
@@ -78,17 +74,12 @@ class _$GenericChartDataCopyWithImpl<TX, TY, $Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? colors = null,
     Object? lines = null,
     Object? toolsX = null,
     Object? toolsY = null,
     Object? minMax = null,
   }) {
     return _then(GenericChartData(
-      colors: null == colors
-          ? _self.colors
-          : colors // ignore: cast_nullable_to_non_nullable
-              as KtList<Color>,
       lines: null == lines
           ? _self.lines
           : lines // ignore: cast_nullable_to_non_nullable

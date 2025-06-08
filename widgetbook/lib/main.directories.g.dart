@@ -25,18 +25,12 @@ final directories = <_i1.WidgetbookNode>[
           builder: _i2.buildDateTimeChartOnlyOneDate,
         ),
       ),
-      _i1.WidgetbookComponent(
+      _i1.WidgetbookLeafComponent(
         name: 'GenericLineChart<double, double, DoubleChartData>',
-        useCases: [
-          _i1.WidgetbookUseCase(
-            name: 'Mismatch of lines and colors',
-            builder: _i3.buildDoubleChartMismatchOfLinesAndColors,
-          ),
-          _i1.WidgetbookUseCase(
-            name: 'No data',
-            builder: _i3.buildDoubleChartNoData,
-          ),
-        ],
+        useCase: _i1.WidgetbookUseCase(
+          name: 'No data',
+          builder: _i3.buildDoubleChartNoData,
+        ),
       ),
     ],
   ),

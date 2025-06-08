@@ -199,7 +199,7 @@ DateTimeChartData _createDateTimeChartData(
         .mapIndexed(
             (int index, List<DateTimePoint> points) 
             => GenericLineData<DateTime, double>(
-                Colors.pink,
+                colors[index],
                 'Data Series #${index + 1}',
                 points.map((DateTimePoint dp) => invert ? DateTimePoint(dp.x, -dp.y) : dp).toImmutableList()
             )
@@ -224,7 +224,6 @@ DateTimeChartData _createDateTimeChartData(
     }
 
     return DateTimeChartData(
-        colors: colors.toImmutableList(),
         lines: convertedDateTimeLines.toImmutableList(),
         toolsX: toolsX,
         toolsY: toolsY,

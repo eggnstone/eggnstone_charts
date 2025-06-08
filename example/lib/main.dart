@@ -22,11 +22,12 @@ class MyApp extends StatelessWidget
             ),
             body: DoubleLineChart(
                 data: DoubleChartData(
-                    colors: KtList<Color>.from(<Color>[Colors.green]),
                     lines: KtList<DoubleLineData>.from(
                         <DoubleLineData>[
                             DoubleLineData(
-                                Colors.pink, 'Data Series #1', KtList<DoublePoint>.from(
+                                Colors.green,
+                                'Data Series #1',
+                                KtList<DoublePoint>.from(
                                     <DoublePoint>[
                                         const DoublePoint(1, 1),
                                         const DoublePoint(9, 9)

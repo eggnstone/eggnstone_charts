@@ -12,10 +12,6 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 Widget buildDoubleChartNoData(BuildContext context)
 => _buildChart(context, 'No Data', _createNoData(context));
 
-@UseCase(path: 'Errors', name: 'Mismatch of lines and colors', type: DoubleLineChart)
-Widget buildDoubleChartMismatchOfLinesAndColors(BuildContext context)
-=> _buildChart(context, 'Mismatch of lines and colors', _createMismatchOfLinesAndColorsData(context));
-
 @UseCase(path: '', name: '2 dots', type: DoubleLineChart)
 Widget buildDoubleChartTwoDots(BuildContext context)
 => _buildChart(context, '2 dots', _createTwoDotsData(context));
@@ -62,13 +58,6 @@ Widget buildDoubleChartDocOne(BuildContext context)
 
 DoubleChartData _createNoData(BuildContext context)
 => _createDoubleChartData(context, colors: <Color>[], lines: <List<DoublePoint>>[]);
-
-DoubleChartData _createMismatchOfLinesAndColorsData(BuildContext context)
-=> _createDoubleChartData(
-    context,
-    colors: <Color>[Colors.red, Colors.green],
-    lines: <List<DoublePoint>>[_createLine1()]
-);
 
 DoubleChartData _createTwoDotsData(BuildContext context)
 => _createDoubleChartData(
@@ -199,7 +188,7 @@ DoubleChartData _createDoubleChartData(
         .mapIndexed(
             (int index, List<DoublePoint> points) 
             => DoubleLineData(
-                Colors.pink,
+                colors[index],
                 'Data Series #${index + 1}', 
                 points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()
             )
@@ -209,7 +198,6 @@ DoubleChartData _createDoubleChartData(
     final double rangeX = context.knobs.int.slider(label: 'Range X', initialValue: rangeInitialValueX, min: rangeMinX, max: rangeMaxX, divisions: rangeStepsX).toDouble();
     final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: rangeInitialValueY, min: rangeMinY, max: rangeMaxY, divisions: rangeStepsY).toDouble();
     return DoubleChartData(
-        colors: colors.toImmutableList(),
         lines: convertedDoubleLines.toImmutableList(),
         toolsX: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
         toolsY: DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert)),
