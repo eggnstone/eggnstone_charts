@@ -47,8 +47,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     final Brightness? brightness;
     final String dataTipFormat;
     final DoubleChartData doubleData;
-    final double highlightDistanceX;
-    final double highlightDistanceY;
+    final double highlightDistance;
     final Offset? pointerPosition;
     final bool showTicksBottom;
     final bool showTicksLeft;
@@ -63,8 +62,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         required this.doubleData,
         this.brightness,
         this.dataTipFormat = '%s\nX: %x\nY: %y',
-        this.highlightDistanceX = 20,
-        this.highlightDistanceY = 20,
+        this.highlightDistance = 20,
         this.pointerPosition,
         this.showTicksBottom = true,
         this.showTicksLeft = true,
@@ -152,7 +150,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         onClosestLineCalculated?.call(closestLine);
         _drawLines(paintInfo, closestLine);
 
-        if (closestLine != null && closestLine.closestPoint.distance.dx <= highlightDistanceX && closestLine.closestPoint.distance.dy <= highlightDistanceY)
+        if (closestLine != null && closestLine.closestPoint.distance <= highlightDistance)
         {
             final GenericDataSeries<TX, TY> line = customData.lines[closestLine.lineIndex];
             _drawDataTip(paintInfo, line.label, closestLine.closestPoint);
@@ -342,6 +340,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestPoint(paintInfo, currentLine);
             if (_isCloser(closestPointOfCurrentLine?.distance, closestLine?.closestPoint.distance))
                 closestLine = ClosestLineInfo(closestPoint: closestPointOfCurrentLine!, lineIndex: lineIndex);
+
+            //closestLine = _getClosestLine(closestLineSoFar: closestLine, currentLine: currentLine);
         }
 
         //todo
@@ -353,7 +353,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     {
         int? highlightLineIndex;
         int? highlightPointIndex;
-        if (closestLine != null && closestLine.closestPoint.distance.dx <= highlightDistanceX && closestLine.closestPoint.distance.dy <= highlightDistanceY)
+        if (closestLine != null && closestLine.closestPoint.distance <= highlightDistance)
         {
             highlightLineIndex = closestLine.lineIndex;
             highlightPointIndex = closestLine.closestPoint.pointIndex;
@@ -382,7 +382,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         double lastX = dataTools.dataToPixelX(line.points[0].x);
         double lastY = dataTools.dataToPixelY(line.points[0].y);
 
-        final Offset distance = _calcDistanceToPoint(lastX, lastY, pointerPosition!);
+        final double distance = _calcDistanceToPoint(lastX, lastY, pointerPosition!);
         ClosestPointInfo? closestPoint = ClosestPointInfo(
             distance: distance,
             pointIndex: 0,
@@ -394,7 +394,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double currentX = dataTools.dataToPixelX(line.points[pointIndex].x);
             final double currentY = dataTools.dataToPixelY(line.points[pointIndex].y);
 
-            final Offset distance = _calcDistanceToPoint(currentX, currentY, pointerPosition!);
+            final double distance = _calcDistanceToPoint(currentX, currentY, pointerPosition!);
             if (_isCloser(distance, closestPoint?.distance))
                 closestPoint = ClosestPointInfo(
                     distance: distance,
@@ -706,18 +706,18 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         textPainter.paint(paintInfo.canvas, Offset(finalDataTipLeft + dataTipPaddingX, finalDataTipTop + dataTipPaddingY));
     }
 
-    Offset _calcDistanceToPoint(double x, double y, Offset point)
-    => Offset((point.dx - x).abs(), (point.dy - y).abs());
+    double _calcDistanceToPoint(double x, double y, Offset point)
+    => Offset((point.dx - x).abs(), (point.dy - y).abs()).distance;
 
-    /// Returns true if the first offset is closer to the pointer position than the second offset.
-    bool _isCloser(Offset? offset1, Offset? offset2)
+    /// Returns true if the first distance is closer to the pointer position than the second distance.
+    bool _isCloser(double? distance1, double? distance2)
     {
-        if (offset1 == null)
+        if (distance1 == null)
             return false;
 
-        if (offset2 == null)
+        if (distance2 == null)
             return true;
 
-        return offset1.distanceSquared < offset2.distanceSquared;
+        return distance1 < distance2;
     }
 }

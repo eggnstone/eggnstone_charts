@@ -22,14 +22,14 @@ final directories = <_i1.WidgetbookNode>[
         name: 'GenericLineChart<DateTime, double, DateTimeChartData>',
         useCase: _i1.WidgetbookUseCase(
           name: 'One date only',
-          builder: _i2.buildDateTimeChartOnlyOneDate,
+          builder: _i2.buildDateTimeChartForOnlyOneDate,
         ),
       ),
       _i1.WidgetbookLeafComponent(
         name: 'GenericLineChart<double, double, DoubleChartData>',
         useCase: _i1.WidgetbookUseCase(
           name: 'No data',
-          builder: _i3.buildDoubleChartNoData,
+          builder: _i3.buildDoubleChartForNoData,
         ),
       ),
     ],
@@ -39,23 +39,23 @@ final directories = <_i1.WidgetbookNode>[
     useCases: [
       _i1.WidgetbookUseCase(
         name: 'Doc 1',
-        builder: _i2.buildDateTimeChartDocOne,
+        builder: _i2.buildDateTimeChartForDocOne,
       ),
       _i1.WidgetbookUseCase(
         name: 'Inverted',
-        builder: _i2.buildDateTimeChartInverted,
+        builder: _i2.buildDateTimeChartForInvertedDisplay,
       ),
       _i1.WidgetbookUseCase(
         name: 'Normal',
-        builder: _i2.buildDateTimeChartNormal,
+        builder: _i2.buildDateTimeChartForNormalDisplay,
       ),
       _i1.WidgetbookUseCase(
         name: 'One date only (fixed)',
-        builder: _i2.buildDateTimeChartOnlyOneDateFixed,
+        builder: _i2.buildDateTimeChartForOnlyOneDateFixed,
       ),
       _i1.WidgetbookUseCase(
         name: 'Two dates only',
-        builder: _i2.buildDateTimeChartOnlyTwoDates,
+        builder: _i2.buildDateTimeChartForOnlyTwoDates,
       ),
     ],
   ),
@@ -64,35 +64,35 @@ final directories = <_i1.WidgetbookNode>[
     useCases: [
       _i1.WidgetbookUseCase(
         name: '1 dot',
-        builder: _i3.buildDoubleChartOneDot,
+        builder: _i3.buildDoubleChartForOneDot,
       ),
       _i1.WidgetbookUseCase(
         name: '1 line',
-        builder: _i3.buildDoubleChartOneLine,
+        builder: _i3.buildDoubleChartForOneLine,
       ),
       _i1.WidgetbookUseCase(
         name: '1 line, 1 dot',
-        builder: _i3.buildDoubleChartOneLineOneDot,
+        builder: _i3.buildDoubleChartForOneLineOneDot,
       ),
       _i1.WidgetbookUseCase(
         name: '1 line, inverted',
-        builder: _i3.buildDoubleChartOneLineInverted,
+        builder: _i3.buildDoubleChartForOneLineInverted,
       ),
       _i1.WidgetbookUseCase(
         name: '2 dots',
-        builder: _i3.buildDoubleChartTwoDots,
+        builder: _i3.buildDoubleChartForTwoDots,
       ),
       _i1.WidgetbookUseCase(
         name: '2 lines',
-        builder: _i3.buildDoubleChartTwoLines,
+        builder: _i3.buildDoubleChartForTwoLines,
       ),
       _i1.WidgetbookUseCase(
         name: '2 lines, 2 dots',
-        builder: _i3.buildDoubleChartTwoLinesTwoDots,
+        builder: _i3.buildDoubleChartForTwoLinesTwoDots,
       ),
       _i1.WidgetbookUseCase(
         name: 'Doc 1',
-        builder: _i3.buildDoubleChartDocOne,
+        builder: _i3.buildDoubleChartForDocOne,
       ),
     ],
   ),

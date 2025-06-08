@@ -8,7 +8,7 @@ part 'ClosestPointInfo.freezed.dart';
 abstract class ClosestPointInfo with _$ClosestPointInfo
 {
     const factory ClosestPointInfo({
-        required Offset distance,
+        required double distance,
         required int pointIndex,
         required Offset position
     }) = _ClosestPointInfo;

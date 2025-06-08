@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$ClosestPointInfo {
-  Offset get distance;
+  double get distance;
   int get pointIndex;
   Offset get position;
 
@@ -55,7 +55,7 @@ abstract mixin class $ClosestPointInfoCopyWith<$Res> {
           ClosestPointInfo value, $Res Function(ClosestPointInfo) _then) =
       _$ClosestPointInfoCopyWithImpl;
   @useResult
-  $Res call({Offset distance, int pointIndex, Offset position});
+  $Res call({double distance, int pointIndex, Offset position});
 }
 
 /// @nodoc
@@ -79,7 +79,7 @@ class _$ClosestPointInfoCopyWithImpl<$Res>
       distance: null == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as Offset,
+              as double,
       pointIndex: null == pointIndex
           ? _self.pointIndex
           : pointIndex // ignore: cast_nullable_to_non_nullable
@@ -101,7 +101,7 @@ class _ClosestPointInfo implements ClosestPointInfo {
       required this.position});
 
   @override
-  final Offset distance;
+  final double distance;
   @override
   final int pointIndex;
   @override
@@ -145,7 +145,7 @@ abstract mixin class _$ClosestPointInfoCopyWith<$Res>
       __$ClosestPointInfoCopyWithImpl;
   @override
   @useResult
-  $Res call({Offset distance, int pointIndex, Offset position});
+  $Res call({double distance, int pointIndex, Offset position});
 }
 
 /// @nodoc
@@ -169,7 +169,7 @@ class __$ClosestPointInfoCopyWithImpl<$Res>
       distance: null == distance
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
-              as Offset,
+              as double,
       pointIndex: null == pointIndex
           ? _self.pointIndex
           : pointIndex // ignore: cast_nullable_to_non_nullable

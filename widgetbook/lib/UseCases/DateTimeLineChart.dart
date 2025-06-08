@@ -10,27 +10,27 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 // UseCases
 
 @UseCase(path: 'Errors', name: 'One date only', type: DateTimeLineChart)
-Widget buildDateTimeChartOnlyOneDate(BuildContext context)
-=> _buildChart(context, 'One date only', _createSampleDataOnlyOneDate(context));
+Widget buildDateTimeChartForOnlyOneDate(BuildContext context)
+=> _buildChart(context, 'One date only', _createDateTimeChartDataForOnlyOneDate(context));
 
 @UseCase(path: '', name: 'Normal', type: DateTimeLineChart)
-Widget buildDateTimeChartNormal(BuildContext context)
-=> _buildChart(context, 'Normal', _createSampleData(context));
+Widget buildDateTimeChartForNormalDisplay(BuildContext context)
+=> _buildChart(context, 'Normal', _createDateTimeChartDataForDisplay(context));
 
 @UseCase(path: '', name: 'Inverted', type: DateTimeLineChart)
-Widget buildDateTimeChartInverted(BuildContext context)
-=> _buildChart(context, 'Inverted', _createSampleData(context, invert: true));
+Widget buildDateTimeChartForInvertedDisplay(BuildContext context)
+=> _buildChart(context, 'Inverted', _createDateTimeChartDataForDisplay(context, invert: true));
 
 @UseCase(path: '', name: 'One date only (fixed)', type: DateTimeLineChart)
-Widget buildDateTimeChartOnlyOneDateFixed(BuildContext context)
-=> _buildChart(context, 'One date only (fixed)', _createSampleDataOnlyOneDateFixed(context));
+Widget buildDateTimeChartForOnlyOneDateFixed(BuildContext context)
+=> _buildChart(context, 'One date only (fixed)', _createDateTimeChartDataForOnlyOneDateFixed(context));
 
 @UseCase(path: '', name: 'Two dates only', type: DateTimeLineChart)
-Widget buildDateTimeChartOnlyTwoDates(BuildContext context)
-=> _buildChart(context, 'Two dates only', _createSampleDataOnlyTwoDates(context));
+Widget buildDateTimeChartForOnlyTwoDates(BuildContext context)
+=> _buildChart(context, 'Two dates only', _createDateTimeChartDataForOnlyTwoDates(context));
 
 @UseCase(path: '', name: 'Doc 1', type: DateTimeLineChart)
-Widget buildDateTimeChartDocOne(BuildContext context)
+Widget buildDateTimeChartForDocOne(BuildContext context)
 => Center(
     child: SizedBox(
         width: 200,
@@ -38,21 +38,21 @@ Widget buildDateTimeChartDocOne(BuildContext context)
         child: _buildChart(
             context,
             'DateTime Sample',
-            _createDocOneData(context)
+            _createDateTimeChartDataForDocOne(context)
         )
     )
 );
 
 // Data
 
-DateTimeChartData _createSampleData(BuildContext context, {bool invert = false})
+DateTimeChartData _createDateTimeChartDataForDisplay(BuildContext context, {bool invert = false})
 {
     final DateTime now = DateTime.now();
     return _createDateTimeChartData(
         context,
         referenceDateTime: now,
         colors: <Color>[Colors.red],
-        lines: <List<DateTimePoint>>[_createLine1(now)],
+        lines: <List<DateTimePoint>>[_createDateTimePointsForLine1(now)],
         invert: invert,
         minX: -8,
         rangeInitialValueX: 2,
@@ -62,14 +62,14 @@ DateTimeChartData _createSampleData(BuildContext context, {bool invert = false})
     );
 }
 
-DateTimeChartData _createSampleDataOnlyOneDate(BuildContext context, {bool invert = false})
+DateTimeChartData _createDateTimeChartDataForOnlyOneDate(BuildContext context, {bool invert = false})
 {
     final DateTime now = DateTime.now();
     return _createDateTimeChartData(
         context,
         referenceDateTime: now,
         colors: <Color>[Colors.red],
-        lines: <List<DateTimePoint>>[_createLineWithOnlyOneDate(now)],
+        lines: <List<DateTimePoint>>[_createDateTimePointsForOnlyOneDate(now)],
         invert: invert,
         minX: 0,
         rangeMinX: 0,
@@ -78,7 +78,7 @@ DateTimeChartData _createSampleDataOnlyOneDate(BuildContext context, {bool inver
     );
 }
 
-DateTimeChartData _createSampleDataOnlyOneDateFixed(BuildContext context, {bool invert = false})
+DateTimeChartData _createDateTimeChartDataForOnlyOneDateFixed(BuildContext context, {bool invert = false})
 {
     final DateTime now = DateTime.now();
     return _createDateTimeChartData(
@@ -86,7 +86,7 @@ DateTimeChartData _createSampleDataOnlyOneDateFixed(BuildContext context, {bool 
         referenceDateTime: now,
         colors: <Color>[Colors.red],
         fixMinMax: true,
-        lines: <List<DateTimePoint>>[_createLineWithOnlyOneDate(now)],
+        lines: <List<DateTimePoint>>[_createDateTimePointsForOnlyOneDate(now)],
         invert: invert,
         minX: 0,
         rangeMinX: 0,
@@ -95,7 +95,7 @@ DateTimeChartData _createSampleDataOnlyOneDateFixed(BuildContext context, {bool 
     );
 }
 
-DateTimeChartData _createSampleDataOnlyTwoDates(BuildContext context, {bool invert = false})
+DateTimeChartData _createDateTimeChartDataForOnlyTwoDates(BuildContext context, {bool invert = false})
 {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
@@ -104,7 +104,7 @@ DateTimeChartData _createSampleDataOnlyTwoDates(BuildContext context, {bool inve
         referenceDateTime: today,
         colors: <Color>[Colors.red],
         fixMinMax: true,
-        lines: <List<DateTimePoint>>[_createLineWithOnlyTwoDates(today)],
+        lines: <List<DateTimePoint>>[_createDateTimePointsForOnlyTwoDates(today)],
         invert: invert,
         minX: -1,
         rangeMinX: 0,
@@ -113,7 +113,7 @@ DateTimeChartData _createSampleDataOnlyTwoDates(BuildContext context, {bool inve
     );
 }
 
-DateTimeChartData _createDocOneData(BuildContext context)
+DateTimeChartData _createDateTimeChartDataForDocOne(BuildContext context)
 {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
@@ -121,7 +121,7 @@ DateTimeChartData _createDocOneData(BuildContext context)
         context,
         referenceDateTime: today,
         colors: <Color>[Colors.green],
-        lines: <List<DateTimePoint>>[_createDocOneLine(today)],
+        lines: <List<DateTimePoint>>[_createDateTimePointsForDocOne(today)],
         rangeInitialValueX: 1,
         rangeInitialValueY: 7,
         minX: -8,
@@ -136,20 +136,20 @@ DateTimeChartData _createDocOneData(BuildContext context)
 
 // Raw data
 
-List<DateTimePoint> _createLineWithOnlyOneDate(DateTime referenceDateTime)
+List<DateTimePoint> _createDateTimePointsForOnlyOneDate(DateTime referenceDateTime)
 => <DateTimePoint>
 [
     DateTimePoint(referenceDateTime, 1)
 ];
 
-List<DateTimePoint> _createLineWithOnlyTwoDates(DateTime referenceDateTime)
+List<DateTimePoint> _createDateTimePointsForOnlyTwoDates(DateTime referenceDateTime)
 => <DateTimePoint>
 [
     DateTimePoint(referenceDateTime.subtract(const Duration(days: 1)), 1),
     DateTimePoint(referenceDateTime, 2)
 ];
 
-List<DateTimePoint> _createLine1(DateTime referenceDateTime)
+List<DateTimePoint> _createDateTimePointsForLine1(DateTime referenceDateTime)
 => <DateTimePoint>
 [
     DateTimePoint(referenceDateTime.subtract(const Duration(days: 7)), 0),
@@ -162,7 +162,7 @@ List<DateTimePoint> _createLine1(DateTime referenceDateTime)
     DateTimePoint(referenceDateTime, 7)
 ];
 
-List<DateTimePoint> _createDocOneLine(DateTime referenceDateTime)
+List<DateTimePoint> _createDateTimePointsForDocOne(DateTime referenceDateTime)
 => <DateTimePoint>
 [
     DateTimePoint(referenceDateTime.subtract(const Duration(days: 7)), 1),
@@ -174,6 +174,8 @@ List<DateTimePoint> _createDocOneLine(DateTime referenceDateTime)
     DateTimePoint(referenceDateTime.subtract(const Duration(days: 1)), 5),
     DateTimePoint(referenceDateTime, 6)
 ];
+
+//
 
 DateTimeChartData _createDateTimeChartData(
     BuildContext context, {

@@ -9,39 +9,39 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 // UseCases
 
 @UseCase(path: 'Errors', name: 'No data', type: DoubleLineChart)
-Widget buildDoubleChartNoData(BuildContext context)
-=> _buildChart(context, 'No Data', _createNoData(context));
+Widget buildDoubleChartForNoData(BuildContext context)
+=> _buildChart(context, 'No Data', _createDoubleChartDataForNoData(context));
 
 @UseCase(path: '', name: '2 dots', type: DoubleLineChart)
-Widget buildDoubleChartTwoDots(BuildContext context)
-=> _buildChart(context, '2 dots', _createTwoDotsData(context));
+Widget buildDoubleChartForTwoDots(BuildContext context)
+=> _buildChart(context, '2 dots', _createDoubleChartDataForTwoDots(context));
 
 @UseCase(path: '', name: '1 dot', type: DoubleLineChart)
-Widget buildDoubleChartOneDot(BuildContext context)
-=> _buildChart(context, '1 dot', _createOneDotData(context));
+Widget buildDoubleChartForOneDot(BuildContext context)
+=> _buildChart(context, '1 dot', _createDoubleChartDataForOneDot(context));
 
 @UseCase(path: '', name: '2 lines', type: DoubleLineChart)
-Widget buildDoubleChartTwoLines(BuildContext context)
-=> _buildChart(context, '2 lines', _createTwoLinesData(context));
+Widget buildDoubleChartForTwoLines(BuildContext context)
+=> _buildChart(context, '2 lines', _createDoubleChartDataForTwoLines(context));
 
 @UseCase(path: '', name: '2 lines, 2 dots', type: DoubleLineChart)
-Widget buildDoubleChartTwoLinesTwoDots(BuildContext context)
-=> _buildChart(context, '2 lines, 2 dots', _createTwoLinesTwoDotsData(context));
+Widget buildDoubleChartForTwoLinesTwoDots(BuildContext context)
+=> _buildChart(context, '2 lines, 2 dots', _createDoubleChartDataForTwoLinesTwoDots(context));
 
 @UseCase(path: '', name: '1 line', type: DoubleLineChart)
-Widget buildDoubleChartOneLine(BuildContext context)
-=> _buildChart(context, '1 line', _createOneLineData(context));
+Widget buildDoubleChartForOneLine(BuildContext context)
+=> _buildChart(context, '1 line', _createDoubleChartDataForOneLine(context));
 
 @UseCase(path: '', name: '1 line, inverted', type: DoubleLineChart)
-Widget buildDoubleChartOneLineInverted(BuildContext context)
-=> _buildChart(context, '1 line, inverted', _createOneLineData(context, invert: true));
+Widget buildDoubleChartForOneLineInverted(BuildContext context)
+=> _buildChart(context, '1 line, inverted', _createDoubleChartDataForOneLine(context, invert: true));
 
 @UseCase(path: '', name: '1 line, 1 dot', type: DoubleLineChart)
-Widget buildDoubleChartOneLineOneDot(BuildContext context)
-=> _buildChart(context, '1 line, 1 dot', _createOneLineOneDotData(context));
+Widget buildDoubleChartForOneLineOneDot(BuildContext context)
+=> _buildChart(context, '1 line, 1 dot', _createDoubleChartDataForOneLineOneDot(context));
 
 @UseCase(path: '', name: 'Doc 1', type: DoubleLineChart)
-Widget buildDoubleChartDocOne(BuildContext context)
+Widget buildDoubleChartForDocOne(BuildContext context)
 => Center(
     child: SizedBox(
         width: 200,
@@ -49,28 +49,28 @@ Widget buildDoubleChartDocOne(BuildContext context)
         child: _buildChart(
             context,
             'Double Sample',
-            _createDocOneData(context)
+            _createDoubleChartDataForDocOne(context)
         )
     )
 );
 
 // Data
 
-DoubleChartData _createNoData(BuildContext context)
+DoubleChartData _createDoubleChartDataForNoData(BuildContext context)
 => _createDoubleChartData(context, colors: <Color>[], lines: <List<DoublePoint>>[]);
 
-DoubleChartData _createTwoDotsData(BuildContext context)
+DoubleChartData _createDoubleChartDataForTwoDots(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red, Colors.green],
-    lines: <List<DoublePoint>>[_createDot1(), _createDot2()]
+    lines: <List<DoublePoint>>[_createDoublePointsForDot1(), _createDoublePointsForDot2()]
 );
 
-DoubleChartData _createDocOneData(BuildContext context)
+DoubleChartData _createDoubleChartDataForDocOne(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.green],
-    lines: <List<DoublePoint>>[_createDocOneLine()],
+    lines: <List<DoublePoint>>[_createDoublePointsForOneLine()],
     rangeInitialValueX: 9,
     rangeInitialValueY: 7,
     rangeMinX: 4,
@@ -81,45 +81,45 @@ DoubleChartData _createDocOneData(BuildContext context)
     rangeStepsY: 2
 );
 
-DoubleChartData _createOneDotData(BuildContext context)
+DoubleChartData _createDoubleChartDataForOneDot(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red],
-    lines: <List<DoublePoint>>[_createDot1()]
+    lines: <List<DoublePoint>>[_createDoublePointsForDot1()]
 );
 
-DoubleChartData _createTwoLinesData(BuildContext context)
+DoubleChartData _createDoubleChartDataForTwoLines(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red, Colors.green],
-    lines: <List<DoublePoint>>[_createLine1(), _createLine2()]
+    lines: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForLine2()]
 );
 
-DoubleChartData _createTwoLinesTwoDotsData(BuildContext context)
+DoubleChartData _createDoubleChartDataForTwoLinesTwoDots(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red, Colors.green, Colors.blue, Colors.orange],
-    lines: <List<DoublePoint>>[_createLine1(), _createLine2(), _createDot1(), _createDot2()]
+    lines: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForLine2(), _createDoublePointsForDot1(), _createDoublePointsForDot2()]
 );
 
-DoubleChartData _createOneLineOneDotData(BuildContext context)
+DoubleChartData _createDoubleChartDataForOneLineOneDot(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red, Colors.green],
-    lines: <List<DoublePoint>>[_createLine1(), _createDot1()]
+    lines: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForDot1()]
 );
 
-DoubleChartData _createOneLineData(BuildContext context, {bool invert = false})
+DoubleChartData _createDoubleChartDataForOneLine(BuildContext context, {bool invert = false})
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red],
-    lines: <List<DoublePoint>>[_createLine1()],
+    lines: <List<DoublePoint>>[_createDoublePointsForLine1()],
     invert: invert
 );
 
 // Raw data
 
-List<DoublePoint> _createDocOneLine()
+List<DoublePoint> _createDoublePointsForOneLine()
 => <DoublePoint>
 [
     const DoublePoint(1, 1),
@@ -132,7 +132,7 @@ List<DoublePoint> _createDocOneLine()
     const DoublePoint(8, 6)
 ];
 
-List<DoublePoint> _createLine1()
+List<DoublePoint> _createDoublePointsForLine1()
 => <DoublePoint>
 [
     const DoublePoint(1, 0),
@@ -145,20 +145,20 @@ List<DoublePoint> _createLine1()
     const DoublePoint(8, 7)
 ];
 
-List<DoublePoint> _createLine2()
+List<DoublePoint> _createDoublePointsForLine2()
 => <DoublePoint>
 [
     const DoublePoint(2, 8),
     const DoublePoint(8, 4)
 ];
 
-List<DoublePoint> _createDot1()
+List<DoublePoint> _createDoublePointsForDot1()
 => <DoublePoint>
 [
     const DoublePoint(5, 5)
 ];
 
-List<DoublePoint> _createDot2()
+List<DoublePoint> _createDoublePointsForDot2()
 => <DoublePoint>
 [
     const DoublePoint(6, 6)

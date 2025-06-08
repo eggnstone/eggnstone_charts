@@ -2,7 +2,7 @@
 
 ## 0.1.6
 
-- Refactored colors.
+- Refactored colors and data series.
 
 ## 0.1.5
 
