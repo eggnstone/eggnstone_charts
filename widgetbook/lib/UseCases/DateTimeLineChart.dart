@@ -195,10 +195,10 @@ DateTimeChartData _createDateTimeChartData(
     }
 )
 {
-    final List<GenericLineData<DateTime, double>> convertedDateTimeLines = lines
+    final List<GenericDataSeries<DateTime, double>> convertedDateTimeLines = lines
         .mapIndexed(
             (int index, List<DateTimePoint> points) 
-            => GenericLineData<DateTime, double>(
+            => GenericDataSeries<DateTime, double>(
                 colors[index],
                 'Data Series #${index + 1}',
                 points.map((DateTimePoint dp) => invert ? DateTimePoint(dp.x, -dp.y) : dp).toImmutableList()

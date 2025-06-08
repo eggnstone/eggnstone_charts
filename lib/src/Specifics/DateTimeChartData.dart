@@ -3,11 +3,11 @@ import 'package:kt_dart/collection.dart';
 
 import '../Generics/GenericChartData.dart';
 import '../Generics/GenericMinMax.dart';
-import 'DateTimeLineData.dart';
+import 'DateTimeDataSeries.dart';
 import 'DateTimePoint.dart';
 import 'DoubleChartData.dart';
+import 'DoubleDataSeries.dart';
 import 'DoubleFormatter.dart';
-import 'DoubleLineData.dart';
 import 'DoubleMinMax.dart';
 import 'DoublePoint.dart';
 import 'DoubleTools.dart';
@@ -26,7 +26,7 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
     @override
     DoubleChartData createDoubleChartData()
     {
-        final List<DoubleLineData> doubleLines = <DoubleLineData>[];
+        final List<DoubleDataSeries> doubleLines = <DoubleDataSeries>[];
 
         /*double minX = double.infinity;
         double maxX = double.negativeInfinity;*/
@@ -36,7 +36,7 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
 
         for (int i = 0; i < lines.size; i++)
         {
-            final DateTimeLineData dateTimeLine = lines[i];
+            final DateTimeDataSeries dateTimeLine = lines[i];
             final List<DoublePoint> doublePoints = <DoublePoint>[];
 
             if (DEBUG)
@@ -50,7 +50,7 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
                 maxX = dateTimePoint.x.millisecondsSinceEpoch > maxX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : maxX;*/
             }
 
-            doubleLines.add(DoubleLineData(dateTimeLine.color, dateTimeLine.label, doublePoints.toImmutableList()));
+            doubleLines.add(DoubleDataSeries(dateTimeLine.color, dateTimeLine.label, doublePoints.toImmutableList()));
         }
 
         final GenericMinMax<double, double> doubleMinxMax = DoubleMinMax(

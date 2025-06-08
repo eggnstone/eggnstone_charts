@@ -11,10 +11,10 @@ import '../DataTools.dart';
 import '../PaintInfo.dart';
 import '../PositionedTextPainter.dart';
 import '../Specifics/DoubleChartData.dart';
-import '../Specifics/DoubleLineData.dart';
+import '../Specifics/DoubleDataSeries.dart';
 import '../Specifics/DoubleMinMax.dart';
 import 'GenericChartData.dart';
-import 'GenericLineData.dart';
+import 'GenericDataSeries.dart';
 import 'GenericTools.dart';
 
 typedef ClosestLineCalculatedCallback = void Function(ClosestLineInfo? closestLine);
@@ -154,7 +154,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         if (closestLine != null && closestLine.closestPoint.distance.dx <= highlightDistanceX && closestLine.closestPoint.distance.dy <= highlightDistanceY)
         {
-            final GenericLineData<TX, TY> line = customData.lines[closestLine.lineIndex];
+            final GenericDataSeries<TX, TY> line = customData.lines[closestLine.lineIndex];
             _drawDataTip(paintInfo, line.label, closestLine.closestPoint);
         }
     }
@@ -338,7 +338,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         for (int lineIndex = 0; lineIndex < doubleData.lines.size; lineIndex++)
         {
-            final DoubleLineData currentLine = doubleData.lines[lineIndex];
+            final DoubleDataSeries currentLine = doubleData.lines[lineIndex];
             final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestPoint(paintInfo, currentLine);
             if (_isCloser(closestPointOfCurrentLine?.distance, closestLine?.closestPoint.distance))
                 closestLine = ClosestLineInfo(closestPoint: closestPointOfCurrentLine!, lineIndex: lineIndex);
@@ -361,19 +361,19 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         for (int lineIndex = 0; lineIndex < doubleData.lines.size; lineIndex++)
         {
-            final DoubleLineData line = doubleData.lines[lineIndex];
+            final DoubleDataSeries line = doubleData.lines[lineIndex];
             if (lineIndex != highlightLineIndex)
                 _drawLine(paintInfo, line);
         }
 
         if (highlightLineIndex != null)
         {
-            final DoubleLineData line = doubleData.lines[highlightLineIndex];
+            final DoubleDataSeries line = doubleData.lines[highlightLineIndex];
             _drawLine(paintInfo, line, highlightPointIndex: highlightPointIndex);
         }
     }
 
-    ClosestPointInfo? _calcClosestPoint(PaintInfo paintInfo, DoubleLineData line)
+    ClosestPointInfo? _calcClosestPoint(PaintInfo paintInfo, DoubleDataSeries line)
     {
         if (pointerPosition == null)
             return null;
@@ -409,7 +409,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return closestPoint;
     }
 
-    void _drawLine(PaintInfo paintInfo, DoubleLineData line, {int? highlightPointIndex})
+    void _drawLine(PaintInfo paintInfo, DoubleDataSeries line, {int? highlightPointIndex})
     {
         final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
         double lastX = dataTools.dataToPixelX(line.points[0].x);

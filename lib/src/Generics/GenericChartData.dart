@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:kt_dart/collection.dart';
 
 import '../Specifics/DoubleChartData.dart';
-import 'GenericLineData.dart';
+import 'GenericDataSeries.dart';
 import 'GenericMinMax.dart';
 import 'GenericTools.dart';
 
@@ -12,7 +12,7 @@ part 'GenericChartData.freezed.dart';
 class GenericChartData<TX, TY> with _$GenericChartData<TX, TY>
 {
     @override
-    final KtList<GenericLineData<TX, TY>> lines;
+    final KtList<GenericDataSeries<TX, TY>> lines;
 
     @override
     final GenericTools<TX> toolsX;

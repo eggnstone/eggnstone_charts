@@ -5,21 +5,21 @@ import 'package:kt_dart/collection.dart';
 
 import 'GenericPoint.dart';
 
-part 'GenericLineData.freezed.dart';
+part 'GenericDataSeries.freezed.dart';
 
 @freezed
-class GenericLineData<TX, TY> with _$GenericLineData<TX, TY>
+class GenericDataSeries<TX, TY> with _$GenericDataSeries<TX, TY>
 {
-    @override
-    final String label;
-
     @override
     final Color color;
 
     @override
+    final String label;
+
+    @override
     final KtList<GenericPoint<TX, TY>> points;
 
-    const GenericLineData(
+    const GenericDataSeries(
         this.color,
         this.label,
         this.points

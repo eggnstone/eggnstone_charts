@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$GenericChartData<TX, TY> {
-  KtList<GenericLineData<TX, TY>> get lines;
+  KtList<GenericDataSeries<TX, TY>> get lines;
   GenericTools<TX> get toolsX;
   GenericTools<TY> get toolsY;
   GenericMinMax<TX, TY> get minMax;
@@ -55,7 +55,7 @@ abstract mixin class $GenericChartDataCopyWith<TX, TY, $Res> {
       _$GenericChartDataCopyWithImpl;
   @useResult
   $Res call(
-      {KtList<GenericLineData<TX, TY>> lines,
+      {KtList<GenericDataSeries<TX, TY>> lines,
       GenericTools<TX> toolsX,
       GenericTools<TY> toolsY,
       GenericMinMax<TX, TY> minMax});
@@ -83,7 +83,7 @@ class _$GenericChartDataCopyWithImpl<TX, TY, $Res>
       lines: null == lines
           ? _self.lines
           : lines // ignore: cast_nullable_to_non_nullable
-              as KtList<GenericLineData<TX, TY>>,
+              as KtList<GenericDataSeries<TX, TY>>,
       toolsX: null == toolsX
           ? _self.toolsX
           : toolsX // ignore: cast_nullable_to_non_nullable

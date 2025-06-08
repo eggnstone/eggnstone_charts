@@ -184,10 +184,10 @@ DoubleChartData _createDoubleChartData(
     }
 )
 {
-    final List<DoubleLineData> convertedDoubleLines = lines
+    final List<DoubleDataSeries> convertedDoubleLines = lines
         .mapIndexed(
             (int index, List<DoublePoint> points) 
-            => DoubleLineData(
+            => DoubleDataSeries(
                 colors[index],
                 'Data Series #${index + 1}', 
                 points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()
