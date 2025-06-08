@@ -52,7 +52,7 @@ DateTimeChartData _createDateTimeChartDataForDisplay(BuildContext context, {bool
         context,
         referenceDateTime: now,
         colors: <Color>[Colors.red],
-        lines: <List<DateTimePoint>>[_createDateTimePointsForLine1(now)],
+        dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForLine1(now)],
         invert: invert,
         minX: -8,
         rangeInitialValueX: 2,
@@ -69,7 +69,7 @@ DateTimeChartData _createDateTimeChartDataForOnlyOneDate(BuildContext context, {
         context,
         referenceDateTime: now,
         colors: <Color>[Colors.red],
-        lines: <List<DateTimePoint>>[_createDateTimePointsForOnlyOneDate(now)],
+        dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForOnlyOneDate(now)],
         invert: invert,
         minX: 0,
         rangeMinX: 0,
@@ -86,7 +86,7 @@ DateTimeChartData _createDateTimeChartDataForOnlyOneDateFixed(BuildContext conte
         referenceDateTime: now,
         colors: <Color>[Colors.red],
         fixMinMax: true,
-        lines: <List<DateTimePoint>>[_createDateTimePointsForOnlyOneDate(now)],
+        dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForOnlyOneDate(now)],
         invert: invert,
         minX: 0,
         rangeMinX: 0,
@@ -104,7 +104,7 @@ DateTimeChartData _createDateTimeChartDataForOnlyTwoDates(BuildContext context, 
         referenceDateTime: today,
         colors: <Color>[Colors.red],
         fixMinMax: true,
-        lines: <List<DateTimePoint>>[_createDateTimePointsForOnlyTwoDates(today)],
+        dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForOnlyTwoDates(today)],
         invert: invert,
         minX: -1,
         rangeMinX: 0,
@@ -121,7 +121,7 @@ DateTimeChartData _createDateTimeChartDataForDocOne(BuildContext context)
         context,
         referenceDateTime: today,
         colors: <Color>[Colors.green],
-        lines: <List<DateTimePoint>>[_createDateTimePointsForDocOne(today)],
+        dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForDocOne(today)],
         rangeInitialValueX: 1,
         rangeInitialValueY: 7,
         minX: -8,
@@ -181,7 +181,7 @@ DateTimeChartData _createDateTimeChartData(
     BuildContext context, {
         required DateTime referenceDateTime,
         required List<Color> colors,
-        required List<List<DateTimePoint>> lines,
+        required List<List<DateTimePoint>> dateTimePointLists,
         bool fixMinMax = false,
         int minX = -10,
         double minY = 0,
@@ -197,7 +197,7 @@ DateTimeChartData _createDateTimeChartData(
     }
 )
 {
-    final List<GenericDataSeries<DateTime, double>> convertedDateTimeLines = lines
+    final List<GenericDataSeries<DateTime, double>> convertedDateTimeDataSeriesList = dateTimePointLists
         .mapIndexed(
             (int index, List<DateTimePoint> points) 
             => GenericDataSeries<DateTime, double>(
@@ -226,7 +226,7 @@ DateTimeChartData _createDateTimeChartData(
     }
 
     return DateTimeChartData(
-        lines: convertedDateTimeLines.toImmutableList(),
+        dataSeriesList: convertedDateTimeDataSeriesList.toImmutableList(),
         toolsX: toolsX,
         toolsY: toolsY,
         minMax: DateTimeMinMax(

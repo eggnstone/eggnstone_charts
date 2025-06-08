@@ -57,20 +57,20 @@ Widget buildDoubleChartForDocOne(BuildContext context)
 // Data
 
 DoubleChartData _createDoubleChartDataForNoData(BuildContext context)
-=> _createDoubleChartData(context, colors: <Color>[], lines: <List<DoublePoint>>[]);
+=> _createDoubleChartData(context, colors: <Color>[], doublePointLists: <List<DoublePoint>>[]);
 
 DoubleChartData _createDoubleChartDataForTwoDots(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red, Colors.green],
-    lines: <List<DoublePoint>>[_createDoublePointsForDot1(), _createDoublePointsForDot2()]
+    doublePointLists: <List<DoublePoint>>[_createDoublePointsForDot1(), _createDoublePointsForDot2()]
 );
 
 DoubleChartData _createDoubleChartDataForDocOne(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.green],
-    lines: <List<DoublePoint>>[_createDoublePointsForOneLine()],
+    doublePointLists: <List<DoublePoint>>[_createDoublePointsForOneLine()],
     rangeInitialValueX: 9,
     rangeInitialValueY: 7,
     rangeMinX: 4,
@@ -85,35 +85,35 @@ DoubleChartData _createDoubleChartDataForOneDot(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red],
-    lines: <List<DoublePoint>>[_createDoublePointsForDot1()]
+    doublePointLists: <List<DoublePoint>>[_createDoublePointsForDot1()]
 );
 
 DoubleChartData _createDoubleChartDataForTwoLines(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red, Colors.green],
-    lines: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForLine2()]
+    doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForLine2()]
 );
 
 DoubleChartData _createDoubleChartDataForTwoLinesTwoDots(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red, Colors.green, Colors.blue, Colors.orange],
-    lines: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForLine2(), _createDoublePointsForDot1(), _createDoublePointsForDot2()]
+    doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForLine2(), _createDoublePointsForDot1(), _createDoublePointsForDot2()]
 );
 
 DoubleChartData _createDoubleChartDataForOneLineOneDot(BuildContext context)
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red, Colors.green],
-    lines: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForDot1()]
+    doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForDot1()]
 );
 
 DoubleChartData _createDoubleChartDataForOneLine(BuildContext context, {bool invert = false})
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red],
-    lines: <List<DoublePoint>>[_createDoublePointsForLine1()],
+    doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1()],
     invert: invert
 );
 
@@ -169,7 +169,7 @@ List<DoublePoint> _createDoublePointsForDot2()
 DoubleChartData _createDoubleChartData(
     BuildContext context, {
         required List<Color> colors,
-        required List<List<DoublePoint>> lines,
+        required List<List<DoublePoint>> doublePointLists,
         double minX = 0,
         double minY = 0,
         int rangeMinX = 10,
@@ -184,7 +184,7 @@ DoubleChartData _createDoubleChartData(
     }
 )
 {
-    final List<DoubleDataSeries> convertedDoubleLines = lines
+    final List<DoubleDataSeries> convertedDoubleDataSeriesList = doublePointLists
         .mapIndexed(
             (int index, List<DoublePoint> points) 
             => DoubleDataSeries(
@@ -198,7 +198,7 @@ DoubleChartData _createDoubleChartData(
     final double rangeX = context.knobs.int.slider(label: 'Range X', initialValue: rangeInitialValueX, min: rangeMinX, max: rangeMaxX, divisions: rangeStepsX).toDouble();
     final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: rangeInitialValueY, min: rangeMinY, max: rangeMaxY, divisions: rangeStepsY).toDouble();
     return DoubleChartData(
-        lines: convertedDoubleLines.toImmutableList(),
+        dataSeriesList: convertedDoubleDataSeriesList.toImmutableList(),
         toolsX: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
         toolsY: DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert)),
         minMax: DoubleMinMax(

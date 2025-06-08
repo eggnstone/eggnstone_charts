@@ -17,7 +17,7 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
     static const bool DEBUG = false;
 
     DateTimeChartData({
-        required super.lines,
+        required super.dataSeriesList,
         required super.toolsX,
         required super.toolsY,
         required super.minMax
@@ -26,31 +26,31 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
     @override
     DoubleChartData createDoubleChartData()
     {
-        final List<DoubleDataSeries> doubleLines = <DoubleDataSeries>[];
+        final List<DoubleDataSeries> doubleDataSeriesList = <DoubleDataSeries>[];
 
         /*double minX = double.infinity;
         double maxX = double.negativeInfinity;*/
 
         if (DEBUG)
-            logDebug('lines.size: ${lines.size}');
+            logDebug('dataSeriesList.size: ${dataSeriesList.size}');
 
-        for (int i = 0; i < lines.size; i++)
+        for (int i = 0; i < dataSeriesList.size; i++)
         {
-            final DateTimeDataSeries dateTimeLine = lines[i];
+            final DateTimeDataSeries dateTimeDataSeries = dataSeriesList[i];
             final List<DoublePoint> doublePoints = <DoublePoint>[];
 
             if (DEBUG)
-                logDebug('dateTimeLine.points.size: ${dateTimeLine.points.size}');
+                logDebug('dateTimeDataSeries.points.size: ${dateTimeDataSeries.points.size}');
 
-            for (int j = 0; j < dateTimeLine.points.size; j++)
+            for (int j = 0; j < dateTimeDataSeries.points.size; j++)
             {
-                final DateTimePoint dateTimePoint = dateTimeLine.points[j];
+                final DateTimePoint dateTimePoint = dateTimeDataSeries.points[j];
                 doublePoints.add(DoublePoint(dateTimePoint.x.millisecondsSinceEpoch.toDouble(), dateTimePoint.y));
                 /*minX = dateTimePoint.x.millisecondsSinceEpoch < minX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : minX;
                 maxX = dateTimePoint.x.millisecondsSinceEpoch > maxX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : maxX;*/
             }
 
-            doubleLines.add(DoubleDataSeries(dateTimeLine.color, dateTimeLine.label, doublePoints.toImmutableList()));
+            doubleDataSeriesList.add(DoubleDataSeries(dateTimeDataSeries.color, dateTimeDataSeries.label, doublePoints.toImmutableList()));
         }
 
         final GenericMinMax<double, double> doubleMinxMax = DoubleMinMax(
@@ -61,7 +61,7 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
         );
 
         return DoubleChartData(
-            lines: doubleLines.toImmutableList(),
+            dataSeriesList: doubleDataSeriesList.toImmutableList(),
             toolsX: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
             toolsY: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
             minMax: doubleMinxMax

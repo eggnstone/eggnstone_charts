@@ -13,3 +13,6 @@ dependencies:
   eggnstone_charts:
     path: ..
   kt_dart: ^1.1.0
+
+flutter:
+  uses-material-design: true

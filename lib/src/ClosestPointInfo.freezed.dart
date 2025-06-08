@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ClosestPointInfo {
   double get distance;
-  int get pointIndex;
+  int? get pointIndex;
   Offset get position;
 
   /// Create a copy of ClosestPointInfo
@@ -55,7 +55,7 @@ abstract mixin class $ClosestPointInfoCopyWith<$Res> {
           ClosestPointInfo value, $Res Function(ClosestPointInfo) _then) =
       _$ClosestPointInfoCopyWithImpl;
   @useResult
-  $Res call({double distance, int pointIndex, Offset position});
+  $Res call({double distance, int? pointIndex, Offset position});
 }
 
 /// @nodoc
@@ -72,7 +72,7 @@ class _$ClosestPointInfoCopyWithImpl<$Res>
   @override
   $Res call({
     Object? distance = null,
-    Object? pointIndex = null,
+    Object? pointIndex = freezed,
     Object? position = null,
   }) {
     return _then(_self.copyWith(
@@ -80,10 +80,10 @@ class _$ClosestPointInfoCopyWithImpl<$Res>
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
               as double,
-      pointIndex: null == pointIndex
+      pointIndex: freezed == pointIndex
           ? _self.pointIndex
           : pointIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       position: null == position
           ? _self.position
           : position // ignore: cast_nullable_to_non_nullable
@@ -103,7 +103,7 @@ class _ClosestPointInfo implements ClosestPointInfo {
   @override
   final double distance;
   @override
-  final int pointIndex;
+  final int? pointIndex;
   @override
   final Offset position;
 
@@ -145,7 +145,7 @@ abstract mixin class _$ClosestPointInfoCopyWith<$Res>
       __$ClosestPointInfoCopyWithImpl;
   @override
   @useResult
-  $Res call({double distance, int pointIndex, Offset position});
+  $Res call({double distance, int? pointIndex, Offset position});
 }
 
 /// @nodoc
@@ -162,7 +162,7 @@ class __$ClosestPointInfoCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   $Res call({
     Object? distance = null,
-    Object? pointIndex = null,
+    Object? pointIndex = freezed,
     Object? position = null,
   }) {
     return _then(_ClosestPointInfo(
@@ -170,10 +170,10 @@ class __$ClosestPointInfoCopyWithImpl<$Res>
           ? _self.distance
           : distance // ignore: cast_nullable_to_non_nullable
               as double,
-      pointIndex: null == pointIndex
+      pointIndex: freezed == pointIndex
           ? _self.pointIndex
           : pointIndex // ignore: cast_nullable_to_non_nullable
-              as int,
+              as int?,
       position: null == position
           ? _self.position
           : position // ignore: cast_nullable_to_non_nullable

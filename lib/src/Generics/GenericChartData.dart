@@ -12,7 +12,7 @@ part 'GenericChartData.freezed.dart';
 class GenericChartData<TX, TY> with _$GenericChartData<TX, TY>
 {
     @override
-    final KtList<GenericDataSeries<TX, TY>> lines;
+    final KtList<GenericDataSeries<TX, TY>> dataSeriesList;
 
     @override
     final GenericTools<TX> toolsX;
@@ -24,7 +24,7 @@ class GenericChartData<TX, TY> with _$GenericChartData<TX, TY>
     final GenericMinMax<TX, TY> minMax;
 
     const GenericChartData({
-        required this.lines,
+        required this.dataSeriesList,
         required this.toolsX,
         required this.toolsY,
         required this.minMax

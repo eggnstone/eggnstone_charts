@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 
 /// @nodoc
 mixin _$GenericChartData<TX, TY> {
-  KtList<GenericDataSeries<TX, TY>> get lines;
+  KtList<GenericDataSeries<TX, TY>> get dataSeriesList;
   GenericTools<TX> get toolsX;
   GenericTools<TY> get toolsY;
   GenericMinMax<TX, TY> get minMax;
@@ -33,18 +33,20 @@ mixin _$GenericChartData<TX, TY> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is GenericChartData<TX, TY> &&
-            (identical(other.lines, lines) || other.lines == lines) &&
+            (identical(other.dataSeriesList, dataSeriesList) ||
+                other.dataSeriesList == dataSeriesList) &&
             (identical(other.toolsX, toolsX) || other.toolsX == toolsX) &&
             (identical(other.toolsY, toolsY) || other.toolsY == toolsY) &&
             (identical(other.minMax, minMax) || other.minMax == minMax));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, lines, toolsX, toolsY, minMax);
+  int get hashCode =>
+      Object.hash(runtimeType, dataSeriesList, toolsX, toolsY, minMax);
 
   @override
   String toString() {
-    return 'GenericChartData<$TX, $TY>(lines: $lines, toolsX: $toolsX, toolsY: $toolsY, minMax: $minMax)';
+    return 'GenericChartData<$TX, $TY>(dataSeriesList: $dataSeriesList, toolsX: $toolsX, toolsY: $toolsY, minMax: $minMax)';
   }
 }
 
@@ -55,7 +57,7 @@ abstract mixin class $GenericChartDataCopyWith<TX, TY, $Res> {
       _$GenericChartDataCopyWithImpl;
   @useResult
   $Res call(
-      {KtList<GenericDataSeries<TX, TY>> lines,
+      {KtList<GenericDataSeries<TX, TY>> dataSeriesList,
       GenericTools<TX> toolsX,
       GenericTools<TY> toolsY,
       GenericMinMax<TX, TY> minMax});
@@ -74,15 +76,15 @@ class _$GenericChartDataCopyWithImpl<TX, TY, $Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? lines = null,
+    Object? dataSeriesList = null,
     Object? toolsX = null,
     Object? toolsY = null,
     Object? minMax = null,
   }) {
     return _then(GenericChartData(
-      lines: null == lines
-          ? _self.lines
-          : lines // ignore: cast_nullable_to_non_nullable
+      dataSeriesList: null == dataSeriesList
+          ? _self.dataSeriesList
+          : dataSeriesList // ignore: cast_nullable_to_non_nullable
               as KtList<GenericDataSeries<TX, TY>>,
       toolsX: null == toolsX
           ? _self.toolsX
