@@ -8,6 +8,7 @@ import 'GenericTools.dart';
 
 part 'GenericChartData.freezed.dart';
 
+/// GenericChartData class that holds data for a chart with generic types for X and Y axes.
 @freezed
 class GenericChartData<TX, TY> with _$GenericChartData<TX, TY>
 {

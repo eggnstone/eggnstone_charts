@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ChartStyle.freezed.dart';
 
+/// ChartStyle class that holds the style properties for a chart.
 @freezed
 abstract class ChartStyle with _$ChartStyle
 {

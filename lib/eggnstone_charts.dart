@@ -2,8 +2,13 @@
 library;
 
 export 'src/ChartInfo.dart';
+// do not export: ChartsException.dart
 export 'src/ChartStyle.dart';
+// do not export: ChartsUserException.dart
 export 'src/ClosestLineInfo.dart';
+export 'src/ClosestPointInfo.dart';
+// do not export: DataTools.dart
+// do not export: PaintInfo.dart
 // do not export: PositionedTextPainter
 
 export 'src/Generics/GenericChartData.dart';

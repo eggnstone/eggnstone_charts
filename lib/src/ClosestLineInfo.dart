@@ -4,6 +4,7 @@ import 'ClosestPointInfo.dart';
 
 part 'ClosestLineInfo.freezed.dart';
 
+/// ClosestLineInfo class that holds information about the closest line to a point in a chart.
 @freezed
 abstract class ClosestLineInfo with _$ClosestLineInfo
 {

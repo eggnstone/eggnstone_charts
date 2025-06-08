@@ -12,6 +12,7 @@ import 'DoubleMinMax.dart';
 import 'DoublePoint.dart';
 import 'DoubleTools.dart';
 
+/// DateTimeChartData class that holds data for a chart with DateTime on the X-axis and double on the Y-axis.
 class DateTimeChartData extends GenericChartData<DateTime, double>
 {
     static const bool DEBUG = false;
@@ -28,9 +29,6 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
     {
         final List<DoubleDataSeries> doubleDataSeriesList = <DoubleDataSeries>[];
 
-        /*double minX = double.infinity;
-        double maxX = double.negativeInfinity;*/
-
         if (DEBUG)
             logDebug('dataSeriesList.size: ${dataSeriesList.size}');
 
@@ -46,8 +44,6 @@ class DateTimeChartData extends GenericChartData<DateTime, double>
             {
                 final DateTimePoint dateTimePoint = dateTimeDataSeries.points[j];
                 doublePoints.add(DoublePoint(dateTimePoint.x.millisecondsSinceEpoch.toDouble(), dateTimePoint.y));
-                /*minX = dateTimePoint.x.millisecondsSinceEpoch < minX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : minX;
-                maxX = dateTimePoint.x.millisecondsSinceEpoch > maxX ? dateTimePoint.x.millisecondsSinceEpoch.toDouble() : maxX;*/
             }
 
             doubleDataSeriesList.add(DoubleDataSeries(dateTimeDataSeries.color, dateTimeDataSeries.label, doublePoints.toImmutableList()));
