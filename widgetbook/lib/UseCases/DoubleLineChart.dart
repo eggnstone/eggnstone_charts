@@ -29,20 +29,12 @@ Widget buildDoubleChartForTwoLinesTwoDots(BuildContext context)
 => _buildChart(context, '2 lines, 2 dots', _createDoubleChartDataForTwoLinesTwoDots(context));
 
 @UseCase(path: '', name: '1 line', type: DoubleLineChart)
-Widget buildDoubleChartForOneLine(BuildContext context)
+Widget buildDoubleChartForOneLineStartingAt0(BuildContext context)
 => _buildChart(context, '1 line', _createDoubleChartDataForOneLine(context));
 
-@UseCase(path: '', name: '1 line, X inverted', type: DoubleLineChart)
-Widget buildDoubleChartForOneLineInvertedX(BuildContext context)
-=> _buildChart(context, '1 line, X inverted', _createDoubleChartDataForOneLine(context, invertX: true), invertX: true);
-
-@UseCase(path: '', name: '1 line, Y inverted', type: DoubleLineChart)
-Widget buildDoubleChartForOneLineInvertedY(BuildContext context)
-=> _buildChart(context, '1 line, Y inverted', _createDoubleChartDataForOneLine(context, invertY: true), invertY: true);
-
-@UseCase(path: '', name: '1 line, All inverted', type: DoubleLineChart)
-Widget buildDoubleChartForOneLineInvertedAll(BuildContext context)
-=> _buildChart(context, '1 line, All inverted', _createDoubleChartDataForOneLine(context, invertX: true, invertY: true), invertX: true, invertY: true);
+@UseCase(path: '', name: '1 line @ 1', type: DoubleLineChart)
+Widget buildDoubleChartForOneLineStartingAt1(BuildContext context)
+=> _buildChart(context, '1 line  1', _createDoubleChartDataForOneLine(context, start: 1));
 
 @UseCase(path: '', name: '1 line, 1 dot', type: DoubleLineChart)
 Widget buildDoubleChartForOneLineOneDot(BuildContext context)
@@ -117,13 +109,15 @@ DoubleChartData _createDoubleChartDataForOneLineOneDot(BuildContext context)
     doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForDot1()]
 );
 
-DoubleChartData _createDoubleChartDataForOneLine(BuildContext context, {bool invertX = false, bool invertY = false})
+DoubleChartData _createDoubleChartDataForOneLine(BuildContext context, {int start = 0})
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red],
-    doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1()],
-    invertX: invertX,
-    invertY: invertY
+    doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1(start: start)],
+    minY: start.toDouble(),
+    rangeMinY: 10 + start,
+    rangeMaxY: 100 + start,
+    rangeInitialValueY: 10 + start
 );
 
 // Raw data
@@ -141,17 +135,17 @@ List<DoublePoint> _createDoublePointsForOneLine()
     const DoublePoint(8, 6)
 ];
 
-List<DoublePoint> _createDoublePointsForLine1()
+List<DoublePoint> _createDoublePointsForLine1({int start = 0})
 => <DoublePoint>
 [
-    const DoublePoint(1, 0),
-    const DoublePoint(2, 1),
-    const DoublePoint(3, 2),
-    const DoublePoint(4, 3),
-    const DoublePoint(5, 4),
-    const DoublePoint(6, 3),
-    const DoublePoint(7, 1),
-    const DoublePoint(8, 7)
+    DoublePoint(1, start.toDouble()),
+    DoublePoint(2, start + 1),
+    DoublePoint(3, start + 2),
+    DoublePoint(4, start + 3),
+    DoublePoint(5, start + 4),
+    DoublePoint(6, start + 3),
+    DoublePoint(7, start + 1),
+    DoublePoint(8, start + 7)
 ];
 
 List<DoublePoint> _createDoublePointsForLine2()
@@ -188,9 +182,7 @@ DoubleChartData _createDoubleChartData(
         int rangeStepsX = 3,
         int rangeStepsY = 3,
         int rangeInitialValueX = 10,
-        int rangeInitialValueY = 10,
-        bool invertX = false,
-        bool invertY = false
+        int rangeInitialValueY = 10
     }
 )
 {
@@ -200,7 +192,7 @@ DoubleChartData _createDoubleChartData(
             => DoubleDataSeries(
                 colors[index],
                 'Data Series #${index + 1}', 
-                points.map((DoublePoint dp) => DoublePoint(invertX ? -dp.x : dp.x, invertY ? -dp.y : dp.y)).toImmutableList()
+                points.toImmutableList()
             )
         )
         .toList();
@@ -209,21 +201,24 @@ DoubleChartData _createDoubleChartData(
     final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: rangeInitialValueY, min: rangeMinY, max: rangeMaxY, divisions: rangeStepsY).toDouble();
     return DoubleChartData(
         dataSeriesList: convertedDoubleDataSeriesList.toImmutableList(),
-        toolsX: DoubleTools(DoubleFormatter(0, invert: invertX), DoubleFormatter(0, invert: invertX)),
-        toolsY: DoubleTools(DoubleFormatter(0, invert: invertY), DoubleFormatter(0, invert: invertY)),
+        toolsX: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
+        toolsY: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
         minMax: DoubleMinMax(
-            minX: invertX ? -rangeX : minX,
-            maxX: invertX ? minX : rangeX,
-            minY: invertY ? -rangeY : minY,
-            maxY: invertY ? minY : rangeY
+            minX: minX,
+            maxX: rangeX,
+            minY: minY,
+            maxY: rangeY
         )
     );
 }
 
 //
 
-Widget _buildChart(BuildContext context, String title, DoubleChartData data, {bool invertX = false, bool invertY = false})
+Widget _buildChart(BuildContext context, String title, DoubleChartData data)
 {
+    final bool invertX = context.knobs.boolean(label: 'Invert X');
+    final bool invertY = context.knobs.boolean(label: 'Invert Y');
+
     final bool showLabelBottom = context.knobs.boolean(label: 'Show label bottom', initialValue: true);
     final bool showLabelLeft = context.knobs.boolean(label: 'Show label left', initialValue: true);
     final bool showLabelRight = context.knobs.boolean(label: 'Show label right');

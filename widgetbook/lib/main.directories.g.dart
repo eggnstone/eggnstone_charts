@@ -38,24 +38,16 @@ final directories = <_i1.WidgetbookNode>[
     name: 'GenericLineChart<DateTime, double, DateTimeChartData>',
     useCases: [
       _i1.WidgetbookUseCase(
+        name: '1 line',
+        builder: _i2.buildDateTimeChartForOneLineStartingAt0,
+      ),
+      _i1.WidgetbookUseCase(
+        name: '1 line @ 1',
+        builder: _i2.buildDateTimeChartForOneLineStartingAt1,
+      ),
+      _i1.WidgetbookUseCase(
         name: 'Doc 1',
         builder: _i2.buildDateTimeChartForDocOne,
-      ),
-      _i1.WidgetbookUseCase(
-        name: 'Inverted 0',
-        builder: _i2.buildDateTimeChartForInvertedDisplay0,
-      ),
-      _i1.WidgetbookUseCase(
-        name: 'Inverted 1',
-        builder: _i2.buildDateTimeChartForInvertedDisplay1,
-      ),
-      _i1.WidgetbookUseCase(
-        name: 'Normal 0',
-        builder: _i2.buildDateTimeChartForNormalDisplay0,
-      ),
-      _i1.WidgetbookUseCase(
-        name: 'Normal 1',
-        builder: _i2.buildDateTimeChartForNormalDisplay1,
       ),
       _i1.WidgetbookUseCase(
         name: 'One date only (fixed)',
@@ -76,23 +68,15 @@ final directories = <_i1.WidgetbookNode>[
       ),
       _i1.WidgetbookUseCase(
         name: '1 line',
-        builder: _i3.buildDoubleChartForOneLine,
+        builder: _i3.buildDoubleChartForOneLineStartingAt0,
+      ),
+      _i1.WidgetbookUseCase(
+        name: '1 line @ 1',
+        builder: _i3.buildDoubleChartForOneLineStartingAt1,
       ),
       _i1.WidgetbookUseCase(
         name: '1 line, 1 dot',
         builder: _i3.buildDoubleChartForOneLineOneDot,
-      ),
-      _i1.WidgetbookUseCase(
-        name: '1 line, All inverted',
-        builder: _i3.buildDoubleChartForOneLineInvertedAll,
-      ),
-      _i1.WidgetbookUseCase(
-        name: '1 line, X inverted',
-        builder: _i3.buildDoubleChartForOneLineInvertedX,
-      ),
-      _i1.WidgetbookUseCase(
-        name: '1 line, Y inverted',
-        builder: _i3.buildDoubleChartForOneLineInvertedY,
       ),
       _i1.WidgetbookUseCase(
         name: '2 dots',

@@ -15,14 +15,20 @@ abstract class PositionedTextPainter<T> with _$PositionedTextPainter<T>
         required TextPainter? textPainter
     }) = _PositionedTextPainter<T>;
 
-    double get textEnd
+    double get textEndX
     => textPosition + textPainter!.width / 2;
+
+    double get textEndY
+    => textPosition + textPainter!.height / 2;
 
     double get textHeight
     => textPainter!.height;
 
-    double get textStart
+    double get textStartX
     => textPosition - textPainter!.width / 2;
+
+    double get textStartY
+    => textPosition - textPainter!.height / 2;
 
     double get textWidth
     => textPainter!.width;

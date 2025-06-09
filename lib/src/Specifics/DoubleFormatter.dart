@@ -3,10 +3,9 @@ import '../Generics/GenericFormatter.dart';
 /// A formatter for double values that formats them to a specified precision.
 class DoubleFormatter implements GenericFormatter<double>
 {
-    final bool invert;
     final int precision;
 
-    const DoubleFormatter(this.precision, {this.invert = false});
+    const DoubleFormatter(this.precision);
 
     @override
     String format(dynamic value)
@@ -19,12 +18,6 @@ class DoubleFormatter implements GenericFormatter<double>
         if (s == '0' || s == '-0')
             return '0';
 
-        if (!invert)
-            return s;
-
-        if (s.startsWith('-'))
-            return s.substring(1);
-
-        return '-$s';
+        return s;
     }
 }

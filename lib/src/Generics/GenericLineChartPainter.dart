@@ -34,7 +34,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     static const double additionalSpaceForLabelY = paddingBetweenTickLabelAndTickLineY + tickLineLengthY;
     static const double paddingBetweenTickLabelAndTickLineY = 0;
     static const double paddingBetweenTicksY = 4;
-    static const double tickLineLengthY = 8;
+    static const double tickLineLengthY = 8; 
 
     static const double dataTipPaddingX = 6;
     static const double dataTipPaddingY = 4;
@@ -648,8 +648,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             logDebug('  customDataMax:   $customDataMax');
         }
 
-        double textPositionMin = axis == Axis.horizontal ? graphMinMax.minX - additionalSpaceForLabelX : graphMinMax.minY - additionalSpaceForLabelY;
-        double textPositionMax = axis == Axis.horizontal ? graphMinMax.maxX + additionalSpaceForLabelX : graphMinMax.maxY + additionalSpaceForLabelY;
+        double textPositionMin = axis == Axis.horizontal 
+            ? graphMinMax.minX - additionalSpaceForLabelX 
+            : graphMinMax.minY - additionalSpaceForLabelY;
+
+        double textPositionMax = axis == Axis.horizontal 
+            ? graphMinMax.maxX + additionalSpaceForLabelX 
+            : graphMinMax.maxY + additionalSpaceForLabelY;
+
         if (DEBUG)
         {
             logDebug('  textPositionMin: $textPositionMin');
@@ -668,12 +674,12 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         );
 
         if (DEBUG)
-            logDebug('    Tick painter for $customDataLast at ${lastPainter.linePosition.toStringAsFixed(1)} // ${lastPainter.textStart.toStringAsFixed(1)} / ${lastPainter.textPosition.toStringAsFixed(1)} / ${lastPainter.textEnd.toStringAsFixed(1)}');
+            logDebug('    Last tick painter for $customDataLast at ${lastPainter.linePosition.toStringAsFixed(1)} / ${lastPainter.textPosition.toStringAsFixed(1)}');
 
         if (axis == Axis.horizontal)
-            textPositionMax = lastPainter.textStart.floorToDouble();
+            textPositionMax = lastPainter.textStartX.floorToDouble() - paddingBetweenTicksX;
         else
-            textPositionMin = lastPainter.textEnd.ceilToDouble();
+            textPositionMin = lastPainter.textEndY.ceilToDouble() + paddingBetweenTicksY;
 
         T customDataValue = customDataFirst;
 
@@ -707,21 +713,21 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             );
 
             if (DEBUG)
-                logDebug('    Tick painter for $customDataValue at ${tickPainter.linePosition.toStringAsFixed(1)} // ${tickPainter.textStart.toStringAsFixed(1)} / ${tickPainter.textPosition.toStringAsFixed(1)} / ${tickPainter.textEnd.toStringAsFixed(1)}');
+                logDebug('    Tick painter for $customDataValue at ${tickPainter.linePosition.toStringAsFixed(1)} / ${tickPainter.textPosition.toStringAsFixed(1)}');
 
             if (axis == Axis.horizontal)
             {
                 if (tickPainter.linePosition >= graphMinMax.maxX)
                     break;
 
-                textPositionMin = tickPainter.textEnd.ceilToDouble() + paddingBetweenTicksX;
+                textPositionMin = tickPainter.textEndX.ceilToDouble() + paddingBetweenTicksX;
             }
             else
             {
                 if (tickPainter.linePosition <= graphMinMax.minY)
                     break;
 
-                textPositionMax = tickPainter.textStart.floorToDouble() - paddingBetweenTicksY;
+                textPositionMax = tickPainter.textStartY.floorToDouble() - paddingBetweenTicksY;
             }
 
             tickPainters.add(tickPainter);
@@ -737,12 +743,12 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final bool invertLoop = axis == Axis.horizontal && invertX || axis == Axis.vertical && invertY;
 
         final double finalTextPositionMin = axis == Axis.horizontal
-            ? graphMinMax.minX - additionalSpaceForLabelX + tickPainters.first.textWidth + paddingBetweenTicksX
-            : graphMinMax.minY - additionalSpaceForLabelY + tickPainters.first.textHeight + paddingBetweenTicksY;
+            ? tickPainters.first.textEndX + paddingBetweenTicksX
+            : tickPainters.last.textEndY + paddingBetweenTicksY;
 
         final double finalTextPositionMax = axis == Axis.horizontal
-            ? graphMinMax.maxX + additionalSpaceForLabelX - tickPainters.last.textWidth - paddingBetweenTicksX
-            : graphMinMax.maxY + additionalSpaceForLabelY - tickPainters.last.textHeight - paddingBetweenTicksY;
+            ? tickPainters.last.textStartX - paddingBetweenTicksX
+            : tickPainters.first.textStartY - paddingBetweenTicksY;
 
         // Find an interval that yields no overlaps and remove non-fitting text painters
         bool foundInterval = false;
@@ -757,16 +763,27 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 final int actualIndex = invertLoop ? tickPainters.length - 1 - i : i;
                 final PositionedTextPainter<T> currentPainter = tickPainters[actualIndex];
 
-                if (currentPainter.textStart < currentTextPositionMin || currentPainter.textEnd > currentTextPositionMax)
+                if (axis == Axis.horizontal)
                 {
-                    overlaps = true;
-                    break;
+                    if (currentPainter.textStartX < currentTextPositionMin || currentPainter.textEndX > currentTextPositionMax)
+                    {
+                        overlaps = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    if (currentPainter.textStartY < currentTextPositionMin || currentPainter.textEndY > currentTextPositionMax)
+                    {
+                        overlaps = true;
+                        break;
+                    }
                 }
 
                 if (axis == Axis.horizontal && !invertX)
-                    currentTextPositionMin = currentPainter.textEnd.ceilToDouble() + paddingBetweenTicksX;
+                    currentTextPositionMin = currentPainter.textEndX.ceilToDouble() + paddingBetweenTicksX;
                 else if (axis == Axis.vertical && !invertY)
-                    currentTextPositionMax = currentPainter.textStart.floorToDouble() - paddingBetweenTicksY;
+                    currentTextPositionMax = currentPainter.textStartY.floorToDouble() - paddingBetweenTicksY;
             }
 
             if (!overlaps)
@@ -781,7 +798,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         for (int i = 0; i < tickPainters.length - 1; i++)
         {
-            if (i % interval != 0) 
+            if (i % interval != 0)
             {
                 final int actualIndex = invertLoop ? tickPainters.length - 1 - i : i;
                 tickPainters[actualIndex] = tickPainters[actualIndex].copyWith(textPainter: null);
