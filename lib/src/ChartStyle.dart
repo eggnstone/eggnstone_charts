@@ -17,6 +17,7 @@ abstract class ChartStyle with _$ChartStyle
         @Default(Colors.black) Color dataTipBackgroundColorDark,
         @Default(Colors.grey) Color gridColor,
         @Default(Colors.grey) Color gridColorDark,
+        @Default(false) bool invertX,
         @Default(false) bool invertY,
         @Default(2) double lineWidth,
         @Default(false) bool showTicksBottom,

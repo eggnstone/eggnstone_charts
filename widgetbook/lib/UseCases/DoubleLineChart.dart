@@ -32,9 +32,17 @@ Widget buildDoubleChartForTwoLinesTwoDots(BuildContext context)
 Widget buildDoubleChartForOneLine(BuildContext context)
 => _buildChart(context, '1 line', _createDoubleChartDataForOneLine(context));
 
-@UseCase(path: '', name: '1 line, inverted', type: DoubleLineChart)
-Widget buildDoubleChartForOneLineInverted(BuildContext context)
-=> _buildChart(context, '1 line, inverted', _createDoubleChartDataForOneLine(context, invert: true));
+@UseCase(path: '', name: '1 line, X inverted', type: DoubleLineChart)
+Widget buildDoubleChartForOneLineInvertedX(BuildContext context)
+=> _buildChart(context, '1 line, X inverted', _createDoubleChartDataForOneLine(context, invertX: true), invertX: true);
+
+@UseCase(path: '', name: '1 line, Y inverted', type: DoubleLineChart)
+Widget buildDoubleChartForOneLineInvertedY(BuildContext context)
+=> _buildChart(context, '1 line, Y inverted', _createDoubleChartDataForOneLine(context, invertY: true), invertY: true);
+
+@UseCase(path: '', name: '1 line, All inverted', type: DoubleLineChart)
+Widget buildDoubleChartForOneLineInvertedAll(BuildContext context)
+=> _buildChart(context, '1 line, All inverted', _createDoubleChartDataForOneLine(context, invertX: true, invertY: true), invertX: true, invertY: true);
 
 @UseCase(path: '', name: '1 line, 1 dot', type: DoubleLineChart)
 Widget buildDoubleChartForOneLineOneDot(BuildContext context)
@@ -109,12 +117,13 @@ DoubleChartData _createDoubleChartDataForOneLineOneDot(BuildContext context)
     doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1(), _createDoublePointsForDot1()]
 );
 
-DoubleChartData _createDoubleChartDataForOneLine(BuildContext context, {bool invert = false})
+DoubleChartData _createDoubleChartDataForOneLine(BuildContext context, {bool invertX = false, bool invertY = false})
 => _createDoubleChartData(
     context,
     colors: <Color>[Colors.red],
     doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1()],
-    invert: invert
+    invertX: invertX,
+    invertY: invertY
 );
 
 // Raw data
@@ -180,7 +189,8 @@ DoubleChartData _createDoubleChartData(
         int rangeStepsY = 3,
         int rangeInitialValueX = 10,
         int rangeInitialValueY = 10,
-        bool invert = false
+        bool invertX = false,
+        bool invertY = false
     }
 )
 {
@@ -190,7 +200,7 @@ DoubleChartData _createDoubleChartData(
             => DoubleDataSeries(
                 colors[index],
                 'Data Series #${index + 1}', 
-                points.map((DoublePoint dp) => invert ? DoublePoint(dp.x, -dp.y) : dp).toImmutableList()
+                points.map((DoublePoint dp) => DoublePoint(invertX ? -dp.x : dp.x, invertY ? -dp.y : dp.y)).toImmutableList()
             )
         )
         .toList();
@@ -199,20 +209,20 @@ DoubleChartData _createDoubleChartData(
     final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: rangeInitialValueY, min: rangeMinY, max: rangeMaxY, divisions: rangeStepsY).toDouble();
     return DoubleChartData(
         dataSeriesList: convertedDoubleDataSeriesList.toImmutableList(),
-        toolsX: DoubleTools(const DoubleFormatter(0), const DoubleFormatter(0)),
-        toolsY: DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert)),
+        toolsX: DoubleTools(DoubleFormatter(0, invert: invertX), DoubleFormatter(0, invert: invertX)),
+        toolsY: DoubleTools(DoubleFormatter(0, invert: invertY), DoubleFormatter(0, invert: invertY)),
         minMax: DoubleMinMax(
-            minX: minX,
-            maxX: rangeX,
-            minY: invert ? -rangeY : minY,
-            maxY: invert ? minY : rangeY
+            minX: invertX ? -rangeX : minX,
+            maxX: invertX ? minX : rangeX,
+            minY: invertY ? -rangeY : minY,
+            maxY: invertY ? minY : rangeY
         )
     );
 }
 
 //
 
-Widget _buildChart(BuildContext context, String title, DoubleChartData data)
+Widget _buildChart(BuildContext context, String title, DoubleChartData data, {bool invertX = false, bool invertY = false})
 {
     final bool showLabelBottom = context.knobs.boolean(label: 'Show label bottom', initialValue: true);
     final bool showLabelLeft = context.knobs.boolean(label: 'Show label left', initialValue: true);
@@ -235,6 +245,8 @@ Widget _buildChart(BuildContext context, String title, DoubleChartData data)
     final ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
         fontSize: 12,
+        invertX: invertX,
+        invertY: invertY,
         pointRadius: 4,
         showTicksBottom: showTicksBottom,
         showTicksLeft: showTicksLeft,

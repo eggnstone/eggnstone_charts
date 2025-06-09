@@ -75,6 +75,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
                         customData: _customData,
                         dataTipFormat: widget.info.dataTipFormat,
                         doubleData: _doubleData,
+                        invertX: widget.style.invertX,
                         invertY:  widget.style.invertY,
                         pointerPosition: _lastPosition,
                         showTicksBottom: widget.style.showTicksBottom,
