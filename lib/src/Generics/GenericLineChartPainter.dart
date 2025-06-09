@@ -28,12 +28,12 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
     static const double additionalSpaceForLabelX = paddingBetweenTickLabelAndTickLineX + tickLineLengthX;
     static const double paddingBetweenTickLabelAndTickLineX = 2;
-    static const double paddingBetweenTicksX = 2;
+    static const double paddingBetweenTicksX = 6;
     static const double tickLineLengthX = 8;
 
     static const double additionalSpaceForLabelY = paddingBetweenTickLabelAndTickLineY + tickLineLengthY;
     static const double paddingBetweenTickLabelAndTickLineY = 0;
-    static const double paddingBetweenTicksY = 2;
+    static const double paddingBetweenTicksY = 4;
     static const double tickLineLengthY = 8;
 
     static const double dataTipPaddingX = 6;
@@ -737,12 +737,12 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         final bool invertLoop = axis == Axis.horizontal && invertX || axis == Axis.vertical && invertY;
 
         final double finalTextPositionMin = axis == Axis.horizontal
-            ? graphMinMax.minX - additionalSpaceForLabelX + tickPainters.first.textWidth
-            : graphMinMax.minY - additionalSpaceForLabelY + tickPainters.first.textHeight;
+            ? graphMinMax.minX - additionalSpaceForLabelX + tickPainters.first.textWidth + paddingBetweenTicksX
+            : graphMinMax.minY - additionalSpaceForLabelY + tickPainters.first.textHeight + paddingBetweenTicksY;
 
         final double finalTextPositionMax = axis == Axis.horizontal
-            ? graphMinMax.maxX + additionalSpaceForLabelX - tickPainters.last.textWidth
-            : graphMinMax.maxY + additionalSpaceForLabelY - tickPainters.last.textHeight;
+            ? graphMinMax.maxX + additionalSpaceForLabelX - tickPainters.last.textWidth - paddingBetweenTicksX
+            : graphMinMax.maxY + additionalSpaceForLabelY - tickPainters.last.textHeight - paddingBetweenTicksY;
 
         // Find an interval that yields no overlaps and remove non-fitting text painters
         bool foundInterval = false;
