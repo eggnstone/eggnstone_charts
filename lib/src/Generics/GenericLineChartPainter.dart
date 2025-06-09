@@ -80,8 +80,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     @override
     void paint(Canvas canvas, Size size)
     {
-        //logDebug('GenericLineChartPainter.paint() pointerPosition: $pointerPosition');
-
         try
         {
             _paintOrThrow(canvas, size);
@@ -712,34 +710,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             if (axis == Axis.horizontal)
             {
                 if (tickPainter.linePosition >= graphMinMax.maxX)
-                {
-                    //logWarning('  X1: Stopping because tickPainter.linePosition (${tickPainter.linePosition} > graphMinMax.maxX (${graphMinMax.maxX})');
                     break;
-                }
-
-                /*// TODO
-                if (tickPainter.textEnd.ceilToDouble() + paddingBetweenTicksX > textPositionMax) 
-                {
-                    logWarning('  X2: Stopping because tickPainter.textEnd (${tickPainter.textEnd.ceilToDouble()}) + paddingBetweenTicksX (${paddingBetweenTicksX}) > textPositionMax (${textPositionMax})');
-                    break;
-                }*/
 
                 textPositionMin = tickPainter.textEnd.ceilToDouble() + paddingBetweenTicksX;
             }
             else
             {
                 if (tickPainter.linePosition <= graphMinMax.minY)
-                {
-                    //logWarning('  Y1: Stopping because tickPainter.linePosition (${tickPainter.linePosition} < graphMinMax.minY (${graphMinMax.minY})');
                     break;
-                }
-
-                /*// TODO
-                if (tickPainter.textStart.ceilToDouble() - paddingBetweenTicksY < textPositionMin) 
-                {
-                    logWarning('  Y2: Stopping because tickPainter.textStart (${tickPainter.textStart.ceilToDouble()}) - paddingBetweenTicksY (${paddingBetweenTicksY}) < textPositionMin (${textPositionMin})');
-                    break;
-                }*/
 
                 textPositionMax = tickPainter.textStart.floorToDouble() - paddingBetweenTicksY;
             }
@@ -751,19 +729,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         // Add the last tick painter after the loop
         tickPainters.add(lastPainter);
 
-        /*if (invertY)
-            tickPainters = tickPainters.reversed.toList();*/
-
-        //logDebug('Tick painters:    ${tickPainters.length}');
-        /*logDebug('Tick painter #0:  ${tickPainters[0]}');
-        logDebug('Tick painter #1:  ${tickPainters[1]}');
-        logDebug('Tick painter #2:  ${tickPainters[2]}');
-        logDebug('Tick painter #-5: ${tickPainters[tickPainters.length - 5]}');
-        logDebug('Tick painter #-4: ${tickPainters[tickPainters.length - 4]}');
-        logDebug('Tick painter #-3: ${tickPainters[tickPainters.length - 3]}');
-        logDebug('Tick painter #-2: ${tickPainters[tickPainters.length - 2]}');
-        logDebug('Tick painter #-1: ${tickPainters[tickPainters.length - 1]}');*/
-
         if (tickPainters.length <= 2)
             return tickPainters;
 
@@ -774,8 +739,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         int interval;
         for (interval = 1; interval <= 100; interval++)
         {
-            //logDebug('Interval: $interval');
-
             double textPositionMin = axis == Axis.horizontal 
                 ? graphMinMax.minX - additionalSpaceForLabelX + tickPainters.first.textWidth
                 : graphMinMax.minY - additionalSpaceForLabelY + tickPainters.first.textHeight;
@@ -784,45 +747,42 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 ? graphMinMax.maxX + additionalSpaceForLabelX - tickPainters.last.textWidth
                 : graphMinMax.maxY + additionalSpaceForLabelY - tickPainters.last.textHeight;
 
-            /*if (interval == 1)
-            {
-                logInfo('  textPositionMin: $textPositionMin');
-                logInfo('  textPositionMax: $textPositionMax');
-            }*/
-
             bool overlaps = false;
             for (int i = interval; i < tickPainters.length - 1; i += interval)
             {
                 final int actualIndex = invertLoop ? tickPainters.length - 1 - i : i;
-
                 final PositionedTextPainter<T> currentPainter = tickPainters[actualIndex];
-                //logDebug('  Tick painter #$i/#$actualIndex: "${currentPainter.textPainter?.plainText}" ${currentPainter.textStart} - ${currentPainter.textEnd}');
 
-                if (currentPainter.textStart < textPositionMin || currentPainter.textEnd > textPositionMax)
+                if (currentPainter.textStart < textPositionMin)
                 {
-                    //logWarning('    Overlap found: ${currentPainter.linePosition} at ${currentPainter.textPosition.toStringAsFixed(1)}');
+                    logWarning('Overlap MIN found: $axis');
                     overlaps = true;
                     break;
                 }
 
-                //logDebug('    OK');
+                if (currentPainter.textEnd > textPositionMax)
+                {
+                    logWarning('Overlap MAX found: $axis');
+                    overlaps = true;
+                    break;
+                }
 
-                //logInfo('OK => currentPainter.textEnd: $currentPainter.textEnd => textPositionMin: $textPositionMin');
                 if (axis == Axis.horizontal)
                 {
-                    //logDebug('    New textPositionMin: $textPositionMin');
+                    /*logDebug('    X textPositionMin: $textPositionMin => ${currentPainter.textEnd.ceilToDouble() + paddingBetweenTicksX}');
+                    textPositionMin = currentPainter.textEnd.ceilToDouble() + paddingBetweenTicksX;*/
                 }
                 else
                 {
                     if (invertY)
                     {
-                        textPositionMin = currentPainter.textEnd.ceilToDouble() + paddingBetweenTicksX;
-                        //logDebug('    New textPositionMin: $textPositionMin');
+                        /*logDebug('    Y textPositionMin: $textPositionMin => ${currentPainter.textEnd.ceilToDouble() + paddingBetweenTicksY}');
+                        textPositionMin = currentPainter.textEnd.ceilToDouble() + paddingBetweenTicksY;*/
                     }
-                    else
+                    else 
                     {
+                        logDebug('    Y textPositionMax: $textPositionMax => ${currentPainter.textStart.floorToDouble() - paddingBetweenTicksY}');
                         textPositionMax = currentPainter.textStart.floorToDouble() - paddingBetweenTicksY;
-                        //logDebug('    New textPositionMax: $textPositionMax');
                     }
                 }
             }
@@ -834,11 +794,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             }
         }
 
-        //logWarning('axis: $axis interval: $interval');
-
-        /*if (invertY)
-            tickPainters = tickPainters.reversed.toList();*/
-
         if (!foundInterval)
             return <PositionedTextPainter<T>>[tickPainters.first, tickPainters.last];
 
@@ -847,16 +802,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final int actualIndex = invertLoop ? tickPainters.length - 1 - i : i;
 
             if (i % interval != 0)
-            {
-                //logInfo('  Removing tick painter #$i');
                 tickPainters[actualIndex] = tickPainters[actualIndex].copyWith(textPainter: null);
-                //tickPainters[i] = tickPainters[i].copyWith(textPainter: _createAndLayoutTextPainter('DEL: #$i', chartStyle));
-            }
-            else
-            {
-                //logInfo('  OK: i: $i i % interval: ${i % interval}');
-                //tickPainters[i] = tickPainters[i].copyWith(textPainter: _createAndLayoutTextPainter('OK: #$i', chartStyle));
-            }
         }
 
         return tickPainters;
