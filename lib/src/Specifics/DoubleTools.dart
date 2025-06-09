@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../Generics/GenericTools.dart';
 
+/// A class that provides specific tools for handling double values in charts.
 class DoubleTools extends GenericTools<double>
 {
     DoubleTools(super.formatter, super.dataTipFormatter);

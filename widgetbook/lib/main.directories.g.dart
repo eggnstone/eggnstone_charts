@@ -42,12 +42,20 @@ final directories = <_i1.WidgetbookNode>[
         builder: _i2.buildDateTimeChartForDocOne,
       ),
       _i1.WidgetbookUseCase(
-        name: 'Inverted',
-        builder: _i2.buildDateTimeChartForInvertedDisplay,
+        name: 'Inverted 0',
+        builder: _i2.buildDateTimeChartForInvertedDisplay0,
       ),
       _i1.WidgetbookUseCase(
-        name: 'Normal',
-        builder: _i2.buildDateTimeChartForNormalDisplay,
+        name: 'Inverted 1',
+        builder: _i2.buildDateTimeChartForInvertedDisplay1,
+      ),
+      _i1.WidgetbookUseCase(
+        name: 'Normal 0',
+        builder: _i2.buildDateTimeChartForNormalDisplay0,
+      ),
+      _i1.WidgetbookUseCase(
+        name: 'Normal 1',
+        builder: _i2.buildDateTimeChartForNormalDisplay1,
       ),
       _i1.WidgetbookUseCase(
         name: 'One date only (fixed)',

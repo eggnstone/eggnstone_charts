@@ -1,6 +1,7 @@
 import '../ChartsException.dart';
 import '../Generics/GenericMinMax.dart';
 
+/// A class that represents the minimum and maximum values for DateTime objects.
 class DateTimeMinMax extends GenericMinMax<DateTime, double>
 {
     DateTimeMinMax({

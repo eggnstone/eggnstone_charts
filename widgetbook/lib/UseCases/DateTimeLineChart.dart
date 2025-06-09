@@ -13,13 +13,21 @@ import 'package:widgetbook_annotation/widgetbook_annotation.dart';
 Widget buildDateTimeChartForOnlyOneDate(BuildContext context)
 => _buildChart(context, 'One date only', _createDateTimeChartDataForOnlyOneDate(context));
 
-@UseCase(path: '', name: 'Normal', type: DateTimeLineChart)
-Widget buildDateTimeChartForNormalDisplay(BuildContext context)
-=> _buildChart(context, 'Normal', _createDateTimeChartDataForDisplay(context));
+@UseCase(path: '', name: 'Normal 0', type: DateTimeLineChart)
+Widget buildDateTimeChartForNormalDisplay0(BuildContext context)
+=> _buildChart(context, 'Normal 0', _createDateTimeChartDataForDisplay(context));
 
-@UseCase(path: '', name: 'Inverted', type: DateTimeLineChart)
-Widget buildDateTimeChartForInvertedDisplay(BuildContext context)
-=> _buildChart(context, 'Inverted', _createDateTimeChartDataForDisplay(context, invert: true));
+@UseCase(path: '', name: 'Normal 1', type: DateTimeLineChart)
+Widget buildDateTimeChartForNormalDisplay1(BuildContext context)
+=> _buildChart(context, 'Normal 1', _createDateTimeChartDataForDisplay(context, start: 1));
+
+@UseCase(path: '', name: 'Inverted 0', type: DateTimeLineChart)
+Widget buildDateTimeChartForInvertedDisplay0(BuildContext context)
+=> _buildChart(context, 'Inverted 0', _createDateTimeChartDataForDisplay(context, invertY: true), invertY: true);
+
+@UseCase(path: '', name: 'Inverted 1', type: DateTimeLineChart)
+Widget buildDateTimeChartForInvertedDisplay1(BuildContext context)
+=> _buildChart(context, 'Inverted 1', _createDateTimeChartDataForDisplay(context, start: 1, invertY: true), invertY: true);
 
 @UseCase(path: '', name: 'One date only (fixed)', type: DateTimeLineChart)
 Widget buildDateTimeChartForOnlyOneDateFixed(BuildContext context)
@@ -45,24 +53,28 @@ Widget buildDateTimeChartForDocOne(BuildContext context)
 
 // Data
 
-DateTimeChartData _createDateTimeChartDataForDisplay(BuildContext context, {bool invert = false})
+DateTimeChartData _createDateTimeChartDataForDisplay(BuildContext context, {int start = 0, bool invertY = false})
 {
     final DateTime now = DateTime.now();
     return _createDateTimeChartData(
         context,
         referenceDateTime: now,
         colors: <Color>[Colors.red],
-        dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForLine1(now)],
-        invert: invert,
+        dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForLine1(now, start: start)],
+        invertY: invertY,
         minX: -8,
         rangeInitialValueX: 2,
         rangeMinX: 2,
         rangeMaxX: 102,
-        rangeStepsX: 2
+        rangeStepsX: 2,
+        minY: invertY ? -start.toDouble() : start.toDouble(),
+        rangeMinY: 10 + start,
+        rangeMaxY: 100 + start,
+        rangeInitialValueY: 10 + start
     );
 }
 
-DateTimeChartData _createDateTimeChartDataForOnlyOneDate(BuildContext context, {bool invert = false})
+DateTimeChartData _createDateTimeChartDataForOnlyOneDate(BuildContext context, {bool invertY = false})
 {
     final DateTime now = DateTime.now();
     return _createDateTimeChartData(
@@ -70,7 +82,7 @@ DateTimeChartData _createDateTimeChartDataForOnlyOneDate(BuildContext context, {
         referenceDateTime: now,
         colors: <Color>[Colors.red],
         dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForOnlyOneDate(now)],
-        invert: invert,
+        invertY: invertY,
         minX: 0,
         rangeMinX: 0,
         rangeMaxX: 2,
@@ -78,7 +90,7 @@ DateTimeChartData _createDateTimeChartDataForOnlyOneDate(BuildContext context, {
     );
 }
 
-DateTimeChartData _createDateTimeChartDataForOnlyOneDateFixed(BuildContext context, {bool invert = false})
+DateTimeChartData _createDateTimeChartDataForOnlyOneDateFixed(BuildContext context, {bool invertY = false})
 {
     final DateTime now = DateTime.now();
     return _createDateTimeChartData(
@@ -87,7 +99,7 @@ DateTimeChartData _createDateTimeChartDataForOnlyOneDateFixed(BuildContext conte
         colors: <Color>[Colors.red],
         fixMinMax: true,
         dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForOnlyOneDate(now)],
-        invert: invert,
+        invertY: invertY,
         minX: 0,
         rangeMinX: 0,
         rangeMaxX: 2,
@@ -95,7 +107,7 @@ DateTimeChartData _createDateTimeChartDataForOnlyOneDateFixed(BuildContext conte
     );
 }
 
-DateTimeChartData _createDateTimeChartDataForOnlyTwoDates(BuildContext context, {bool invert = false})
+DateTimeChartData _createDateTimeChartDataForOnlyTwoDates(BuildContext context, {bool invertY = false})
 {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
@@ -105,7 +117,7 @@ DateTimeChartData _createDateTimeChartDataForOnlyTwoDates(BuildContext context, 
         colors: <Color>[Colors.red],
         fixMinMax: true,
         dateTimePointLists: <List<DateTimePoint>>[_createDateTimePointsForOnlyTwoDates(today)],
-        invert: invert,
+        invertY: invertY,
         minX: -1,
         rangeMinX: 0,
         rangeMaxX: 2,
@@ -149,17 +161,17 @@ List<DateTimePoint> _createDateTimePointsForOnlyTwoDates(DateTime referenceDateT
     DateTimePoint(referenceDateTime, 2)
 ];
 
-List<DateTimePoint> _createDateTimePointsForLine1(DateTime referenceDateTime)
+List<DateTimePoint> _createDateTimePointsForLine1(DateTime referenceDateTime, {int start = 0})
 => <DateTimePoint>
 [
-    DateTimePoint(referenceDateTime.subtract(const Duration(days: 7)), 0),
-    DateTimePoint(referenceDateTime.subtract(const Duration(days: 6)), 1),
-    DateTimePoint(referenceDateTime.subtract(const Duration(days: 5)), 2),
-    DateTimePoint(referenceDateTime.subtract(const Duration(days: 4)), 3),
-    DateTimePoint(referenceDateTime.subtract(const Duration(days: 3)), 4),
-    DateTimePoint(referenceDateTime.subtract(const Duration(days: 2)), 3),
-    DateTimePoint(referenceDateTime.subtract(const Duration(days: 1)), 1),
-    DateTimePoint(referenceDateTime, 7)
+    DateTimePoint(referenceDateTime.subtract(const Duration(days: 7)), start.toDouble()),
+    DateTimePoint(referenceDateTime.subtract(const Duration(days: 6)), start + 1),
+    DateTimePoint(referenceDateTime.subtract(const Duration(days: 5)), start + 2),
+    DateTimePoint(referenceDateTime.subtract(const Duration(days: 4)), start + 3),
+    DateTimePoint(referenceDateTime.subtract(const Duration(days: 3)), start + 4),
+    DateTimePoint(referenceDateTime.subtract(const Duration(days: 2)), start + 3),
+    DateTimePoint(referenceDateTime.subtract(const Duration(days: 1)), start + 1),
+    DateTimePoint(referenceDateTime, start + 7)
 ];
 
 List<DateTimePoint> _createDateTimePointsForDocOne(DateTime referenceDateTime)
@@ -193,7 +205,7 @@ DateTimeChartData _createDateTimeChartData(
         int rangeStepsY = 3,
         int rangeInitialValueX = 0,
         int rangeInitialValueY = 10,
-        bool invert = false
+        bool invertY = false
     }
 )
 {
@@ -203,7 +215,7 @@ DateTimeChartData _createDateTimeChartData(
             => GenericDataSeries<DateTime, double>(
                 colors[index],
                 'Data Series #${index + 1}',
-                points.map((DateTimePoint dp) => invert ? DateTimePoint(dp.x, -dp.y) : dp).toImmutableList()
+                points.map((DateTimePoint dp) => invertY ? DateTimePoint(dp.x, -dp.y) : dp).toImmutableList()
             )
         )
         .toList();
@@ -212,7 +224,7 @@ DateTimeChartData _createDateTimeChartData(
     final double rangeY = context.knobs.int.slider(label: 'Range Y', initialValue: rangeInitialValueY, min: rangeMinY, max: rangeMaxY, divisions: rangeStepsY).toDouble();
 
     final DateTimeTools toolsX = DateTimeTools(DateTimeFormatter(DateFormat('dd.\nMM.\nyyyy')), DateTimeFormatter(DateFormat('dd.MM.yyyy')), useUtc: true);
-    final DoubleTools toolsY = DoubleTools(DoubleFormatter(0, invert: invert), DoubleFormatter(0, invert: invert));
+    final DoubleTools toolsY = DoubleTools(DoubleFormatter(0, invert: invertY), DoubleFormatter(0, invert: invertY));
     DateTime dateTimeMinX = referenceDateTime.add(Duration(days: minX));
     DateTime dateTimeMaxX = referenceDateTime.add(Duration(days: rangeX));
 
@@ -232,15 +244,15 @@ DateTimeChartData _createDateTimeChartData(
         minMax: DateTimeMinMax(
             minX: dateTimeMinX,
             maxX: dateTimeMaxX,
-            minY: invert ? -rangeY : minY,
-            maxY: invert ? minY : rangeY
+            minY: invertY ? -rangeY : minY,
+            maxY: invertY ? minY : rangeY
         )
     );
 }
 
 //
 
-Widget _buildChart(BuildContext context, String title, DateTimeChartData data)
+Widget _buildChart(BuildContext context, String title, DateTimeChartData data, {bool invertY = false})
 {
     final bool showLabelBottom = context.knobs.boolean(label: 'Show label bottom', initialValue: true);
     final bool showLabelLeft = context.knobs.boolean(label: 'Show label left', initialValue: true);
@@ -263,6 +275,7 @@ Widget _buildChart(BuildContext context, String title, DateTimeChartData data)
     final ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
         fontSize: 12,
+        invertY: invertY,
         pointRadius: 4,
         showTicksBottom: showTicksBottom,
         showTicksLeft: showTicksLeft,

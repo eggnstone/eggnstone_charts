@@ -5,6 +5,7 @@ import 'Specifics/DoubleMinMax.dart';
 
 part 'PaintInfo.freezed.dart';
 
+/// A class that holds information about the painting context for a chart, including the canvas, size, min/max values, and various paints.
 @freezed
 abstract class PaintInfo with _$PaintInfo
 {

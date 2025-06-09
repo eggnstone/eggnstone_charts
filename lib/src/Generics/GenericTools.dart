@@ -1,5 +1,6 @@
 import 'GenericFormatter.dart';
 
+/// An abstract class that defines generic tools for formatting and manipulating values of type T.
 abstract class GenericTools<T>
 {
     final GenericFormatter<T> formatter;

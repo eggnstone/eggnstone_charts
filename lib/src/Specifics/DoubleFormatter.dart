@@ -1,5 +1,6 @@
 import '../Generics/GenericFormatter.dart';
 
+/// A formatter for double values that formats them to a specified precision.
 class DoubleFormatter implements GenericFormatter<double>
 {
     final bool invert;

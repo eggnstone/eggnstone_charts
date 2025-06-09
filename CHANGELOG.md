@@ -1,5 +1,9 @@
 # eggnstone_charts
 
+## 0.1.7
+
+- Better grid. More documentation.
+
 ## 0.1.6
 
 - Refactored colors and data series.

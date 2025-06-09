@@ -2,7 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ChartInfo.freezed.dart';
 
-/// ChartInfo class that holds information about a chart's title, axis labels, and data tip format.
+/// A class that holds information about a chart, including data tip format and labels for the axes and title.
 @freezed
 abstract class ChartInfo with _$ChartInfo
 {

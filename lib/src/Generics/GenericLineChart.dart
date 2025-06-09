@@ -12,6 +12,7 @@ import 'GenericLineChartPainter.dart';
 
 typedef TapCallback = void Function<TX, TY>(Offset location, TX dataX, TY dataY, ClosestLineInfo? closestLine);
 
+/// A generic line chart widget that can display data of any type.
 class GenericLineChart<TX, TY, TD extends GenericChartData<TX, TY>> extends StatefulWidget
 {
     final TD data;
@@ -69,11 +70,12 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
                 child: CustomPaint(
                     size: Size.infinite,
                     painter: GenericLineChartPainter<TX, TY>(
+                        brightness: brightness,
+                        chartStyle: widget.style.copyWith(borderColor: borderColor, textColor: textColor),
                         customData: _customData,
                         dataTipFormat: widget.info.dataTipFormat,
                         doubleData: _doubleData,
-                        chartStyle: widget.style.copyWith(borderColor: borderColor, textColor: textColor),
-                        brightness: brightness,
+                        invertY:  widget.style.invertY,
                         pointerPosition: _lastPosition,
                         showTicksBottom: widget.style.showTicksBottom,
                         showTicksLeft: widget.style.showTicksLeft,

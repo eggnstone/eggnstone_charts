@@ -2,6 +2,7 @@ import 'package:intl/intl.dart';
 
 import '../Generics/GenericFormatter.dart';
 
+/// A formatter for DateTime objects that formats them using a specified DateFormat.
 class DateTimeFormatter implements GenericFormatter<DateTime>
 {
     final DateFormat dateTimeFormat;

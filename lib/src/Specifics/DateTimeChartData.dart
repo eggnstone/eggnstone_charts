@@ -12,7 +12,7 @@ import 'DoubleMinMax.dart';
 import 'DoublePoint.dart';
 import 'DoubleTools.dart';
 
-/// DateTimeChartData class that holds data for a chart with DateTime on the X-axis and double on the Y-axis.
+/// A chart data class specifically for handling DateTime data series.
 class DateTimeChartData extends GenericChartData<DateTime, double>
 {
     static const bool DEBUG = false;

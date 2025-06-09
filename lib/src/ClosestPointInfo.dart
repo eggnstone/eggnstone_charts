@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ClosestPointInfo.freezed.dart';
 
-/// ClosestPointInfo class that holds information about the closest point to a given position in a chart.
+/// A class that holds information about the closest point on a chart.
 @freezed
 abstract class ClosestPointInfo with _$ClosestPointInfo
 {

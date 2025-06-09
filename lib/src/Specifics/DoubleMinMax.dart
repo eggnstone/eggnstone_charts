@@ -1,5 +1,6 @@
 import '../Generics/GenericMinMax.dart';
 
+/// A class that represents the minimum and maximum values for double values.
 class DoubleMinMax extends GenericMinMax<double, double>
 {
     DoubleMinMax({

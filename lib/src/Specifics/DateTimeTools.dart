@@ -1,5 +1,6 @@
 import '../Generics/GenericTools.dart';
 
+/// A class that provides tools for working with DateTime objects,
 class DateTimeTools extends GenericTools<DateTime>
 {
     final bool useUtc;

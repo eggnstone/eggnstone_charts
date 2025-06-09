@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'GenericMinMax.freezed.dart';
 
+/// A generic class that holds minimum and maximum values for two types, TX and TY.
 @freezed
 class GenericMinMax<TX, TY> with _$GenericMinMax<TX, TY>
 {

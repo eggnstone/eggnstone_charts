@@ -43,11 +43,6 @@ mixin _$PositionedTextPainter<T> {
   @override
   int get hashCode =>
       Object.hash(runtimeType, linePosition, textPosition, textPainter);
-
-  @override
-  String toString() {
-    return 'PositionedTextPainter<$T>(linePosition: $linePosition, textPosition: $textPosition, textPainter: $textPainter)';
-  }
 }
 
 /// @nodoc
@@ -135,11 +130,6 @@ class _PositionedTextPainter<T> extends PositionedTextPainter<T> {
   @override
   int get hashCode =>
       Object.hash(runtimeType, linePosition, textPosition, textPainter);
-
-  @override
-  String toString() {
-    return 'PositionedTextPainter<$T>(linePosition: $linePosition, textPosition: $textPosition, textPainter: $textPainter)';
-  }
 }
 
 /// @nodoc

@@ -3,6 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'PositionedTextPainter.freezed.dart';
 
+/// A class that holds the position and painter information for text in a chart.
 @freezed
 abstract class PositionedTextPainter<T> with _$PositionedTextPainter<T>
 {
@@ -17,6 +18,16 @@ abstract class PositionedTextPainter<T> with _$PositionedTextPainter<T>
     double get textEnd
     => textPosition + textPainter!.width / 2;
 
+    double get textHeight
+    => textPainter!.height;
+
     double get textStart
     => textPosition - textPainter!.width / 2;
+
+    double get textWidth
+    => textPainter!.width;
+
+    @override
+    String toString() 
+    => 'PositionedTextPainter<$T>(linePosition: $linePosition, textPosition: $textPosition, textPainter: "${textPainter?.plainText}")';
 }

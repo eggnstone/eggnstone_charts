@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'ChartStyle.freezed.dart';
 
-/// ChartStyle class that holds the style properties for a chart.
+/// A class that defines the style properties for charts.
 @freezed
 abstract class ChartStyle with _$ChartStyle
 {
@@ -17,6 +17,7 @@ abstract class ChartStyle with _$ChartStyle
         @Default(Colors.black) Color dataTipBackgroundColorDark,
         @Default(Colors.grey) Color gridColor,
         @Default(Colors.grey) Color gridColorDark,
+        @Default(false) bool invertY,
         @Default(2) double lineWidth,
         @Default(false) bool showTicksBottom,
         @Default(false) bool showTicksLeft,

@@ -4,6 +4,7 @@ import 'ChartsException.dart';
 import 'Generics/GenericMinMax.dart';
 import 'Specifics/DoubleMinMax.dart';
 
+/// A utility class for converting between data values and pixel values in a chart.
 class DataTools
 {
     static const bool DEBUG = false;
