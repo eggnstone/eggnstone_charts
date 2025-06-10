@@ -34,7 +34,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     static const double additionalSpaceForLabelY = paddingBetweenTickLabelAndTickLineY + tickLineLengthY;
     static const double paddingBetweenTickLabelAndTickLineY = 0;
     static const double paddingBetweenTicksY = 4;
-    static const double tickLineLengthY = 8; 
+    static const double tickLineLengthY = 8;
 
     static const double dataTipPaddingX = 6;
     static const double dataTipPaddingY = 4;
@@ -50,8 +50,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     final String dataTipFormat2;
     final DoubleChartData doubleData;
     final double highlightDistance;
-    final bool invertX;
-    final bool invertY;
+    final bool invertXAxis;
+    final bool invertYAxis;
     final Offset? pointerPosition;
     final bool showTicksBottom;
     final bool showTicksLeft;
@@ -68,13 +68,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         this.dataTipFormat = '%s\nX: %x\nY: %y',
         this.dataTipFormat2 = '%s',
         this.highlightDistance = 20,
-        this.invertX = false,
-        this.invertY = false,
+        this.invertXAxis = false,
+        this.invertYAxis = false,
         this.pointerPosition,
         this.showTicksBottom = true,
         this.showTicksLeft = true,
         this.showTicksRight = false,
-        this.showTicksTop = false,        
+        this.showTicksTop = false,
         this.onClosestLineCalculated,
         this.onGraphMinMaxCalculated
     });
@@ -98,72 +98,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         }
     }
 
-    void _paintOrThrow(Canvas canvas, Size size)
-    {
-        if (DEBUG)
-        {
-            logDebug('GenericLineChartPainter._paintOrThrow() Size: $size');
-            logDebug('  customData.minMax: ${customData.minMax}');
-            logDebug('  doubleData.minMax: ${doubleData.minMax}');
-        }
-
-        if (customData.dataSeriesList.isEmpty())
-            throw ChartsUserException('No data');
-
-        final DoubleMinMax graphMinMax = _calcGraphMinMax(
-            size, 
-            <TextPainter>[
-                _createAndLayoutTextPainter(customData.toolsX.format(customData.minMax.minX), chartStyle),
-                _createAndLayoutTextPainter(customData.toolsX.format(customData.minMax.maxX), chartStyle)
-            ],
-            <TextPainter>[
-                _createAndLayoutTextPainter(customData.toolsY.format(customData.minMax.minY), chartStyle),
-                _createAndLayoutTextPainter(customData.toolsY.format(customData.minMax.maxY), chartStyle)
-            ],
-            showTicksBottom: showTicksBottom,
-            showTicksLeft: showTicksLeft,
-            showTicksRight: showTicksRight,
-            showTicksTop: showTicksTop
-        );
-
-        onGraphMinMaxCalculated?.call(graphMinMax);
-        if (DEBUG)
-            logDebug('  graphMinMax:       $graphMinMax');
-
-        final List<PositionedTextPainter<TX>> xAxisPainters = _createXAxisTicks(graphMinMax);
-        final List<PositionedTextPainter<TY>> yAxisPainters = _createYAxisTicks(graphMinMax);
-
-        final PaintInfo paintInfo = PaintInfo(
-            canvas: canvas,
-            size: size,
-            graphMinMax: graphMinMax,
-            borderPaint: _createBorderPaint(),
-            dataTipBackgroundPaint: _createDataTipBackgroundPaint(),
-            gridPaint: _createGridPaint(),
-            gridPaint2: _createGridPaint2()
-        );
-
-        canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), paintInfo.borderPaint);
-
-        _paintHorizontalGridLines(paintInfo, yAxisPainters);
-        _paintTextPaintersLeft(paintInfo, yAxisPainters, showTicks: showTicksLeft);
-        _paintTextPaintersRight(paintInfo, yAxisPainters, showTicks: showTicksRight);
-
-        _paintVerticalGridLines(paintInfo, xAxisPainters);
-        _paintTextPaintersTop(paintInfo, xAxisPainters, showTicks: showTicksTop);
-        _paintTextPaintersBottom(paintInfo, xAxisPainters, showTicks: showTicksBottom);
-
-        final ClosestLineInfo? closestLine = _calcClosestLine(paintInfo);
-        onClosestLineCalculated?.call(closestLine);
-        _drawLines(paintInfo, closestLine);
-
-        if (closestLine != null)
-        {
-            final GenericDataSeries<TX, TY> dataSeries = customData.dataSeriesList[closestLine.lineIndex];
-            _drawDataTip(paintInfo, dataSeries.label, closestLine.closestPoint);
-        }
-    }
-
     @override
     bool shouldRepaint(covariant CustomPainter oldDelegate)
     {
@@ -181,23 +115,138 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return true;
     }
 
-    void _drawLineSegment(Canvas canvas, Paint paint, double x1, double y1, double x2, double y2) 
-    => canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
-
-    static TextPainter _createAndLayoutTextPainter(String text, ChartStyle style, [double? textScale])
+    ClosestPointInfo? _calcClosestDataPoint(PaintInfo paintInfo, DoubleDataSeries dataSeries)
     {
-        final TextPainter tp = TextPainter(
-            textScaler: textScale == null ? TextScaler.noScaling : TextScaler.linear(textScale),
-            text: TextSpan(style: TextStyle(color: style.textColor, fontSize: style.fontSize), text: text),
-            textDirection: TextDirection.ltr
+        if (dataSeries.points.isEmpty())
+            return null;
+
+        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
+        double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
+        double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
+
+        final double distance = _calcDistanceToPoint(lastX, lastY, pointerPosition!);
+        ClosestPointInfo closestPoint = ClosestPointInfo(
+            distance: distance,
+            pointIndex: 0,
+            position: Offset(lastX, lastY)
         );
-        tp.layout();
-        return tp;
+
+        for (int pointIndex = 1; pointIndex < dataSeries.points.size; pointIndex++)
+        {
+            final double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
+            final double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
+
+            final double distance = _calcDistanceToPoint(currentX, currentY, pointerPosition!);
+            if (distance < closestPoint.distance)
+                closestPoint = ClosestPointInfo(
+                    distance: distance,
+                    pointIndex: pointIndex,
+                    position: Offset(currentX, currentY)
+                );
+
+            lastX = currentX;
+            lastY = currentY;
+        }
+
+        return closestPoint;
+    }
+
+    double _calcDistanceBetweenPoints(double x1, double y1, double x2, double y2)
+    => sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+
+    double _calcDistanceToPoint(double x, double y, Offset point)
+    => Offset((point.dx - x).abs(), (point.dy - y).abs()).distance;
+
+    ClosestLineInfo? _calcClosestLine(PaintInfo paintInfo)
+    {
+        if (pointerPosition == null)
+            return null;
+
+        ClosestLineInfo? closestLineByDataPoints;
+        ClosestLineInfo? closestLineByLinePoints;
+
+        for (int lineIndex = 0; lineIndex < doubleData.dataSeriesList.size; lineIndex++)
+        {
+            closestLineByDataPoints = _calcClosestLineByDataPoints(paintInfo, closestLineSoFar: closestLineByDataPoints, currentLine: doubleData.dataSeriesList[lineIndex], lineIndex: lineIndex);
+            closestLineByLinePoints = _calcClosestLineByLinePoints(paintInfo, closestLineSoFar: closestLineByLinePoints, currentLine: doubleData.dataSeriesList[lineIndex], lineIndex: lineIndex);
+        }
+
+        if (closestLineByDataPoints == null || closestLineByLinePoints == null)
+            return null;
+
+        if (closestLineByDataPoints.closestPoint.distance < highlightDistance)
+            return closestLineByDataPoints;
+
+        if (closestLineByLinePoints.closestPoint.distance < highlightDistance)
+            return closestLineByLinePoints;
+
+        return null;
+    }
+
+    ClosestLineInfo? _calcClosestLineByDataPoints(PaintInfo paintInfo, {required ClosestLineInfo? closestLineSoFar, required DoubleDataSeries currentLine, required int lineIndex})
+    {
+        final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestDataPoint(paintInfo, currentLine);
+        if (closestPointOfCurrentLine == null)
+            return closestLineSoFar;
+
+        if (closestLineSoFar == null || closestPointOfCurrentLine.distance < closestLineSoFar.closestPoint.distance)
+            return ClosestLineInfo(
+                closestPoint: closestPointOfCurrentLine,
+                lineIndex: lineIndex
+            );
+
+        return closestLineSoFar;
+    }
+
+    ClosestLineInfo? _calcClosestLineByLinePoints(PaintInfo paintInfo, {required ClosestLineInfo? closestLineSoFar, required DoubleDataSeries currentLine, required int lineIndex})
+    {
+        final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestLinePoint(paintInfo, currentLine);
+        if (closestPointOfCurrentLine == null)
+            return closestLineSoFar;
+
+        if (closestLineSoFar == null || closestPointOfCurrentLine.distance < closestLineSoFar.closestPoint.distance)
+            return ClosestLineInfo(
+                closestPoint: closestPointOfCurrentLine,
+                lineIndex: lineIndex
+            );
+
+        return closestLineSoFar;
+    }
+
+    ClosestPointInfo? _calcClosestLinePoint(PaintInfo paintInfo, DoubleDataSeries dataSeries)
+    {
+        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
+        double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
+        double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
+
+        ClosestPointInfo? closestPoint;
+        for (int pointIndex = 1; pointIndex < dataSeries.points.size; pointIndex++)
+        {
+            final double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
+            final double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
+
+            final Offset? intersection = _projectFromPointOnLine(pointerPosition!.dx, pointerPosition!.dy, lastX, lastY, currentX, currentY);
+            if (intersection != null)
+            {
+                final double distance = _calcDistanceBetweenPoints(pointerPosition!.dx, pointerPosition!.dy, intersection.dx, intersection.dy);
+                if (closestPoint == null || distance < closestPoint.distance)
+                    closestPoint = ClosestPointInfo(
+                        distance: distance,
+                        pointIndex: null,
+                        position: intersection
+                    );
+            }
+
+            lastX = currentX;
+            lastY = currentY;
+        }
+
+        return closestPoint;
     }
 
     static DoubleMinMax _calcGraphMinMax(
         Size size,
-        List<TextPainter> xAxisPainters, 
+        List<TextPainter> xAxisPainters,
         List<TextPainter> yAxisPainters, {
             bool showTicksBottom = false,
             bool showTicksLeft = false,
@@ -267,365 +316,16 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return maxWidth;
     }
 
-    void _paintTextPaintersLeft<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
+    static TextPainter _createAndLayoutTextPainter(String text, ChartStyle style, [double? textScale])
     {
-        if (!showTicks)
-            return;
-
-        for (int i = 0; i < painters.length; i++)
-        {
-            final PositionedTextPainter<T> painter = painters[i];
-            final TextPainter? textPainter = painter.textPainter;
-
-            if (textPainter != null)
-            {
-                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.minX - tickLineLengthX, painter.linePosition, paintInfo.graphMinMax.minX, painter.linePosition);
-                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.minX - additionalSpaceForLabelX - textPainter.width, painter.textPosition - textPainter.height / 2));
-            }
-        }
-    }
-
-    void _paintHorizontalGridLines<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
-    {
-        for (int i = 0; i < painters.length; i++)
-        {
-            final PositionedTextPainter<T> painter = painters[i];
-            final TextPainter? textPainter = painter.textPainter;
-
-            if (painter.linePosition > paintInfo.graphMinMax.minY && painter.linePosition < paintInfo.graphMinMax.maxY)
-            {
-                final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
-                _drawLineSegment(paintInfo.canvas, gridPaint, paintInfo.graphMinMax.minX, painter.linePosition, paintInfo.graphMinMax.maxX, painter.linePosition);
-            }
-        }
-    }
-
-    void _paintTextPaintersTop<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
-    {
-        if (!showTicks)
-            return;
-
-        for (int i = 0; i < painters.length; i++)
-        {
-            final PositionedTextPainter<T> painter = painters[i];
-            final TextPainter? textPainter = painter.textPainter;
-            if (textPainter != null)
-            {
-                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, painter.linePosition, paintInfo.graphMinMax.minY - tickLineLengthY, painter.linePosition, paintInfo.graphMinMax.minY);
-                textPainter.paint(paintInfo.canvas, Offset(painter.textPosition - textPainter.width / 2, paintInfo.graphMinMax.minY - additionalSpaceForLabelY - textPainter.height));
-            }
-        }
-    }
-
-    void _paintTextPaintersRight<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
-    {
-        if (!showTicks)
-            return;
-
-        for (int i = 0; i < painters.length; i++)
-        {
-            final PositionedTextPainter<T> painter = painters[i];
-            final TextPainter? textPainter = painter.textPainter;
-            if (textPainter != null)
-            {
-                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, paintInfo.graphMinMax.maxX, painter.linePosition, paintInfo.graphMinMax.maxX + tickLineLengthX, painter.linePosition);
-                textPainter.paint(paintInfo.canvas, Offset(paintInfo.graphMinMax.maxX + additionalSpaceForLabelX, painter.textPosition - textPainter.height / 2));
-            }
-        }
-    }
-
-    void _paintTextPaintersBottom<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
-    {
-        if (!showTicks)
-            return;
-
-        for (int i = 0; i < painters.length; i++)
-        {
-            final PositionedTextPainter<T> painter = painters[i];
-            final TextPainter? textPainter = painter.textPainter;
-
-            if (textPainter != null)
-            {
-                _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, painter.linePosition, paintInfo.graphMinMax.maxY, painter.linePosition, paintInfo.graphMinMax.maxY + tickLineLengthY);
-                textPainter.paint(paintInfo.canvas, Offset(painter.textPosition - textPainter.width / 2, paintInfo.graphMinMax.maxY + additionalSpaceForLabelY));
-            }
-        }
-    }
-
-    void _paintVerticalGridLines<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
-    {
-        for (int i = 0; i < painters.length; i++)
-        {
-            final PositionedTextPainter<T> painter = painters[i];
-            final TextPainter? textPainter = painter.textPainter;
-
-            if (painter.linePosition > paintInfo.graphMinMax.minX && painter.linePosition < paintInfo.graphMinMax.maxX)
-            {
-                final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
-                _drawLineSegment(paintInfo.canvas, gridPaint, painter.linePosition, paintInfo.graphMinMax.minY, painter.linePosition, paintInfo.graphMinMax.maxY);
-            }
-        }
-    }
-
-    ClosestLineInfo? _calcClosestLine(PaintInfo paintInfo)
-    {
-        if (pointerPosition == null)
-            return null;
-
-        ClosestLineInfo? closestLineByDataPoints;
-        ClosestLineInfo? closestLineByLinePoints;
-
-        for (int lineIndex = 0; lineIndex < doubleData.dataSeriesList.size; lineIndex++)
-        {
-            closestLineByDataPoints = _calcClosestLineByDataPoints(paintInfo, closestLineSoFar: closestLineByDataPoints, currentLine: doubleData.dataSeriesList[lineIndex], lineIndex: lineIndex);
-            closestLineByLinePoints = _calcClosestLineByLinePoints(paintInfo, closestLineSoFar: closestLineByLinePoints, currentLine: doubleData.dataSeriesList[lineIndex], lineIndex: lineIndex);
-        }
-
-        if (closestLineByDataPoints == null || closestLineByLinePoints == null)
-            return null;
-
-        if (closestLineByDataPoints.closestPoint.distance < highlightDistance)
-            return closestLineByDataPoints;
-
-        if (closestLineByLinePoints.closestPoint.distance < highlightDistance)
-            return closestLineByLinePoints;
-
-        return null;
-    }
-
-    ClosestLineInfo? _calcClosestLineByDataPoints(PaintInfo paintInfo, {required ClosestLineInfo? closestLineSoFar, required DoubleDataSeries currentLine, required int lineIndex})
-    {
-        final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestDataPoint(paintInfo, currentLine);
-        if (closestPointOfCurrentLine == null)
-            return closestLineSoFar;
-
-        if (closestLineSoFar == null || closestPointOfCurrentLine.distance < closestLineSoFar.closestPoint.distance)
-            return ClosestLineInfo(
-                closestPoint: closestPointOfCurrentLine,
-                lineIndex: lineIndex
-            );
-
-        return closestLineSoFar;
-    }
-
-    ClosestLineInfo? _calcClosestLineByLinePoints(PaintInfo paintInfo, {required ClosestLineInfo? closestLineSoFar, required DoubleDataSeries currentLine, required int lineIndex})
-    {
-        final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestLinePoint(paintInfo, currentLine);
-        if (closestPointOfCurrentLine == null)
-            return closestLineSoFar;
-
-        if (closestLineSoFar == null || closestPointOfCurrentLine.distance < closestLineSoFar.closestPoint.distance)
-            return ClosestLineInfo(
-                closestPoint: closestPointOfCurrentLine,
-                lineIndex: lineIndex
-            );
-
-        return closestLineSoFar;
-    }
-
-    ClosestPointInfo? _calcClosestDataPoint(PaintInfo paintInfo, DoubleDataSeries dataSeries)
-    {
-        if (dataSeries.points.isEmpty())
-            return null;
-
-        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
-        double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
-        double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
-
-        final double distance = _calcDistanceToPoint(lastX, lastY, pointerPosition!);
-        ClosestPointInfo closestPoint = ClosestPointInfo(
-            distance: distance,
-            pointIndex: 0,
-            position: Offset(lastX, lastY)
+        final TextPainter tp = TextPainter(
+            textScaler: textScale == null ? TextScaler.noScaling : TextScaler.linear(textScale),
+            text: TextSpan(style: TextStyle(color: style.textColor, fontSize: style.fontSize), text: text),
+            textDirection: TextDirection.ltr
         );
-
-        for (int pointIndex = 1; pointIndex < dataSeries.points.size; pointIndex++)
-        {
-            final double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
-            final double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
-
-            final double distance = _calcDistanceToPoint(currentX, currentY, pointerPosition!);
-            if (distance < closestPoint.distance)
-                closestPoint = ClosestPointInfo(
-                    distance: distance,
-                    pointIndex: pointIndex,
-                    position: Offset(currentX, currentY)
-                );
-
-            lastX = currentX;
-            lastY = currentY;
-        }
-
-        return closestPoint;
+        tp.layout();
+        return tp;
     }
-
-    ClosestPointInfo? _calcClosestLinePoint(PaintInfo paintInfo, DoubleDataSeries dataSeries)
-    {
-        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
-        double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
-        double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
-
-        ClosestPointInfo? closestPoint;
-        for (int pointIndex = 1; pointIndex < dataSeries.points.size; pointIndex++)
-        {
-            final double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
-            final double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
-
-            final Offset? intersection = _projectFromPointOnLine(pointerPosition!.dx, pointerPosition!.dy, lastX, lastY, currentX, currentY);
-            if (intersection != null)
-            {
-                final double distance = _calcDistanceBetweenPoints(pointerPosition!.dx, pointerPosition!.dy, intersection.dx, intersection.dy);
-                if (closestPoint == null || distance < closestPoint.distance)
-                    closestPoint = ClosestPointInfo(
-                        distance: distance,
-                        pointIndex: null,
-                        position: intersection
-                    );
-            }
-
-            lastX = currentX;
-            lastY = currentY;
-        }
-
-        return closestPoint;
-    }
-
-    Offset? _projectFromPointOnLine(double pointX, double pointY, double lineX1, double lineY1, double lineX2, double lineY2)
-    {
-        final double dx = lineX2 - lineX1;
-        final double dy = lineY2 - lineY1;
-        final double lengthSquared = dx * dx + dy * dy;
-        if (lengthSquared == 0)
-            return null;
-
-        // Vector from (x1, y1) to the point
-        final double t = ((pointX - lineX1) * dx + (pointY - lineY1) * dy) / lengthSquared;
-
-        // The closest point is outside the segment
-        if (t < 0 || t > 1)
-            return null;
-
-        final double intersectionX = lineX1 + t * dx;
-        final double intersectionY = lineY1 + t * dy;
-
-        return Offset(intersectionX, intersectionY);
-    }
-
-    double _calcDistanceBetweenPoints(double x1, double y1, double x2, double y2)
-    => sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
-
-    void _drawLine(PaintInfo paintInfo, DoubleDataSeries dataSeries, {required bool highlight, ClosestPointInfo? highlightPoint})
-    {
-        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
-        double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
-        double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
-
-        double lineWidth = chartStyle.lineWidth;
-        if (highlight)
-            if (highlightPoint == null)
-                lineWidth *= 0.5;
-            else 
-                lineWidth *= 2;
-
-        final Paint linePaint = _createPaint(dataSeries.color, strokeWidth: lineWidth, paintingStyle: PaintingStyle.fill);
-
-        double pointRadius = chartStyle.pointRadius;
-        if (highlight)
-            if (highlightPoint == null)
-                pointRadius *= 0.5;
-            else if (highlightPoint.pointIndex == 0)
-                pointRadius *= 2;
-            else
-                pointRadius *= 1.5;
-
-        paintInfo.canvas.drawCircle(Offset(lastX, lastY), pointRadius, linePaint);
-
-        for (int pointIndex = 1; pointIndex < dataSeries.points.size; pointIndex++)
-        {
-            final double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
-            final double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
-
-            _drawLineSegment(paintInfo.canvas, linePaint, lastX, lastY, currentX, currentY);
-
-            double pointRadius = chartStyle.pointRadius;
-            if (highlight)
-                if (highlightPoint == null)
-                    pointRadius *= 0.5;
-                else if (highlightPoint.pointIndex == pointIndex)
-                    pointRadius *= 2;
-                else
-                    pointRadius *= 1.5;
-
-            paintInfo.canvas.drawCircle(Offset(currentX, currentY), pointRadius, linePaint);
-
-            lastX = currentX;
-            lastY = currentY;
-        }
-    }
-
-    void _drawLines(PaintInfo paintInfo, ClosestLineInfo? closestLine)
-    {
-        int? highlightLineIndex;
-        ClosestPointInfo? highlightPoint;
-
-        final bool highlight = closestLine != null;
-        if (highlight)
-        {
-            highlightLineIndex = closestLine.lineIndex;
-            highlightPoint = closestLine.closestPoint;
-        }
-
-        for (int lineIndex = 0; lineIndex < doubleData.dataSeriesList.size; lineIndex++)
-        {
-            final DoubleDataSeries dataSeries = doubleData.dataSeriesList[lineIndex];
-            if (lineIndex != highlightLineIndex)
-                _drawLine(paintInfo, dataSeries, highlight: highlight);
-        }
-
-        if (highlightLineIndex != null)
-        {
-            final DoubleDataSeries dataSeries = doubleData.dataSeriesList[highlightLineIndex];
-            _drawLine(paintInfo, dataSeries, highlight: highlight, highlightPoint: highlightPoint);
-        }
-    }
-
-    void _showError(Canvas canvas, Size size, String s)
-    {
-        final DoubleMinMax graphMinMax = _calcGraphMinMax(size, <TextPainter>[], <TextPainter>[]);
-        canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), _createBorderPaint());
-
-        final TextPainter tp = _createAndLayoutTextPainter(s, chartStyle, 1.5);
-        tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - tp.height / 2));
-    }
-
-    Paint _createDataTipBackgroundPaint()
-    => _createPaint(brightness == Brightness.dark ? chartStyle.dataTipBackgroundColorDark : chartStyle.dataTipBackgroundColor, paintingStyle: PaintingStyle.fill);
-
-    Paint _createBorderPaint()
-    => _createPaint(brightness == Brightness.dark ? chartStyle.borderColorDark : chartStyle.borderColor);
-
-    Paint _createGridPaint() 
-    => _createPaint((brightness == Brightness.dark ? chartStyle.gridColorDark : chartStyle.gridColor).withAlpha(128));
-
-    Paint _createGridPaint2()
-    => _createPaint((brightness == Brightness.dark ? chartStyle.gridColorDark : chartStyle.gridColor).withAlpha(32));
-
-    Paint _createPaint(Color color, {double strokeWidth = 1, PaintingStyle paintingStyle = PaintingStyle.stroke})
-    {
-        final Paint paint = Paint()
-            ..color = color
-            //..strokeWidth = 1
-            ..strokeWidth = strokeWidth //1 / chartStyle.devicePixelRatio
-            ..style = paintingStyle;
-
-        return paint;
-    }
-
-    List<PositionedTextPainter<TX>> _createXAxisTicks(DoubleMinMax graphMinMax)
-    => _createAxisTicks<TX>(graphMinMax, customData.toolsX, Axis.horizontal);
-
-    List<PositionedTextPainter<TY>> _createYAxisTicks(DoubleMinMax graphMinMax)
-    => _createAxisTicks<TY>(graphMinMax, customData.toolsY, Axis.vertical);
 
     List<PositionedTextPainter<T>> _createAxisTicks<T>(DoubleMinMax graphMinMax, GenericTools<T> tools, Axis axis)
     {
@@ -648,12 +348,12 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             logDebug('  customDataMax:   $customDataMax');
         }
 
-        double textPositionMin = axis == Axis.horizontal 
-            ? graphMinMax.minX - additionalSpaceForLabelX 
+        double textPositionMin = axis == Axis.horizontal
+            ? graphMinMax.minX - additionalSpaceForLabelX
             : graphMinMax.minY - additionalSpaceForLabelY;
 
-        double textPositionMax = axis == Axis.horizontal 
-            ? graphMinMax.maxX + additionalSpaceForLabelX 
+        double textPositionMax = axis == Axis.horizontal
+            ? graphMinMax.maxX + additionalSpaceForLabelX
             : graphMinMax.maxY + additionalSpaceForLabelY;
 
         if (DEBUG)
@@ -740,7 +440,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         if (tickPainters.length <= 2)
             return tickPainters;
 
-        final bool invertLoop = axis == Axis.horizontal && invertX || axis == Axis.vertical && invertY;
+        final bool invertLoop = axis == Axis.horizontal && invertXAxis || axis == Axis.vertical && invertYAxis;
 
         final double finalTextPositionMin = axis == Axis.horizontal
             ? tickPainters.first.textEndX + paddingBetweenTicksX
@@ -780,9 +480,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                     }
                 }
 
-                if (axis == Axis.horizontal && !invertX)
+                if (axis == Axis.horizontal && !invertXAxis)
                     currentTextPositionMin = currentPainter.textEndX.ceilToDouble() + paddingBetweenTicksX;
-                else if (axis == Axis.vertical && !invertY)
+                else if (axis == Axis.vertical && !invertYAxis)
                     currentTextPositionMax = currentPainter.textStartY.floorToDouble() - paddingBetweenTicksY;
             }
 
@@ -806,6 +506,29 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         }
 
         return tickPainters;
+    }
+
+    Paint _createBorderPaint()
+    => _createPaint(brightness == Brightness.dark ? chartStyle.borderColorDark : chartStyle.borderColor);
+
+    Paint _createDataTipBackgroundPaint()
+    => _createPaint(brightness == Brightness.dark ? chartStyle.dataTipBackgroundColorDark : chartStyle.dataTipBackgroundColor, paintingStyle: PaintingStyle.fill);
+
+    Paint _createGridPaint()
+    => _createPaint((brightness == Brightness.dark ? chartStyle.gridColorDark : chartStyle.gridColor).withAlpha(128));
+
+    Paint _createGridPaint2()
+    => _createPaint((brightness == Brightness.dark ? chartStyle.gridColorDark : chartStyle.gridColor).withAlpha(32));
+
+    Paint _createPaint(Color color, {double strokeWidth = 1, PaintingStyle paintingStyle = PaintingStyle.stroke})
+    {
+        final Paint paint = Paint()
+            ..color = color
+            //..strokeWidth = 1
+            ..strokeWidth = strokeWidth //1 / chartStyle.devicePixelRatio
+            ..style = paintingStyle;
+
+        return paint;
     }
 
     static PositionedTextPainter<T> _createTickPainter<T>(
@@ -837,6 +560,12 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         return PositionedTextPainter<T>(linePosition: textPosition, textPosition: textPosition, textPainter: textPainter);
     }
+
+    List<PositionedTextPainter<TX>> _createXAxisTicks(DoubleMinMax graphMinMax)
+    => _createAxisTicks<TX>(graphMinMax, customData.toolsX, Axis.horizontal);
+
+    List<PositionedTextPainter<TY>> _createYAxisTicks(DoubleMinMax graphMinMax)
+    => _createAxisTicks<TY>(graphMinMax, customData.toolsY, Axis.vertical);
 
     void _drawDataTip(PaintInfo paintInfo, String label, ClosestPointInfo closestPoint)
     {
@@ -895,6 +624,337 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         textPainter.paint(paintInfo.canvas, Offset(finalDataTipLeft + dataTipPaddingX, finalDataTipTop + dataTipPaddingY));
     }
 
-    double _calcDistanceToPoint(double x, double y, Offset point)
-    => Offset((point.dx - x).abs(), (point.dy - y).abs()).distance;
+    void _drawLine(PaintInfo paintInfo, DoubleDataSeries dataSeries, {required bool highlight, ClosestPointInfo? highlightPoint})
+    {
+        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
+        double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
+        double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
+
+        double lineWidth = chartStyle.lineWidth;
+        if (highlight)
+            if (highlightPoint == null)
+                lineWidth *= 0.5;
+            else
+                lineWidth *= 2;
+
+        final Paint linePaint = _createPaint(dataSeries.color, strokeWidth: lineWidth, paintingStyle: PaintingStyle.fill);
+
+        double pointRadius = chartStyle.pointRadius;
+        if (highlight)
+            if (highlightPoint == null)
+                pointRadius *= 0.5;
+            else if (highlightPoint.pointIndex == 0)
+                pointRadius *= 2;
+            else
+                pointRadius *= 1.5;
+
+        paintInfo.canvas.drawCircle(Offset(lastX, lastY), pointRadius, linePaint);
+
+        for (int pointIndex = 1; pointIndex < dataSeries.points.size; pointIndex++)
+        {
+            final double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
+            final double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
+
+            _drawLineSegment(paintInfo.canvas, linePaint, lastX, lastY, currentX, currentY);
+
+            double pointRadius = chartStyle.pointRadius;
+            if (highlight)
+                if (highlightPoint == null)
+                    pointRadius *= 0.5;
+                else if (highlightPoint.pointIndex == pointIndex)
+                    pointRadius *= 2;
+                else
+                    pointRadius *= 1.5;
+
+            paintInfo.canvas.drawCircle(Offset(currentX, currentY), pointRadius, linePaint);
+
+            lastX = currentX;
+            lastY = currentY;
+        }
+    }
+
+    void _drawLines(PaintInfo paintInfo, ClosestLineInfo? closestLine)
+    {
+        int? highlightLineIndex;
+        ClosestPointInfo? highlightPoint;
+
+        final bool highlight = closestLine != null;
+        if (highlight)
+        {
+            highlightLineIndex = closestLine.lineIndex;
+            highlightPoint = closestLine.closestPoint;
+        }
+
+        for (int lineIndex = 0; lineIndex < doubleData.dataSeriesList.size; lineIndex++)
+        {
+            final DoubleDataSeries dataSeries = doubleData.dataSeriesList[lineIndex];
+            if (lineIndex != highlightLineIndex)
+                _drawLine(paintInfo, dataSeries, highlight: highlight);
+        }
+
+        if (highlightLineIndex != null)
+        {
+            final DoubleDataSeries dataSeries = doubleData.dataSeriesList[highlightLineIndex];
+            _drawLine(paintInfo, dataSeries, highlight: highlight, highlightPoint: highlightPoint);
+        }
+    }
+
+    void _drawLineSegment(Canvas canvas, Paint paint, double x1, double y1, double x2, double y2)
+    => canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
+
+    void _paintHorizontalGridLines<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
+    {
+        for (int i = 0; i < painters.length; i++)
+        {
+            final PositionedTextPainter<T> painter = painters[i];
+            final TextPainter? textPainter = painter.textPainter;
+
+            if (painter.linePosition > paintInfo.graphMinMax.minY && painter.linePosition < paintInfo.graphMinMax.maxY)
+            {
+                final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
+
+                final double lineY = invertYAxis
+                    ? paintInfo.graphMinMax.maxY - (painter.linePosition - paintInfo.graphMinMax.minY)
+                    : painter.linePosition;
+
+                _drawLineSegment(paintInfo.canvas, gridPaint, paintInfo.graphMinMax.minX, lineY, paintInfo.graphMinMax.maxX, lineY);
+            }
+        }
+    }
+
+    void _paintOrThrow(Canvas canvas, Size size)
+    {
+        if (DEBUG)
+        {
+            logDebug('GenericLineChartPainter._paintOrThrow() Size: $size');
+            logDebug('  customData.minMax: ${customData.minMax}');
+            logDebug('  doubleData.minMax: ${doubleData.minMax}');
+        }
+
+        if (customData.dataSeriesList.isEmpty())
+            throw ChartsUserException('No data');
+
+        final DoubleMinMax graphMinMax = _calcGraphMinMax(
+            size,
+            <TextPainter>[
+                _createAndLayoutTextPainter(customData.toolsX.format(customData.minMax.minX), chartStyle),
+                _createAndLayoutTextPainter(customData.toolsX.format(customData.minMax.maxX), chartStyle)
+            ],
+            <TextPainter>[
+                _createAndLayoutTextPainter(customData.toolsY.format(customData.minMax.minY), chartStyle),
+                _createAndLayoutTextPainter(customData.toolsY.format(customData.minMax.maxY), chartStyle)
+            ],
+            showTicksBottom: showTicksBottom,
+            showTicksLeft: showTicksLeft,
+            showTicksRight: showTicksRight,
+            showTicksTop: showTicksTop
+        );
+
+        onGraphMinMaxCalculated?.call(graphMinMax);
+        if (DEBUG)
+            logDebug('  graphMinMax:       $graphMinMax');
+
+        final List<PositionedTextPainter<TX>> xAxisPainters = _createXAxisTicks(graphMinMax);
+        final List<PositionedTextPainter<TY>> yAxisPainters = _createYAxisTicks(graphMinMax);
+
+        final PaintInfo paintInfo = PaintInfo(
+            canvas: canvas,
+            size: size,
+            graphMinMax: graphMinMax,
+            borderPaint: _createBorderPaint(),
+            dataTipBackgroundPaint: _createDataTipBackgroundPaint(),
+            gridPaint: _createGridPaint(),
+            gridPaint2: _createGridPaint2()
+        );
+
+        canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), paintInfo.borderPaint);
+
+        _paintHorizontalGridLines(paintInfo, yAxisPainters);
+        _paintTextPaintersLeft(paintInfo, yAxisPainters, showTicks: showTicksLeft);
+        _paintTextPaintersRight(paintInfo, yAxisPainters, showTicks: showTicksRight);
+
+        _paintVerticalGridLines(paintInfo, xAxisPainters);
+        _paintTextPaintersTop(paintInfo, xAxisPainters, showTicks: showTicksTop);
+        _paintTextPaintersBottom(paintInfo, xAxisPainters, showTicks: showTicksBottom);
+
+        final ClosestLineInfo? closestLine = _calcClosestLine(paintInfo);
+        onClosestLineCalculated?.call(closestLine);
+        _drawLines(paintInfo, closestLine);
+
+        if (closestLine != null)
+        {
+            final GenericDataSeries<TX, TY> dataSeries = customData.dataSeriesList[closestLine.lineIndex];
+            _drawDataTip(paintInfo, dataSeries.label, closestLine.closestPoint);
+        }
+    }
+
+    void _paintTextPaintersBottom<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
+    {
+        if (!showTicks)
+            return;
+
+        for (int i = 0; i < painters.length; i++)
+        {
+            final PositionedTextPainter<T> painter = painters[i];
+            final TextPainter? textPainter = painter.textPainter;
+            if (textPainter == null)
+                continue;
+
+            final double lineX = invertXAxis
+                ? paintInfo.graphMinMax.maxX - (painter.linePosition - paintInfo.graphMinMax.minX)
+                : painter.linePosition;
+
+            final double lineY = paintInfo.graphMinMax.maxY;
+
+            _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, lineX, lineY, lineX, lineY + tickLineLengthY);
+
+            final double textPainterX = invertXAxis
+                ? paintInfo.graphMinMax.maxX - (painter.textEndX - paintInfo.graphMinMax.minX)
+                : painter.textStartX;
+
+            final double textPainterY = paintInfo.graphMinMax.maxY + additionalSpaceForLabelY;
+
+            textPainter.paint(paintInfo.canvas, Offset(textPainterX, textPainterY));
+        }
+    }
+
+    void _paintTextPaintersLeft<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
+    {
+        if (!showTicks)
+            return;
+
+        for (int i = 0; i < painters.length; i++)
+        {
+            final PositionedTextPainter<T> painter = painters[i];
+            final TextPainter? textPainter = painter.textPainter;
+            if (textPainter == null)
+                continue;
+
+            final double lineX = paintInfo.graphMinMax.minX;
+
+            final double lineY = invertYAxis
+                ? paintInfo.graphMinMax.maxY - (painter.linePosition - paintInfo.graphMinMax.minY)
+                : painter.linePosition;
+
+            _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, lineX - tickLineLengthX, lineY, lineX, lineY);
+
+            final double textPainterX = paintInfo.graphMinMax.minX - additionalSpaceForLabelX - textPainter.width;
+
+            final double textPainterY = invertYAxis
+                ? paintInfo.graphMinMax.maxY - (painter.textEndY - paintInfo.graphMinMax.minY)
+                : painter.textStartY;
+
+            textPainter.paint(paintInfo.canvas, Offset(textPainterX, textPainterY));
+        }
+    }
+
+    void _paintTextPaintersRight<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
+    {
+        if (!showTicks)
+            return;
+
+        for (int i = 0; i < painters.length; i++)
+        {
+            final PositionedTextPainter<T> painter = painters[i];
+            final TextPainter? textPainter = painter.textPainter;
+            if (textPainter == null)
+                continue;
+
+            final double lineX = paintInfo.graphMinMax.maxX;
+
+            final double lineY = invertYAxis
+                ? paintInfo.graphMinMax.maxY - (painter.linePosition - paintInfo.graphMinMax.minY)
+                : painter.linePosition;
+
+            _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, lineX, lineY, lineX + tickLineLengthX, lineY);
+
+            final double textPainterX = paintInfo.graphMinMax.maxX + additionalSpaceForLabelX;
+
+            final double textPainterY = invertYAxis
+                ? paintInfo.graphMinMax.maxY - (painter.textEndY - paintInfo.graphMinMax.minY)
+                : painter.textStartY;
+
+            textPainter.paint(paintInfo.canvas, Offset(textPainterX, textPainterY));
+        }
+    }
+
+    void _paintTextPaintersTop<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
+    {
+        if (!showTicks)
+            return;
+
+        for (int i = 0; i < painters.length; i++)
+        {
+            final PositionedTextPainter<T> painter = painters[i];
+            final TextPainter? textPainter = painter.textPainter;
+            if (textPainter == null)
+                continue;
+
+            final double lineX = invertXAxis
+                ? paintInfo.graphMinMax.maxX - (painter.linePosition - paintInfo.graphMinMax.minX)
+                : painter.linePosition;
+
+            final double lineY = paintInfo.graphMinMax.minY;
+
+            _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, lineX, lineY, lineX, lineY - tickLineLengthY);
+
+            final double textPainterX = invertXAxis
+                ? paintInfo.graphMinMax.maxX - (painter.textEndX - paintInfo.graphMinMax.minX)
+                : painter.textStartX;
+
+            final double textPainterY = paintInfo.graphMinMax.minY - additionalSpaceForLabelY - textPainter.height;
+
+            textPainter.paint(paintInfo.canvas, Offset(textPainterX, textPainterY));
+        }
+    }
+
+    void _paintVerticalGridLines<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters)
+    {
+        for (int i = 0; i < painters.length; i++)
+        {
+            final PositionedTextPainter<T> painter = painters[i];
+            final TextPainter? textPainter = painter.textPainter;
+
+            if (painter.linePosition > paintInfo.graphMinMax.minX && painter.linePosition < paintInfo.graphMinMax.maxX)
+            {
+                final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
+
+                final double lineX = invertXAxis
+                    ? paintInfo.graphMinMax.maxX - (painter.linePosition - paintInfo.graphMinMax.minX)
+                    : painter.linePosition;
+
+                _drawLineSegment(paintInfo.canvas, gridPaint, lineX, paintInfo.graphMinMax.minY, lineX, paintInfo.graphMinMax.maxY);
+            }
+        }
+    }
+
+    Offset? _projectFromPointOnLine(double pointX, double pointY, double lineX1, double lineY1, double lineX2, double lineY2)
+    {
+        final double dx = lineX2 - lineX1;
+        final double dy = lineY2 - lineY1;
+        final double lengthSquared = dx * dx + dy * dy;
+        if (lengthSquared == 0)
+            return null;
+
+        // Vector from (x1, y1) to the point
+        final double t = ((pointX - lineX1) * dx + (pointY - lineY1) * dy) / lengthSquared;
+
+        // The closest point is outside the segment
+        if (t < 0 || t > 1)
+            return null;
+
+        final double intersectionX = lineX1 + t * dx;
+        final double intersectionY = lineY1 + t * dy;
+
+        return Offset(intersectionX, intersectionY);
+    }
+
+    void _showError(Canvas canvas, Size size, String s)
+    {
+        final DoubleMinMax graphMinMax = _calcGraphMinMax(size, <TextPainter>[], <TextPainter>[]);
+        canvas.drawRect(Rect.fromLTRB(graphMinMax.minX, graphMinMax.minY, graphMinMax.maxX, graphMinMax.maxY), _createBorderPaint());
+
+        final TextPainter tp = _createAndLayoutTextPainter(s, chartStyle, 1.5);
+        tp.paint(canvas, Offset(size.width / 2 - tp.width / 2, size.height / 2 - tp.height / 2));
+    }
 }

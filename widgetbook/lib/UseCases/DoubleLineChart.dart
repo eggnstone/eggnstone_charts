@@ -114,9 +114,11 @@ DoubleChartData _createDoubleChartDataForOneLine(BuildContext context, {int star
     context,
     colors: <Color>[Colors.red],
     doublePointLists: <List<DoublePoint>>[_createDoublePointsForLine1(start: start)],
+    minX: start.toDouble(),
     minY: start.toDouble(),
+    rangeMinX: 10 + start,
     rangeMinY: 10 + start,
-    rangeMaxY: 100 + start,
+    rangeInitialValueX: 10 + start,
     rangeInitialValueY: 10 + start
 );
 
@@ -138,14 +140,14 @@ List<DoublePoint> _createDoublePointsForOneLine()
 List<DoublePoint> _createDoublePointsForLine1({int start = 0})
 => <DoublePoint>
 [
-    DoublePoint(1, start.toDouble()),
-    DoublePoint(2, start + 1),
-    DoublePoint(3, start + 2),
-    DoublePoint(4, start + 3),
-    DoublePoint(5, start + 4),
-    DoublePoint(6, start + 3),
-    DoublePoint(7, start + 1),
-    DoublePoint(8, start + 7)
+    DoublePoint(start.toDouble(), start.toDouble()),
+    DoublePoint(start + 1, start + 1),
+    DoublePoint(start + 2, start + 2),
+    DoublePoint(start + 3, start + 3),
+    DoublePoint(start + 4, start + 4),
+    DoublePoint(start + 5, start + 3),
+    DoublePoint(start + 6, start + 1),
+    DoublePoint(start + 7, start + 7)
 ];
 
 List<DoublePoint> _createDoublePointsForLine2()
@@ -216,18 +218,18 @@ DoubleChartData _createDoubleChartData(
 
 Widget _buildChart(BuildContext context, String title, DoubleChartData data)
 {
-    final bool invertX = context.knobs.boolean(label: 'Invert X');
-    final bool invertY = context.knobs.boolean(label: 'Invert Y');
+    final bool invertXAxis = context.knobs.boolean(label: 'Invert X');
+    final bool invertYAxis = context.knobs.boolean(label: 'Invert Y');
 
-    final bool showLabelBottom = context.knobs.boolean(label: 'Show label bottom', initialValue: true);
-    final bool showLabelLeft = context.knobs.boolean(label: 'Show label left', initialValue: true);
+    final bool showLabelBottom = context.knobs.boolean(label: 'Show label bottom');
+    final bool showLabelLeft = context.knobs.boolean(label: 'Show label left');
     final bool showLabelRight = context.knobs.boolean(label: 'Show label right');
     final bool showLabelTop = context.knobs.boolean(label: 'Show label top');
 
     final bool showTicksBottom = context.knobs.boolean(label: 'Show ticks bottom', initialValue: true);
     final bool showTicksLeft = context.knobs.boolean(label: 'Show ticks left', initialValue: true);
-    final bool showTicksRight = context.knobs.boolean(label: 'Show ticks right');
-    final bool showTicksTop = context.knobs.boolean(label: 'Show ticks top');
+    final bool showTicksRight = context.knobs.boolean(label: 'Show ticks right', initialValue: true);
+    final bool showTicksTop = context.knobs.boolean(label: 'Show ticks top', initialValue: true);
 
     final ChartInfo info = ChartInfo(
         title: title,
@@ -240,8 +242,8 @@ Widget _buildChart(BuildContext context, String title, DoubleChartData data)
     final ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
         fontSize: 12,
-        invertX: invertX,
-        invertY: invertY,
+        invertXAxis: invertXAxis,
+        invertYAxis: invertYAxis,
         pointRadius: 4,
         showTicksBottom: showTicksBottom,
         showTicksLeft: showTicksLeft,

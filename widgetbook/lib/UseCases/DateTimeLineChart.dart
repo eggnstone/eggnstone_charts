@@ -241,8 +241,8 @@ DateTimeChartData _createDateTimeChartData(
 
 Widget _buildChart(BuildContext context, String title, DateTimeChartData data)
 {
-    final bool invertX = context.knobs.boolean(label: 'Invert X');
-    final bool invertY = context.knobs.boolean(label: 'Invert Y');
+    final bool invertXAxis = context.knobs.boolean(label: 'Invert X');
+    final bool invertYAxis = context.knobs.boolean(label: 'Invert Y');
 
     final bool showLabelBottom = context.knobs.boolean(label: 'Show label bottom', initialValue: true);
     final bool showLabelLeft = context.knobs.boolean(label: 'Show label left', initialValue: true);
@@ -265,8 +265,8 @@ Widget _buildChart(BuildContext context, String title, DateTimeChartData data)
     final ChartStyle style = ChartStyle(
         devicePixelRatio: 1,
         fontSize: 12,
-        invertX: invertX,
-        invertY: invertY,
+        invertXAxis: invertXAxis,
+        invertYAxis: invertYAxis,
         pointRadius: 4,
         showTicksBottom: showTicksBottom,
         showTicksLeft: showTicksLeft,
