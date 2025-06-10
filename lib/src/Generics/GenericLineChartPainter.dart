@@ -849,7 +849,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double textPainterX = paintInfo.graphMinMax.minX - additionalSpaceForLabelX - textPainter.width;
 
             final double textPainterY = invertYAxis
-                ? paintInfo.graphMinMax.minY - paintInfo.graphMinMax.maxY - painter.textEndY
+                ? paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - painter.textEndY
                 : painter.textStartY;
 
             textPainter.paint(paintInfo.canvas, Offset(textPainterX, textPainterY));
