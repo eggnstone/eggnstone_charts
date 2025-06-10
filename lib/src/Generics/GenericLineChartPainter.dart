@@ -624,8 +624,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     void _drawLine(PaintInfo paintInfo, DoubleDataSeries dataSeries, {required bool highlight, ClosestPointInfo? highlightPoint})
     {
         final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
+
         double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
+        if (invertXAxis)
+            lastX = paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - lastX;
+
         double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
+        if (invertYAxis)
+            lastY = paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - lastY;
 
         double lineWidth = chartStyle.lineWidth;
         if (highlight)
@@ -649,8 +655,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         for (int pointIndex = 1; pointIndex < dataSeries.points.size; pointIndex++)
         {
-            final double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
-            final double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
+            double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
+            if (invertXAxis)
+                currentX = paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - currentX;
+
+            double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
+            if (invertYAxis)
+                currentY = paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - currentY;
 
             _drawLineSegment(paintInfo.canvas, linePaint, lastX, lastY, currentX, currentY);
 
@@ -711,7 +722,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
 
                 final double lineY = invertYAxis
-                    ? paintInfo.graphMinMax.maxY - (painter.linePosition - paintInfo.graphMinMax.minY)
+                    ? paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - painter.linePosition 
                     : painter.linePosition;
 
                 _drawLineSegment(paintInfo.canvas, gridPaint, paintInfo.graphMinMax.minX, lineY, paintInfo.graphMinMax.maxX, lineY);
@@ -798,7 +809,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 continue;
 
             final double lineX = invertXAxis
-                ? paintInfo.graphMinMax.maxX - (painter.linePosition - paintInfo.graphMinMax.minX)
+                ? paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - painter.linePosition 
                 : painter.linePosition;
 
             final double lineY = paintInfo.graphMinMax.maxY;
@@ -806,7 +817,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, lineX, lineY, lineX, lineY + tickLineLengthY);
 
             final double textPainterX = invertXAxis
-                ? paintInfo.graphMinMax.maxX - (painter.textEndX - paintInfo.graphMinMax.minX)
+                ? paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - painter.textEndX 
                 : painter.textStartX;
 
             final double textPainterY = paintInfo.graphMinMax.maxY + additionalSpaceForLabelY;
@@ -830,7 +841,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double lineX = paintInfo.graphMinMax.minX;
 
             final double lineY = invertYAxis
-                ? paintInfo.graphMinMax.maxY - (painter.linePosition - paintInfo.graphMinMax.minY)
+                ? paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - painter.linePosition 
                 : painter.linePosition;
 
             _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, lineX - tickLineLengthX, lineY, lineX, lineY);
@@ -838,7 +849,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double textPainterX = paintInfo.graphMinMax.minX - additionalSpaceForLabelX - textPainter.width;
 
             final double textPainterY = invertYAxis
-                ? paintInfo.graphMinMax.maxY - (painter.textEndY - paintInfo.graphMinMax.minY)
+                ? paintInfo.graphMinMax.minY - paintInfo.graphMinMax.maxY - painter.textEndY
                 : painter.textStartY;
 
             textPainter.paint(paintInfo.canvas, Offset(textPainterX, textPainterY));
@@ -860,7 +871,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double lineX = paintInfo.graphMinMax.maxX;
 
             final double lineY = invertYAxis
-                ? paintInfo.graphMinMax.maxY - (painter.linePosition - paintInfo.graphMinMax.minY)
+                ? paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - painter.linePosition
                 : painter.linePosition;
 
             _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, lineX, lineY, lineX + tickLineLengthX, lineY);
@@ -868,7 +879,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double textPainterX = paintInfo.graphMinMax.maxX + additionalSpaceForLabelX;
 
             final double textPainterY = invertYAxis
-                ? paintInfo.graphMinMax.maxY - (painter.textEndY - paintInfo.graphMinMax.minY)
+                ? paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - painter.textEndY
                 : painter.textStartY;
 
             textPainter.paint(paintInfo.canvas, Offset(textPainterX, textPainterY));
@@ -888,7 +899,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 continue;
 
             final double lineX = invertXAxis
-                ? paintInfo.graphMinMax.maxX - (painter.linePosition - paintInfo.graphMinMax.minX)
+                ? paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - painter.linePosition 
                 : painter.linePosition;
 
             final double lineY = paintInfo.graphMinMax.minY;
@@ -896,7 +907,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             _drawLineSegment(paintInfo.canvas, paintInfo.borderPaint, lineX, lineY, lineX, lineY - tickLineLengthY);
 
             final double textPainterX = invertXAxis
-                ? paintInfo.graphMinMax.maxX - (painter.textEndX - paintInfo.graphMinMax.minX)
+                ? paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - painter.textEndX 
                 : painter.textStartX;
 
             final double textPainterY = paintInfo.graphMinMax.minY - additionalSpaceForLabelY - textPainter.height;
@@ -917,7 +928,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                 final Paint gridPaint = textPainter == null ? paintInfo.gridPaint2 : paintInfo.gridPaint;
 
                 final double lineX = invertXAxis
-                    ? paintInfo.graphMinMax.maxX - (painter.linePosition - paintInfo.graphMinMax.minX)
+                    ? paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - painter.linePosition 
                     : painter.linePosition;
 
                 _drawLineSegment(paintInfo.canvas, gridPaint, lineX, paintInfo.graphMinMax.minY, lineX, paintInfo.graphMinMax.maxY);
