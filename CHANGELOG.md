@@ -1,5 +1,9 @@
 # eggnstone_charts
 
+## 0.1.8
+
+- Reworked invert x/y.
+
 ## 0.1.7
 
 - Better grid. More documentation.
