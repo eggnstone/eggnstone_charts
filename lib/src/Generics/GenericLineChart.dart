@@ -6,7 +6,6 @@ import '../ChartStyle.dart';
 import '../ClosestLineInfo.dart';
 import '../DataTools.dart';
 import '../Specifics/DoubleChartData.dart';
-import '../Specifics/DoubleMinMax.dart';
 import 'GenericChartData.dart';
 import 'GenericLineChartPainter.dart';
 
@@ -83,7 +82,7 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
                         showTicksRight: widget.style.showTicksRight,
                         showTicksTop: widget.style.showTicksTop,
                         onClosestLineCalculated: _onClosestLineCalculated,
-                        onGraphMinMaxCalculated: _onGraphMinMaxCalculated
+                        onDataToolsAvailable: _onDataToolsAvailable
                     )
                 ),
                 onHover: _onHover,
@@ -161,11 +160,9 @@ class _GenericLineChartState<TX, TY, TD extends GenericChartData<TX, TY>> extend
         _onTap('onTapUp');
     }
 
-    void _onGraphMinMaxCalculated(DoubleMinMax graphMinMax)
-    {
-        //logDebug('onGraphMinMaxCalculated($graphMinMax)');
-        _dataTools = DataTools(_doubleData.minMax, graphMinMax);
-    }
+    // ignore: use_setters_to_change_properties
+    void _onDataToolsAvailable(DataTools dataTools)
+    => _dataTools = dataTools;
 
     void _onPanEnd(DragEndDetails details)
     {

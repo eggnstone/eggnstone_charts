@@ -11,10 +11,12 @@ class DataTools
 
     final GenericMinMax<double, double> doubleDataMinMax;
     final DoubleMinMax graphMinMax;
+    final bool invertXAxis;
+    final bool invertYAxis;
 
-    DataTools(this.doubleDataMinMax, this.graphMinMax);
+    DataTools(this.doubleDataMinMax, this.graphMinMax, {required this.invertXAxis, required this.invertYAxis});
 
-    double dataToPixelX(double doubleData)
+    double dataToPixelX(double doubleData, {bool useInvert = true})
     {
         if (doubleDataMinMax.getWidth() == 0)
             throw ChartsException('DataTools.dataToPixelX: doubleDataMinMax.getWidth() == 0');
@@ -30,10 +32,13 @@ class DataTools
             logDebug('  result:           $result');
         }
 
+        if (useInvert && invertXAxis)
+            return graphMinMax.minX + graphMinMax.maxX - result;
+
         return result;
     }
 
-    double dataToPixelY(double doubleData)
+    double dataToPixelY(double doubleData, {bool useInvert = true})
     {
         if (doubleDataMinMax.getHeight() == 0)
             throw ChartsException('DataTools.dataToPixelY: doubleDataMinMax.getHeight() == 0');
@@ -49,6 +54,9 @@ class DataTools
             logDebug('  result:           $result');
         }
 
+        if (useInvert && invertYAxis)
+            return graphMinMax.minY + graphMinMax.maxY - result;
+
         return result;
     }
 
@@ -57,7 +65,8 @@ class DataTools
         if (graphMinMax.getWidth() == 0)
             throw ChartsException('DataTools.pixelToDataX: graphMinMax.getWidth() == 0');
 
-        final double result = doubleDataMinMax.minX + (pixelX - graphMinMax.minX) / graphMinMax.getWidth() * doubleDataMinMax.getWidth();
+        final double actualPixelX = invertXAxis ? graphMinMax.minX + graphMinMax.maxX - pixelX : pixelX;
+        final double result = doubleDataMinMax.minX + (actualPixelX - graphMinMax.minX) / graphMinMax.getWidth() * doubleDataMinMax.getWidth();
 
         if (DEBUG)
         {
@@ -65,6 +74,7 @@ class DataTools
             logDebug('  graphMinMax:      [${graphMinMax.minX}, ${graphMinMax.maxX}] = ${graphMinMax.getWidth()}');
             logDebug('  doubleDataMinMax: [${doubleDataMinMax.minX}, ${doubleDataMinMax.maxX}] = ${doubleDataMinMax.getWidth()}');
             logDebug('  pixelX:           $pixelX');
+            logDebug('  actualPixelX:     $actualPixelX');
             logDebug('  result:           $result');
         }
 
@@ -76,7 +86,8 @@ class DataTools
         if (graphMinMax.getHeight() == 0)
             throw ChartsException('DataTools.pixelToDataY: graphMinMax.getHeight() == 0');
 
-        final double result = doubleDataMinMax.minY + (graphMinMax.maxY - pixelY) / graphMinMax.getHeight() * doubleDataMinMax.getHeight();
+        final double actualPixelY = invertYAxis ? graphMinMax.minY + graphMinMax.maxY - pixelY : pixelY;
+        final double result = doubleDataMinMax.minY + (graphMinMax.maxY - actualPixelY) / graphMinMax.getHeight() * doubleDataMinMax.getHeight();
 
         if (DEBUG)
         {
@@ -84,6 +95,7 @@ class DataTools
             logDebug('  graphMinMax:      [${graphMinMax.minY}, ${graphMinMax.maxY}] = ${graphMinMax.getHeight()}');
             logDebug('  doubleDataMinMax: [${doubleDataMinMax.minY}, ${doubleDataMinMax.maxY}] = ${doubleDataMinMax.getHeight()}');
             logDebug('  pixelY:           $pixelY');
+            logDebug('  actualPixelY:     $actualPixelY');
             logDebug('  result:           $result');
         }
 

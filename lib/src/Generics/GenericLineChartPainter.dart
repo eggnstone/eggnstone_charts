@@ -18,7 +18,7 @@ import 'GenericDataSeries.dart';
 import 'GenericTools.dart';
 
 typedef ClosestLineCalculatedCallback = void Function(ClosestLineInfo? closestLine);
-typedef GraphMinMaxCalculatedCallback = void Function(DoubleMinMax graphMinMax);
+typedef DataToolsAvailableCallback = void Function(DataTools dataTools);
 
 /// A painter for drawing a generic line chart with customizable data types.
 class GenericLineChartPainter<TX, TY> extends CustomPainter
@@ -61,7 +61,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     final bool showTicksRight;
     final bool showTicksTop;
     final ClosestLineCalculatedCallback? onClosestLineCalculated;
-    final GraphMinMaxCalculatedCallback? onGraphMinMaxCalculated;
+    final DataToolsAvailableCallback? onDataToolsAvailable;
 
     GenericLineChartPainter({
         required this.chartStyle,
@@ -79,7 +79,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         this.showTicksRight = false,
         this.showTicksTop = false,
         this.onClosestLineCalculated,
-        this.onGraphMinMaxCalculated
+        this.onDataToolsAvailable
     });
 
     @override
@@ -118,12 +118,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return true;
     }
 
-    ClosestPointInfo? _calcClosestDataPoint(PaintInfo paintInfo, DoubleDataSeries dataSeries)
+    ClosestPointInfo? _calcClosestDataPoint(PaintInfo paintInfo, DataTools dataTools, DoubleDataSeries dataSeries)
     {
         if (dataSeries.points.isEmpty())
             return null;
 
-        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
         double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
         double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
 
@@ -160,7 +159,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     double _calcDistanceToPoint(double x, double y, Offset point)
     => Offset((point.dx - x).abs(), (point.dy - y).abs()).distance;
 
-    ClosestLineInfo? _calcClosestLine(PaintInfo paintInfo)
+    ClosestLineInfo? _calcClosestLine(PaintInfo paintInfo, DataTools dataTools)
     {
         if (pointerPosition == null)
             return null;
@@ -170,15 +169,18 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         for (int lineIndex = 0; lineIndex < doubleData.dataSeriesList.size; lineIndex++)
         {
-            closestLineByDataPoints = _calcClosestLineByDataPoints(paintInfo, closestLineSoFar: closestLineByDataPoints, currentLine: doubleData.dataSeriesList[lineIndex], lineIndex: lineIndex);
-            closestLineByLinePoints = _calcClosestLineByLinePoints(paintInfo, closestLineSoFar: closestLineByLinePoints, currentLine: doubleData.dataSeriesList[lineIndex], lineIndex: lineIndex);
+            closestLineByDataPoints = _calcClosestLineByDataPoints(paintInfo, dataTools, closestLineSoFar: closestLineByDataPoints, currentLine: doubleData.dataSeriesList[lineIndex], lineIndex: lineIndex);
+            closestLineByLinePoints = _calcClosestLineByLinePoints(paintInfo, dataTools, closestLineSoFar: closestLineByLinePoints, currentLine: doubleData.dataSeriesList[lineIndex], lineIndex: lineIndex);
         }
 
-        if (closestLineByDataPoints == null || closestLineByLinePoints == null)
+        if (closestLineByDataPoints == null)
             return null;
 
         if (closestLineByDataPoints.closestPoint.distance < highlightDistance)
             return closestLineByDataPoints;
+
+        if (closestLineByLinePoints == null)
+            return null;
 
         if (closestLineByLinePoints.closestPoint.distance < highlightDistance)
             return closestLineByLinePoints;
@@ -186,9 +188,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return null;
     }
 
-    ClosestLineInfo? _calcClosestLineByDataPoints(PaintInfo paintInfo, {required ClosestLineInfo? closestLineSoFar, required DoubleDataSeries currentLine, required int lineIndex})
+    ClosestLineInfo? _calcClosestLineByDataPoints(PaintInfo paintInfo, DataTools dataTools, {required ClosestLineInfo? closestLineSoFar, required DoubleDataSeries currentLine, required int lineIndex})
     {
-        final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestDataPoint(paintInfo, currentLine);
+        final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestDataPoint(paintInfo, dataTools, currentLine);
         if (closestPointOfCurrentLine == null)
             return closestLineSoFar;
 
@@ -201,9 +203,9 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return closestLineSoFar;
     }
 
-    ClosestLineInfo? _calcClosestLineByLinePoints(PaintInfo paintInfo, {required ClosestLineInfo? closestLineSoFar, required DoubleDataSeries currentLine, required int lineIndex})
+    ClosestLineInfo? _calcClosestLineByLinePoints(PaintInfo paintInfo, DataTools dataTools, {required ClosestLineInfo? closestLineSoFar, required DoubleDataSeries currentLine, required int lineIndex})
     {
-        final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestLinePoint(paintInfo, currentLine);
+        final ClosestPointInfo? closestPointOfCurrentLine = _calcClosestLinePoint(paintInfo, dataTools, currentLine);
         if (closestPointOfCurrentLine == null)
             return closestLineSoFar;
 
@@ -216,9 +218,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return closestLineSoFar;
     }
 
-    ClosestPointInfo? _calcClosestLinePoint(PaintInfo paintInfo, DoubleDataSeries dataSeries)
+    ClosestPointInfo? _calcClosestLinePoint(PaintInfo paintInfo, DataTools dataTools, DoubleDataSeries dataSeries)
     {
-        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
         double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
         double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
 
@@ -330,12 +331,11 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return tp;
     }
 
-    List<PositionedTextPainter<T>> _createAxisTicks<T>(DoubleMinMax graphMinMax, GenericTools<T> tools, Axis axis)
+    List<PositionedTextPainter<T>> _createAxisTicks<T>(DataTools dataTools, DoubleMinMax graphMinMax, GenericTools<T> tools, Axis axis)
     {
         if (DEBUG_TICKS || DEBUG_TICKS_INTERVAL || DEBUG_TICKS_CLEAN_UP)
             logDebug('_createAxisTicks(axis: $axis)');
 
-        final DataTools dataTools = DataTools(doubleData.minMax, graphMinMax);
         final bool invertLoop = axis == Axis.horizontal && invertXAxis || axis == Axis.vertical && invertYAxis;
         final T customDataMin = axis == Axis.horizontal ? customData.minMax.minX as T : customData.minMax.minY as T;
         final T customDataMax = axis == Axis.horizontal ? customData.minMax.maxX as T : customData.minMax.maxY as T;
@@ -476,6 +476,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
                     }
                 }
 
+                // TODO: what about invert?
                 if (axis == Axis.horizontal && !invertXAxis)
                     currentTextPositionMin = currentPainter.textEndX.ceilToDouble() + paddingBetweenTicksX;
                 else if (axis == Axis.vertical && !invertYAxis)
@@ -543,7 +544,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
     {
         final double doubleDataValue = tools.toDoubleValue(customDataValue);
         final TextPainter textPainter = _createAndLayoutTextPainter(tools.format(customDataValue), chartStyle);
-        final double textPosition = axis == Axis.horizontal ? dataTools.dataToPixelX(doubleDataValue) : dataTools.dataToPixelY(doubleDataValue);
+        final double textPosition = axis == Axis.horizontal ? dataTools.dataToPixelX(doubleDataValue, useInvert: false) : dataTools.dataToPixelY(doubleDataValue, useInvert: false);
         final double textPositionStart = textPosition - (axis == Axis.horizontal ? textPainter.width : textPainter.height) / 2;
         final double textPositionEnd = textPosition + (axis == Axis.horizontal ? textPainter.width : textPainter.height) / 2;
 
@@ -558,13 +559,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         return PositionedTextPainter<T>(linePosition: textPosition, textPosition: textPosition, textPainter: textPainter);
     }
 
-    List<PositionedTextPainter<TX>> _createXAxisTicks(DoubleMinMax graphMinMax)
-    => _createAxisTicks<TX>(graphMinMax, customData.toolsX, Axis.horizontal);
+    List<PositionedTextPainter<TX>> _createXAxisTicks(DataTools dataTools, DoubleMinMax graphMinMax)
+    => _createAxisTicks<TX>(dataTools, graphMinMax, customData.toolsX, Axis.horizontal);
 
-    List<PositionedTextPainter<TY>> _createYAxisTicks(DoubleMinMax graphMinMax)
-    => _createAxisTicks<TY>(graphMinMax, customData.toolsY, Axis.vertical);
+    List<PositionedTextPainter<TY>> _createYAxisTicks(DataTools dataTools, DoubleMinMax graphMinMax)
+    => _createAxisTicks<TY>(dataTools, graphMinMax, customData.toolsY, Axis.vertical);
 
-    void _drawDataTip(PaintInfo paintInfo, String label, ClosestPointInfo closestPoint)
+    void _drawDataTip(PaintInfo paintInfo, DataTools dataTools, String label, ClosestPointInfo closestPoint)
     {
         if (pointerPosition == null)
             return;
@@ -579,7 +580,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             final double closestX = closestPoint.position.dx;
             final double closestY = closestPoint.position.dy;
 
-            final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
             if (dataTools.pixelToDataX(pointerPosition!.dx + tickLineLengthX) < doubleData.minMax.minX
                 || dataTools.pixelToDataX(pointerPosition!.dx - tickLineLengthX) > doubleData.minMax.maxX
                 || dataTools.pixelToDataY(pointerPosition!.dy - tickLineLengthY) < doubleData.minMax.minY
@@ -621,17 +621,10 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         textPainter.paint(paintInfo.canvas, Offset(finalDataTipLeft + dataTipPaddingX, finalDataTipTop + dataTipPaddingY));
     }
 
-    void _drawLine(PaintInfo paintInfo, DoubleDataSeries dataSeries, {required bool highlight, ClosestPointInfo? highlightPoint})
+    void _drawLine(PaintInfo paintInfo, DataTools dataTools, DoubleDataSeries dataSeries, {required bool highlight, ClosestPointInfo? highlightPoint})
     {
-        final DataTools dataTools = DataTools(doubleData.minMax, paintInfo.graphMinMax);
-
         double lastX = dataTools.dataToPixelX(dataSeries.points[0].x);
-        if (invertXAxis)
-            lastX = paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - lastX;
-
         double lastY = dataTools.dataToPixelY(dataSeries.points[0].y);
-        if (invertYAxis)
-            lastY = paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - lastY;
 
         double lineWidth = chartStyle.lineWidth;
         if (highlight)
@@ -655,13 +648,8 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
 
         for (int pointIndex = 1; pointIndex < dataSeries.points.size; pointIndex++)
         {
-            double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
-            if (invertXAxis)
-                currentX = paintInfo.graphMinMax.minX + paintInfo.graphMinMax.maxX - currentX;
-
-            double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
-            if (invertYAxis)
-                currentY = paintInfo.graphMinMax.minY + paintInfo.graphMinMax.maxY - currentY;
+            final double currentX = dataTools.dataToPixelX(dataSeries.points[pointIndex].x);
+            final double currentY = dataTools.dataToPixelY(dataSeries.points[pointIndex].y);
 
             _drawLineSegment(paintInfo.canvas, linePaint, lastX, lastY, currentX, currentY);
 
@@ -681,7 +669,7 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         }
     }
 
-    void _drawLines(PaintInfo paintInfo, ClosestLineInfo? closestLine)
+    void _drawLines(PaintInfo paintInfo, DataTools dataTools, ClosestLineInfo? closestLine)
     {
         int? highlightLineIndex;
         ClosestPointInfo? highlightPoint;
@@ -697,13 +685,13 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         {
             final DoubleDataSeries dataSeries = doubleData.dataSeriesList[lineIndex];
             if (lineIndex != highlightLineIndex)
-                _drawLine(paintInfo, dataSeries, highlight: highlight);
+                _drawLine(paintInfo, dataTools, dataSeries, highlight: highlight);
         }
 
         if (highlightLineIndex != null)
         {
             final DoubleDataSeries dataSeries = doubleData.dataSeriesList[highlightLineIndex];
-            _drawLine(paintInfo, dataSeries, highlight: highlight, highlightPoint: highlightPoint);
+            _drawLine(paintInfo, dataTools, dataSeries, highlight: highlight, highlightPoint: highlightPoint);
         }
     }
 
@@ -758,12 +746,14 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
             showTicksTop: showTicksTop
         );
 
-        onGraphMinMaxCalculated?.call(graphMinMax);
         if (DEBUG)
             logDebug('  graphMinMax:       $graphMinMax');
 
-        final List<PositionedTextPainter<TX>> xAxisPainters = _createXAxisTicks(graphMinMax);
-        final List<PositionedTextPainter<TY>> yAxisPainters = _createYAxisTicks(graphMinMax);
+        final DataTools dataTools = DataTools(doubleData.minMax, graphMinMax, invertXAxis: invertXAxis, invertYAxis: invertYAxis);
+        onDataToolsAvailable?.call(dataTools);
+
+        final List<PositionedTextPainter<TX>> xAxisPainters = _createXAxisTicks(dataTools, graphMinMax);
+        final List<PositionedTextPainter<TY>> yAxisPainters = _createYAxisTicks(dataTools, graphMinMax);
 
         final PaintInfo paintInfo = PaintInfo(
             canvas: canvas,
@@ -785,15 +775,15 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         _paintTextPaintersRight(paintInfo, yAxisPainters, showTicks: showTicksRight);
         _paintHorizontalGridLines(paintInfo, yAxisPainters);
 
-        final ClosestLineInfo? closestLine = _calcClosestLine(paintInfo);
+        final ClosestLineInfo? closestLine = _calcClosestLine(paintInfo, dataTools);
         onClosestLineCalculated?.call(closestLine);
-        _drawLines(paintInfo, closestLine);
+        _drawLines(paintInfo, dataTools, closestLine);
 
         if (closestLine == null)
             return;
 
         final GenericDataSeries<TX, TY> dataSeries = customData.dataSeriesList[closestLine.lineIndex];
-        _drawDataTip(paintInfo, dataSeries.label, closestLine.closestPoint);
+        _drawDataTip(paintInfo, dataTools, dataSeries.label, closestLine.closestPoint);
     }
 
     void _paintTextPaintersBottom<T>(PaintInfo paintInfo, List<PositionedTextPainter<T>> painters, {required bool showTicks})
