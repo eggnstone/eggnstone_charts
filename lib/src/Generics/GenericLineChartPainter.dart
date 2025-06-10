@@ -579,13 +579,6 @@ class GenericLineChartPainter<TX, TY> extends CustomPainter
         {
             final double closestX = closestPoint.position.dx;
             final double closestY = closestPoint.position.dy;
-
-            if (dataTools.pixelToDataX(pointerPosition!.dx + tickLineLengthX) < doubleData.minMax.minX
-                || dataTools.pixelToDataX(pointerPosition!.dx - tickLineLengthX) > doubleData.minMax.maxX
-                || dataTools.pixelToDataY(pointerPosition!.dy - tickLineLengthY) < doubleData.minMax.minY
-                || dataTools.pixelToDataY(pointerPosition!.dy + tickLineLengthY) > doubleData.minMax.maxY)
-                return;
-
             final TX customDataX = customData.toolsX.toCustomValue(dataTools.pixelToDataX(closestX));
             final TY customDataY = customData.toolsY.toCustomValue(dataTools.pixelToDataY(closestY));
             final String customDataXString = customData.toolsX.formatDataTip(customDataX);
